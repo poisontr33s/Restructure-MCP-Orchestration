@@ -1,0 +1,60 @@
+import { ServerConfig, ServerStatus } from '@mcp/shared';
+import { createLogger } from './logger';
+
+// Create logger instance
+const logger = createLogger('server-manager');
+
+/**
+ * Server Manager class
+ * Responsible for managing server instances and their lifecycle
+ */
+export class ServerManager {
+  private serverRegistry: Map<string, any> = new Map();
+  
+  /**
+   * Register a server with the manager
+   * @param serverType - The type of server to register
+   * @param serverClass - The server class constructor
+   */
+  public registerServerType(serverType: string, serverClass: any): void {
+    if (this.serverRegistry.has(serverType)) {
+      logger.warn(`Server type ${serverType} is already registered`);
+      return;
+    }
+    
+    this.serverRegistry.set(serverType, serverClass);
+    logger.info(`Registered server type: ${serverType}`);
+  }
+  
+  /**
+   * Create a server instance
+   * @param config - The server configuration
+   */
+  public createServer(config: ServerConfig): any {
+    const serverType = config.type;
+    
+    if (!this.serverRegistry.has(serverType)) {
+      throw new Error(`Server type ${serverType} is not registered`);
+    }
+    
+    const ServerClass = this.serverRegistry.get(serverType);
+    return new ServerClass(config);
+  }
+  
+  /**
+   * Get available server types
+   */
+  public getAvailableServerTypes(): string[] {
+    return Array.from(this.serverRegistry.keys());
+  }
+  
+  /**
+   * Check if a server type is registered
+   * @param serverType - The server type to check
+   */
+  public hasServerType(serverType: string): boolean {
+    return this.serverRegistry.has(serverType);
+  }
+}
+
+export default ServerManager;

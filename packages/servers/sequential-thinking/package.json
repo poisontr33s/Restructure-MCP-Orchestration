@@ -1,0 +1,23 @@
+{
+  "name": "@mcp/server-sequential-thinking",
+  "version": "1.0.0",
+  "description": "Sequential Thinking MCP Server",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --format esm --dts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mcp/server-base": "workspace:*",
+    "@mcp/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "tsup": "^8.0.2",
+    "vitest": "^1.3.1"
+  }
+}

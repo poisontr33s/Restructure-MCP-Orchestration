@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build MCP System",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/restructure && pnpm build",
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Start MCP System",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/restructure && pnpm start",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
+      "label": "Dev MCP System",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/restructure && pnpm start:dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Check MCP Status",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/restructure && pnpm exec mcp status",
+      "problemMatcher": []
+    }
+  ]
+}

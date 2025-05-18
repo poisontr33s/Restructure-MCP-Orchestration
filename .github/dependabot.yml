@@ -5,7 +5,10 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "npm"
+    directory: "/"                # For root package.json and pnpm-workspace.yaml
     schedule:
-      interval: "daily"
+      interval: "hourly"
+  - package-ecosystem: "npm"
+    directory: "/packages/core"   # Add for each subpackage
+  # Add more entries for each package that has its own package.json

@@ -1,6 +1,6 @@
 # THE MONOREPO RITUAL: A Guide for Sisters, Siblings, and Silent Spectators
 
-> *Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena".* 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: *[Feather.Weeds.Subordinate](www.piratehub.com/actors/Cpt_Guthilda_Triple_D)
+> *Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena".* 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: *[Feather.Weeds.Subordinate](www.piratehub.com/actors/Cpt_Guthilda_Triple_D*)
 * **(You stand before the Orchestration System, a house of many rooms—each with its own secrets. This is the step-by-step to make sense of the labyrinth, keep your dependencies sane, and dance with pnpm *(never npm).***
 
 ---

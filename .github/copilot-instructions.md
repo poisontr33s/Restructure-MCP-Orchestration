@@ -87,6 +87,8 @@
 
 ## 7. The Floorplan (Structure Example)
 
+```mermaid
+
 repo-root/
 ├── package.json             # All shared devDependencies & scripts
 ├── pnpm-workspace.yaml      # Points to 'packages/*'
@@ -102,6 +104,7 @@ repo-root/
 │   └── ...                  # More packages as needed
 └── .vscode/
     └── tasks.json           # Optional VS Code tasks
+```
 
 ---
 

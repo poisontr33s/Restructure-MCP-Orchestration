@@ -6,16 +6,17 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  },  "scripts": {
-    "dev": "turbo run dev",
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "prepare": "husky install",
     "start": "node packages/cli/dist/index.js start",
-    "start:dev": "turbo run dev --parallel",
-    "clean": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist"
+    "clean": "pnpm clean:all",
+    "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
   },
   "keywords": [
     "mcp",
@@ -34,10 +35,12 @@
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "turbo": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.4.0",
+    "tsup": "^8.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --fix",
-    "*.{js,ts,tsx,md,json}": "prettier --write"
+    "*.{js,ts,tsx,jsx}": "eslint --fix",
+    "*.{js,ts,tsx,jsx,md,json}": "prettier --write"
   }
 }

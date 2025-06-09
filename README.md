@@ -1,123 +1,27 @@
 # MCP Orchestration System
 
-A modern Orchestration System for Model Context Protocol (MCP) servers, designed for 2025.
+> SYSTEM STATUS: ORCHESTRATION PROTOCOLS ACTIVE
 
-## Overview
+## Om
+Et moderne orkestreringsystem for Model Context Protocol (MCP) tjenere, designet for 2025. Dette systemet tilbyr en sentralisert plattform for håndtering av ulike MCP-tjenere gjennom en modulær TypeScript-arkitektur.
 
-The MCP Orchestration System provides a centralized management platform for various MCP servers, including:
+## Strukturell Tektonikk
+- Monorepo-struktur med PNPM workspace og klart separerte ansvarsområder
+- Modulær arkitektur med pluginbasert tilnærming for enkel utvidelse
+- Full TypeScript-støtte med sterk typing og moderne utviklingsverktøy
+- Sentral overvåkning og administrasjon av alle MCP-tjenere
 
-- Sequential Thinking MCP
-- DuckDuckGo MCP
-- Puppeteer MCP
-- Memory Bank MCP
-- GitHub MCP
-- Knowledge Graph MCP
-- Compass MCP
-- Playwright MCP
+## Hovedfunksjoner
+- **Sentralisert administrasjon**: Start, stopp og overvåk alle MCP-tjenere fra ett grensesnitt
+- **Sanntidsovervåking**: Dashboard for tjenerestatus, systemressurser og logger
+- **Helsesjekk**: Automatiske helsesjekker og statusoppdateringer
+- **CLI-støtte**: Kommandolinjebasert administrering av tjenere
 
-The system is built using a modern TypeScript monorepo architecture, with clear separation of concerns and modular design.
+## Relasjoner
+- [Meta-index](https://github.com/poisontr33s/poisontr33s) - Katalogisering og oversikt
+- [Konsept-node](https://github.com/poisontr33s/PsychoNoir-Kontrapunkt) - Konseptuell inspirasjon for systemdesign
 
-## Features
+## Installasjon og bruk
+Se den tekniske dokumentasjonen i prosjektmappene for detaljerte instruksjoner.
 
-- **Centralized Management**: Start, stop, and monitor all MCP servers from a single interface
-- **Real-time Monitoring**: Dashboard for monitoring server status, system resources, and logs
-- **Health Checks**: Automatic health checks and status updates for all servers
-- **Modular Architecture**: Add new server types easily with a plugin-based architecture
-- **TypeScript Support**: Full TypeScript support with strong typing
-- **Modern Tooling**: ESLint, Prettier, Vite, Tailwind CSS, and more
-- **CLI Support**: Command-line interface for server management
-
-## Project Structure
-
-The project is organized as a PNPM workspace with the following packages:
-
-- **@mcp/core**: Core orchestration system and server management
-- **@mcp/shared**: Shared types, utilities, and configuration
-- **@mcp/monitor**: Modern React dashboard with Tailwind CSS
-- **@mcp/cli**: Command-line interface for the orchestration system
-- **@mcp/server-base**: Base server class for all MCP servers
-- **@mcp/server-***: Individual server implementations
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18 or later
-- PNPM 8 or later
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-
-```bash
-pnpm install
-```
-
-3. Build all packages:
-
-```bash
-pnpm build
-```
-
-### Running the System
-
-Start the complete system:
-
-```bash
-pnpm start
-```
-
-This will start the orchestration hub, all enabled MCP servers, and the monitor dashboard.
-
-For development, you can use:
-
-```bash
-pnpm start:dev
-```
-
-This will run all packages in watch mode, allowing for real-time code updates.
-
-### Accessing the Dashboard
-
-Once the system is running, you can access the monitor dashboard at:
-
-```
-http://localhost:8080
-```
-
-## Using the CLI
-
-The MCP Orchestration System includes a CLI for managing servers:
-
-```bash
-# Start the system
-pnpm exec mcp start
-
-# Check server status
-pnpm exec mcp status
-
-# Start a specific server
-pnpm exec mcp server start sequential-thinking
-
-# Stop a specific server
-pnpm exec mcp server stop sequential-thinking
-
-# Run interactive setup
-pnpm exec mcp setup
-```
-
-## Developing New Servers
-
-To create a new server implementation:
-
-1. Create a new package in `packages/servers/your-server-name`
-2. Extend the `BaseServer` class from `@mcp/server-base`
-3. Implement the required methods
-4. Register your server in the orchestration hub
-
-See the existing server implementations for examples.
-
-## License
-
-MIT
+> Orchestration is not control; it's conversation with chaos.

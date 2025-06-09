@@ -87,7 +87,7 @@
 
 ## 7. The Floorplan (Structure Example)
 
-```mermaid
+```ascii2025
 
 repo-root/
 ├── package.json             # All shared devDependencies & scripts

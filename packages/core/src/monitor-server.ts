@@ -1,4 +1,5 @@
 import express from 'express';
+import RateLimit from 'express-rate-limit';
 import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -183,7 +184,11 @@ export class MonitorServer {
     this.app.use(express.static(this.staticDir));
     
     // Fallback route for SPA (Single Page Application)
-    this.app.get('*', (req, res) => {
+    const fallbackRateLimiter = RateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // max 100 requests per windowMs
+    });
+    this.app.get('*', fallbackRateLimiter, (req, res) => {
       res.sendFile(path.join(this.staticDir, 'index.html'));
     });
   }

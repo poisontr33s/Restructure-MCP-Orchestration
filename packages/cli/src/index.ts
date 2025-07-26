@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+// Console output is appropriate for CLI applications
+
 import { Command } from 'commander';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -213,7 +216,7 @@ program
         name: 'monitorPort',
         message: 'Enter the port for the monitor dashboard:',
         default: defaultConfig.monitor.port,
-        validate: (value) => value > 0 && value < 65536 ? true : 'Please enter a valid port number'
+        validate: (value) => (typeof value === 'number' && value > 0 && value < 65536) ? true : 'Please enter a valid port number'
       },
       {
         type: 'checkbox',

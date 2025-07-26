@@ -1,22 +1,25 @@
-import { ServerConfig, ServerStatus } from '@mcp/shared';
+import { ServerConfig } from '@mcp/shared';
 import { createLogger } from './logger';
 
 // Create logger instance
 const logger = createLogger('server-manager');
+
+// Server class constructor type
+type ServerConstructor = new (config: ServerConfig) => unknown;
 
 /**
  * Server Manager class
  * Responsible for managing server instances and their lifecycle
  */
 export class ServerManager {
-  private serverRegistry: Map<string, any> = new Map();
+  private serverRegistry: Map<string, ServerConstructor> = new Map();
   
   /**
    * Register a server with the manager
    * @param serverType - The type of server to register
    * @param serverClass - The server class constructor
    */
-  public registerServerType(serverType: string, serverClass: any): void {
+  public registerServerType(serverType: string, serverClass: ServerConstructor): void {
     if (this.serverRegistry.has(serverType)) {
       logger.warn(`Server type ${serverType} is already registered`);
       return;
@@ -30,7 +33,7 @@ export class ServerManager {
    * Create a server instance
    * @param config - The server configuration
    */
-  public createServer(config: ServerConfig): any {
+  public createServer(config: ServerConfig): unknown {
     const serverType = config.type;
     
     if (!this.serverRegistry.has(serverType)) {
@@ -38,6 +41,10 @@ export class ServerManager {
     }
     
     const ServerClass = this.serverRegistry.get(serverType);
+    if (!ServerClass) {
+      throw new Error(`Server class for type ${serverType} is not available`);
+    }
+    
     return new ServerClass(config);
   }
   

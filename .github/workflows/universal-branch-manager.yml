@@ -1,0 +1,321 @@
+name: Universal Multi-Repository Branch Manager
+
+on:
+  # Manual trigger with full repository control
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Operation to perform'
+        required: true
+        default: 'cleanup'
+        type: choice
+        options:
+          - cleanup
+          - list
+          - delete-all
+          - delete-pattern
+      repositories:
+        description: 'Repositories to manage (org/repo format, comma-separated, or "ALL" for all org repos)'
+        required: true
+        default: 'ALL'
+      branch_pattern:
+        description: 'Branch pattern to match (e.g., copilot/*, feature/*, specific-branch)'
+        required: false
+        default: 'copilot/*'
+      days_threshold:
+        description: 'Minimum age in days for branches to be considered for deletion'
+        required: false
+        default: '7'
+        type: number
+      dry_run:
+        description: 'Dry run - show what would be done without executing'
+        required: false
+        default: 'true'
+        type: boolean
+      exclude_repos:
+        description: 'Repositories to exclude (comma-separated)'
+        required: false
+        default: ''
+
+  # Scheduled cleanup across all repositories
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2 AM UTC
+
+  # API trigger for external automation
+  repository_dispatch:
+    types: [universal-branch-cleanup]
+
+jobs:
+  universal-branch-manager:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      metadata: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup GitHub CLI
+      run: |
+        # Ensure gh CLI is available and authenticated
+        gh --version
+        gh auth status
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "Universal Branch Manager[bot]"
+        git config --global user.email "universal-branch-manager[bot]@users.noreply.github.com"
+
+    - name: Determine Operation Parameters
+      id: params
+      run: |
+        # Set defaults for scheduled runs
+        if [ "${{ github.event_name }}" = "schedule" ]; then
+          echo "operation=cleanup" >> $GITHUB_OUTPUT
+          echo "repositories=ALL" >> $GITHUB_OUTPUT
+          echo "branch_pattern=copilot/*" >> $GITHUB_OUTPUT
+          echo "days_threshold=7" >> $GITHUB_OUTPUT
+          echo "dry_run=false" >> $GITHUB_OUTPUT
+          echo "exclude_repos=" >> $GITHUB_OUTPUT
+        elif [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+          echo "operation=${{ github.event.client_payload.operation || 'cleanup' }}" >> $GITHUB_OUTPUT
+          echo "repositories=${{ github.event.client_payload.repositories || 'ALL' }}" >> $GITHUB_OUTPUT
+          echo "branch_pattern=${{ github.event.client_payload.branch_pattern || 'copilot/*' }}" >> $GITHUB_OUTPUT
+          echo "days_threshold=${{ github.event.client_payload.days_threshold || '7' }}" >> $GITHUB_OUTPUT
+          echo "dry_run=${{ github.event.client_payload.dry_run || 'true' }}" >> $GITHUB_OUTPUT
+          echo "exclude_repos=${{ github.event.client_payload.exclude_repos || '' }}" >> $GITHUB_OUTPUT
+        else
+          echo "operation=${{ github.event.inputs.operation }}" >> $GITHUB_OUTPUT
+          echo "repositories=${{ github.event.inputs.repositories }}" >> $GITHUB_OUTPUT
+          echo "branch_pattern=${{ github.event.inputs.branch_pattern }}" >> $GITHUB_OUTPUT
+          echo "days_threshold=${{ github.event.inputs.days_threshold }}" >> $GITHUB_OUTPUT
+          echo "dry_run=${{ github.event.inputs.dry_run }}" >> $GITHUB_OUTPUT
+          echo "exclude_repos=${{ github.event.inputs.exclude_repos }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Get Target Repositories
+      id: repos
+      run: |
+        REPOS_INPUT="${{ steps.params.outputs.repositories }}"
+        EXCLUDE_REPOS="${{ steps.params.outputs.exclude_repos }}"
+        
+        echo "🔍 Determining target repositories..."
+        
+        if [ "$REPOS_INPUT" = "ALL" ]; then
+          echo "📡 Fetching all repositories from organization..."
+          # Get organization name from current repository
+          ORG_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          
+          # Get all repositories in the organization
+          ALL_REPOS=$(gh repo list "$ORG_NAME" --limit 1000 --json name,owner --jq '.[] | "\(.owner.login)/\(.name)"')
+          
+          if [ -n "$EXCLUDE_REPOS" ]; then
+            echo "🚫 Excluding repositories: $EXCLUDE_REPOS"
+            # Convert comma-separated list to array and filter
+            FILTERED_REPOS=""
+            for repo in $ALL_REPOS; do
+              EXCLUDE=false
+              IFS=',' read -ra EXCLUDES <<< "$EXCLUDE_REPOS"
+              for exclude in "${EXCLUDES[@]}"; do
+                exclude=$(echo "$exclude" | tr -d ' ')
+                if [[ "$repo" == *"$exclude"* ]]; then
+                  EXCLUDE=true
+                  break
+                fi
+              done
+              if [ "$EXCLUDE" = false ]; then
+                FILTERED_REPOS="$FILTERED_REPOS $repo"
+              fi
+            done
+            TARGET_REPOS="$FILTERED_REPOS"
+          else
+            TARGET_REPOS="$ALL_REPOS"
+          fi
+        else
+          # Use specified repositories
+          TARGET_REPOS=$(echo "$REPOS_INPUT" | tr ',' '\n' | tr -d ' ')
+        fi
+        
+        echo "🎯 Target repositories:"
+        echo "$TARGET_REPOS" | sed 's/^/  /'
+        
+        # Save to file for next step
+        echo "$TARGET_REPOS" > /tmp/target_repos.txt
+        
+        REPO_COUNT=$(echo "$TARGET_REPOS" | wc -w)
+        echo "📊 Total repositories to process: $REPO_COUNT"
+        echo "repo_count=$REPO_COUNT" >> $GITHUB_OUTPUT
+
+    - name: Execute Universal Branch Management
+      run: |
+        OPERATION="${{ steps.params.outputs.operation }}"
+        PATTERN="${{ steps.params.outputs.branch_pattern }}"
+        DAYS_THRESHOLD="${{ steps.params.outputs.days_threshold }}"
+        DRY_RUN="${{ steps.params.outputs.dry_run }}"
+        
+        echo "🚀 Starting Universal Branch Management"
+        echo "Operation: $OPERATION"
+        echo "Pattern: $PATTERN"
+        echo "Days Threshold: $DAYS_THRESHOLD"
+        echo "Dry Run: $DRY_RUN"
+        echo "=================================="
+        
+        TOTAL_BRANCHES_PROCESSED=0
+        TOTAL_BRANCHES_DELETED=0
+        TOTAL_REPOS_PROCESSED=0
+        FAILED_REPOS=0
+        
+        # Process each repository
+        while IFS= read -r repo; do
+          if [ -z "$repo" ]; then continue; fi
+          
+          echo ""
+          echo "🏠 Processing repository: $repo"
+          echo "----------------------------------------"
+          
+          TOTAL_REPOS_PROCESSED=$((TOTAL_REPOS_PROCESSED + 1))
+          
+          # Get branches for this repository
+          echo "📥 Fetching branches matching pattern: $PATTERN"
+          
+          if [[ "$PATTERN" == *"*"* ]]; then
+            # Pattern matching
+            PATTERN_REGEX=$(echo "$PATTERN" | sed 's/\*/.*/')
+            BRANCHES=$(gh api "repos/$repo/branches" --paginate --jq '.[].name' | grep -E "$PATTERN_REGEX" || true)
+          else
+            # Specific branch
+            BRANCHES=$(gh api "repos/$repo/branches" --paginate --jq '.[].name' | grep -x "$PATTERN" || true)
+          fi
+          
+          if [ -z "$BRANCHES" ]; then
+            echo "ℹ️  No branches found matching pattern in $repo"
+            continue
+          fi
+          
+          echo "Found branches:"
+          echo "$BRANCHES" | sed 's/^/  /'
+          
+          REPO_DELETED_COUNT=0
+          
+          # Process each branch
+          for branch in $BRANCHES; do
+            TOTAL_BRANCHES_PROCESSED=$((TOTAL_BRANCHES_PROCESSED + 1))
+            
+            echo ""
+            echo "🌿 Analyzing branch: $branch"
+            
+            # Skip protected branches
+            if [[ "$branch" == "main" || "$branch" == "master" || "$branch" == "develop" ]]; then
+              echo "  🛡️  Skipping protected branch: $branch"
+              continue
+            fi
+            
+            # Check for open PRs
+            PR_COUNT=$(gh pr list --repo "$repo" --head "$branch" --state open --json number --jq length 2>/dev/null || echo "0")
+            if [ "$PR_COUNT" -gt 0 ]; then
+              echo "  📋 Skipping branch with open PR(s): $branch"
+              continue
+            fi
+            
+            # Check branch age
+            BRANCH_DATE=$(gh api "repos/$repo/commits/$branch" --jq '.commit.committer.date' 2>/dev/null || echo "")
+            if [ -n "$BRANCH_DATE" ]; then
+              BRANCH_TIMESTAMP=$(date -d "$BRANCH_DATE" +%s 2>/dev/null || echo "0")
+              CURRENT_TIMESTAMP=$(date +%s)
+              DAYS_OLD=$(( (CURRENT_TIMESTAMP - BRANCH_TIMESTAMP) / 86400 ))
+              
+              if [ "$DAYS_OLD" -lt "$DAYS_THRESHOLD" ]; then
+                echo "  ⏰ Skipping recent branch: $branch (age: $DAYS_OLD days)"
+                continue
+              fi
+              
+              echo "  📅 Branch age: $DAYS_OLD days (threshold: $DAYS_THRESHOLD)"
+            fi
+            
+            # Execute operation
+            case "$OPERATION" in
+              "list")
+                echo "  📝 Listed: $branch"
+                ;;
+              "cleanup"|"delete-pattern"|"delete-all")
+                if [ "$DRY_RUN" = "true" ]; then
+                  echo "  🔄 [DRY RUN] Would delete: $branch"
+                  REPO_DELETED_COUNT=$((REPO_DELETED_COUNT + 1))
+                else
+                  echo "  🗑️  Deleting branch: $branch"
+                  if gh api "repos/$repo/git/refs/heads/$branch" -X DELETE 2>/dev/null; then
+                    echo "  ✅ Successfully deleted: $branch"
+                    REPO_DELETED_COUNT=$((REPO_DELETED_COUNT + 1))
+                    TOTAL_BRANCHES_DELETED=$((TOTAL_BRANCHES_DELETED + 1))
+                  else
+                    echo "  ❌ Failed to delete: $branch"
+                  fi
+                fi
+                ;;
+            esac
+          done
+          
+          echo ""
+          echo "📊 Repository $repo summary:"
+          echo "  Branches processed: $(echo "$BRANCHES" | wc -w)"
+          echo "  Branches deleted: $REPO_DELETED_COUNT"
+          
+        done < /tmp/target_repos.txt
+        
+        echo ""
+        echo "🎉 Universal Branch Management Complete!"
+        echo "========================================"
+        echo "📊 Final Summary:"
+        echo "  Total repositories processed: $TOTAL_REPOS_PROCESSED"
+        echo "  Total branches analyzed: $TOTAL_BRANCHES_PROCESSED"
+        echo "  Total branches deleted: $TOTAL_BRANCHES_DELETED"
+        echo "  Failed repositories: $FAILED_REPOS"
+        
+        if [ "$DRY_RUN" = "true" ]; then
+          echo ""
+          echo "ℹ️  This was a dry run - no actual deletions were performed"
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Summary Report
+      run: |
+        cat > /tmp/branch_management_report.md << 'EOF'
+        # Universal Branch Management Report
+        
+        **Operation:** ${{ steps.params.outputs.operation }}
+        **Pattern:** `${{ steps.params.outputs.branch_pattern }}`
+        **Days Threshold:** ${{ steps.params.outputs.days_threshold }}
+        **Dry Run:** ${{ steps.params.outputs.dry_run }}
+        **Repositories Processed:** ${{ steps.repos.outputs.repo_count }}
+        
+        ## Execution Summary
+        
+        - ✅ **Completed**: Universal branch management across multiple repositories
+        - 🎯 **Target Pattern**: `${{ steps.params.outputs.branch_pattern }}`
+        - 📊 **Repositories**: ${{ steps.repos.outputs.repo_count }} processed
+        - ⏰ **Timestamp**: $(date -u)
+        
+        ## Next Steps
+        
+        - Monitor repository states for any issues
+        - Review deletion logs for verification
+        - Update automation parameters if needed
+        
+        ---
+        *Automated by Universal Branch Manager*
+        EOF
+        
+        echo "📄 Branch management report created"
+        cat /tmp/branch_management_report.md
+
+    - name: Notify on Completion
+      if: always()
+      run: |
+        echo "🔔 Universal branch management operation completed"
+        echo "Check the job logs for detailed information about the operations performed"

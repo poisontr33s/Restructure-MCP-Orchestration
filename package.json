@@ -20,7 +20,11 @@
     "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml",
     "cleanup-branches": "scripts/cleanup-branches.sh",
     "cleanup-branches:dry": "scripts/cleanup-branches.sh --dry-run",
-    "cleanup-branches:force": "scripts/cleanup-branches.sh --force"
+    "cleanup-branches:force": "scripts/cleanup-branches.sh --force",
+    "universal-cleanup": "scripts/universal-branch-manager.sh",
+    "universal-cleanup:dry": "scripts/universal-branch-manager.sh --dry-run",
+    "universal-cleanup:all": "scripts/universal-branch-manager.sh --operation cleanup --repositories ALL",
+    "universal-list": "scripts/universal-branch-manager.sh --operation list --repositories ALL"
   },
   "keywords": [
     "mcp",

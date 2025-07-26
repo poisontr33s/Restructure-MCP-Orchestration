@@ -17,6 +17,12 @@ Et moderne orkestreringsystem for Model Context Protocol (MCP) tjenere, designet
 - **Helsesjekk**: Automatiske helsesjekker og statusoppdateringer
 - **CLI-støtte**: Kommandolinjebasert administrering av tjenere
 
+## 📋 Documentation
+
+- [Universal Branch Management](docs/universal-branch-management.md) - Multi-repository branch automation system
+- [Branch Management](docs/branch-management.md) - Single repository branch cleanup
+- [Development Setup](docs/development-setup.md) - Local development environment setup
+
 ## Relasjoner
 - [Meta-index](https://github.com/poisontr33s/poisontr33s) - Katalogisering og oversikt
 - [Konsept-node](https://github.com/poisontr33s/PsychoNoir-Kontrapunkt) - Konseptuell inspirasjon for systemdesign

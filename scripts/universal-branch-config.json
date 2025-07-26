@@ -1,0 +1,41 @@
+{
+  "default_pattern": "copilot/*",
+  "default_threshold": 7,
+  "protected_branches": [
+    "main",
+    "master", 
+    "develop",
+    "development",
+    "production",
+    "prod",
+    "release",
+    "staging"
+  ],
+  "excluded_repositories": [
+    "critical-repo",
+    "production-repo"
+  ],
+  "organization_settings": {
+    "auto_cleanup_enabled": true,
+    "max_repositories_per_run": 100,
+    "parallel_processing": false
+  },
+  "notification_settings": {
+    "webhook_url": "",
+    "slack_channel": "",
+    "email_notifications": false
+  },
+  "advanced_patterns": {
+    "feature_branches": "feature/*",
+    "hotfix_branches": "hotfix/*",
+    "bugfix_branches": "bugfix/*",
+    "experimental_branches": "experiment/*"
+  },
+  "age_thresholds": {
+    "copilot_branches": 7,
+    "feature_branches": 14,
+    "hotfix_branches": 3,
+    "experimental_branches": 30
+  },
+  "github_token": "env:GITHUB_TOKEN"
+}

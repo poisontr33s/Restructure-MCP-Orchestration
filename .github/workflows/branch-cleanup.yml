@@ -1,0 +1,161 @@
+name: Automated Branch Cleanup
+
+on:
+  # Manual trigger for immediate cleanup
+  workflow_dispatch:
+    inputs:
+      branch_pattern:
+        description: 'Branch pattern to delete (e.g., copilot/*, feature/*, or specific branch name)'
+        required: false
+        default: 'copilot/*'
+      dry_run:
+        description: 'Dry run - show what would be deleted without actually deleting'
+        required: false
+        default: 'false'
+        type: boolean
+
+  # Automatic cleanup on pull request closure
+  pull_request:
+    types: [closed]
+
+  # Weekly cleanup of stale branches
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+
+jobs:
+  cleanup-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Clean up merged PR branch
+      if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+      run: |
+        BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+        echo "Cleaning up merged branch: $BRANCH_NAME"
+        
+        # Check if branch exists remotely
+        if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+          echo "Deleting remote branch: $BRANCH_NAME"
+          git push origin --delete "$BRANCH_NAME" || echo "Failed to delete $BRANCH_NAME (may already be deleted)"
+        else
+          echo "Branch $BRANCH_NAME not found on remote"
+        fi
+
+    - name: Clean up stale copilot branches
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      run: |
+        DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+        PATTERN="${{ github.event.inputs.branch_pattern || 'copilot/*' }}"
+        
+        echo "Starting branch cleanup with pattern: $PATTERN"
+        echo "Dry run mode: $DRY_RUN"
+        
+        # Get all remote branches matching pattern
+        BRANCHES_TO_DELETE=$(git ls-remote --heads origin | grep -E "$PATTERN" | awk '{print $2}' | sed 's/refs\/heads\///' || true)
+        
+        if [ -z "$BRANCHES_TO_DELETE" ]; then
+          echo "No branches found matching pattern: $PATTERN"
+          exit 0
+        fi
+        
+        echo "Found branches matching pattern:"
+        echo "$BRANCHES_TO_DELETE"
+        
+        # Check which branches have associated PRs
+        for branch in $BRANCHES_TO_DELETE; do
+          echo "Checking branch: $branch"
+          
+          # Skip if it's the main/master branch
+          if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+            echo "  Skipping protected branch: $branch"
+            continue
+          fi
+          
+          # Check if branch has an open PR
+          PR_COUNT=$(gh pr list --head "$branch" --state open --json number --jq length 2>/dev/null || echo "0")
+          
+          if [ "$PR_COUNT" -gt 0 ]; then
+            echo "  Branch $branch has open PR(s), skipping"
+            continue
+          fi
+          
+          # Check if branch was created more than 7 days ago
+          BRANCH_DATE=$(git log -1 --format=%ct "origin/$branch" 2>/dev/null || echo "0")
+          CURRENT_DATE=$(date +%s)
+          DAYS_OLD=$(( (CURRENT_DATE - BRANCH_DATE) / 86400 ))
+          
+          if [ "$DAYS_OLD" -lt 7 ]; then
+            echo "  Branch $branch is only $DAYS_OLD days old, skipping"
+            continue
+          fi
+          
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "  [DRY RUN] Would delete branch: $branch (age: ${DAYS_OLD} days)"
+          else
+            echo "  Deleting stale branch: $branch (age: ${DAYS_OLD} days)"
+            git push origin --delete "$branch" || echo "  Failed to delete $branch"
+          fi
+        done
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Manual branch deletion
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.branch_pattern != 'copilot/*'
+      run: |
+        DRY_RUN="${{ github.event.inputs.dry_run }}"
+        PATTERN="${{ github.event.inputs.branch_pattern }}"
+        
+        echo "Manual deletion requested for pattern: $PATTERN"
+        
+        # Handle specific branch name
+        if [[ "$PATTERN" != *"*"* ]]; then
+          if git ls-remote --heads origin "$PATTERN" | grep -q "$PATTERN"; then
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "[DRY RUN] Would delete specific branch: $PATTERN"
+            else
+              echo "Deleting specific branch: $PATTERN"
+              git push origin --delete "$PATTERN" || echo "Failed to delete $PATTERN"
+            fi
+          else
+            echo "Branch $PATTERN not found on remote"
+          fi
+        else
+          # Handle pattern-based deletion
+          BRANCHES_TO_DELETE=$(git ls-remote --heads origin | grep -E "${PATTERN//\*/.*}" | awk '{print $2}' | sed 's/refs\/heads\///' || true)
+          
+          for branch in $BRANCHES_TO_DELETE; do
+            if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+              echo "Skipping protected branch: $branch"
+              continue
+            fi
+            
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "[DRY RUN] Would delete branch: $branch"
+            else
+              echo "Deleting branch: $branch"
+              git push origin --delete "$branch" || echo "Failed to delete $branch"
+            fi
+          done
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Summary
+      run: |
+        echo "Branch cleanup completed successfully"
+        echo "Remaining branches:"
+        git ls-remote --heads origin | awk '{print $2}' | sed 's/refs\/heads\///' | sort

@@ -100,7 +100,7 @@ program
       
       console.log('\n' + chalk.bold('MCP Servers:'));
       
-      status.servers.forEach((server: { name: string; status: string; port: number; pid?: number }) => {
+      status.servers.forEach((server: { name: string; type: string; status: string; port: number; pid?: number }) => {
         let statusColor;
         
         switch (server.status) {

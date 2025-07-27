@@ -79,6 +79,8 @@ jobs:
 
   lint-and-format:
     name: Lint & Format Check (${{ matrix.package }})
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     
     strategy:

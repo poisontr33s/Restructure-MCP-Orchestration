@@ -24,7 +24,18 @@
     "universal-cleanup": "scripts/universal-branch-manager.sh",
     "universal-cleanup:dry": "scripts/universal-branch-manager.sh --dry-run",
     "universal-cleanup:all": "scripts/universal-branch-manager.sh --operation cleanup --repositories ALL",
-    "universal-list": "scripts/universal-branch-manager.sh --operation list --repositories ALL"
+    "universal-list": "scripts/universal-branch-manager.sh --operation list --repositories ALL",
+    "cross-repo:init": "scripts/cross-repo-bridge.sh init",
+    "cross-repo:validate": "scripts/cross-repo-bridge.sh validate",
+    "cross-repo:sync": "scripts/cross-repo-bridge.sh sync",
+    "cross-repo:build": "scripts/cross-repo-bridge.sh build",
+    "pre-merge-check": "scripts/cross-repo-bridge.sh validate",
+    "universal:analyze": "scripts/universal-automation.sh analyze",
+    "universal:install": "scripts/universal-automation.sh install", 
+    "universal:build": "scripts/universal-automation.sh build",
+    "universal:test": "scripts/universal-automation.sh test",
+    "universal:lint": "scripts/universal-automation.sh lint",
+    "universal:all": "scripts/universal-automation.sh all"
   },
   "keywords": [
     "mcp",
@@ -45,7 +56,7 @@
     "prettier": "^3.2.5",
     "tsup": "^8.0.2",
     "turbo": "^2.0.0",
-    "typescript": "^5.5.4",
+    "typescript": "5.9.1-rc",
     "vitest": "^3.2.4"
   },
   "lint-staged": {

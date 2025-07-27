@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-test:
     name: Build & Test (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     
     strategy:

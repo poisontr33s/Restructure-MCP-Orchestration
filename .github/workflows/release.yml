@@ -1,4 +1,6 @@
 name: Release Pipeline
+permissions:
+  contents: read
 
 on:
   push:

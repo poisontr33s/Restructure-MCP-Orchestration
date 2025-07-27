@@ -4,8 +4,6 @@
  * Main entry point for the MCP Orchestration System
  */
 
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
 import { OrchestrationHub } from '@mcp/core';
 import { ServerManager } from '@mcp/core';
 import { MonitorServer } from '@mcp/core';
@@ -15,11 +13,8 @@ import { defaultConfig } from '@mcp/shared';
 import SequentialThinkingServer from '@mcp/server-sequential-thinking';
 import DuckDuckGoServer from '@mcp/server-duckduckgo';
 
-// Get the current directory
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 // Print banner
-console.log(`
+console.info(`
 ╔════════════════════════════════════════════════════╗
 ║             MCP ORCHESTRATION SYSTEM               ║
 ║                                                    ║
@@ -30,7 +25,7 @@ console.log(`
 
 async function main() {
   try {
-    console.log('Starting MCP Orchestration System...');
+    console.info('Starting MCP Orchestration System...');
     
     // Create server manager
     const serverManager = new ServerManager();
@@ -60,17 +55,17 @@ async function main() {
     // Start all servers
     await orchestrationHub.startAllServers();
     
-    console.log(`MCP Orchestration System is running`);
-    console.log(`Monitor dashboard available at: http://localhost:${defaultConfig.monitor.port}`);
+    console.info(`MCP Orchestration System is running`);
+    console.info(`Monitor dashboard available at: http://localhost:${defaultConfig.monitor.port}`);
     
     // Handle process shutdown
     process.on('SIGINT', async () => {
-      console.log('Shutting down MCP Orchestration System...');
+      console.info('Shutting down MCP Orchestration System...');
       
       await orchestrationHub.shutdown();
       await monitorServer.stop();
       
-      console.log('MCP Orchestration System shutdown complete');
+      console.info('MCP Orchestration System shutdown complete');
       process.exit(0);
     });
     

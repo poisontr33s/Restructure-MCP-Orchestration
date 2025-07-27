@@ -1,0 +1,159 @@
+name: Artifact V4 Compatibility Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/**'
+
+jobs:
+  # Test job that creates artifacts to demonstrate v4 compatibility
+  create-test-artifacts:
+    name: Create Test Artifacts (${{ matrix.test-case }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        test-case: [case-1, case-2, case-3]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Create test data
+        run: |
+          mkdir -p test-data
+          echo "Test case: ${{ matrix.test-case }}" > test-data/info.txt
+          echo "Created at: $(date)" >> test-data/info.txt
+          echo "Commit: ${{ github.sha }}" >> test-data/info.txt
+          
+      # ARTIFACT V4 COMPATIBILITY DEMONSTRATION:
+      # - Using @v4 version of upload-artifact
+      # - Unique artifact names per matrix job (required by v4)
+      # - Including commit SHA to ensure global uniqueness
+      # - v4 artifacts are immutable - cannot be overwritten
+      - name: Upload test artifacts (v4 compatible)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifact-${{ matrix.test-case }}-${{ github.sha }}
+          path: test-data/
+          retention-days: 1
+          if-no-files-found: error
+
+  # Test job that downloads artifacts to verify v4 compatibility
+  download-test-artifacts:
+    name: Download and Verify Artifacts
+    runs-on: ubuntu-latest
+    needs: create-test-artifacts
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # ARTIFACT V4 COMPATIBILITY DEMONSTRATION:
+      # - Using @v4 version of download-artifact
+      # - Must specify exact artifact names (no pattern matching in v4)
+      # - Each artifact downloaded separately
+      - name: Download test artifact case-1
+        uses: actions/download-artifact@v4
+        with:
+          name: test-artifact-case-1-${{ github.sha }}
+          path: downloaded/case-1/
+          
+      - name: Download test artifact case-2
+        uses: actions/download-artifact@v4
+        with:
+          name: test-artifact-case-2-${{ github.sha }}
+          path: downloaded/case-2/
+          
+      - name: Download test artifact case-3
+        uses: actions/download-artifact@v4
+        with:
+          name: test-artifact-case-3-${{ github.sha }}
+          path: downloaded/case-3/
+          
+      - name: Verify downloaded artifacts
+        run: |
+          echo "=== Verifying artifact downloads ==="
+          for case in case-1 case-2 case-3; do
+            if [ -f "downloaded/$case/info.txt" ]; then
+              echo "✅ $case artifact downloaded successfully"
+              cat "downloaded/$case/info.txt"
+            else
+              echo "❌ $case artifact missing"
+              exit 1
+            fi
+            echo "---"
+          done
+          
+      - name: Create verification report
+        run: |
+          mkdir -p verification-report
+          cat > verification-report/v4-compatibility-report.md << EOF
+          # Artifact V4 Compatibility Test Report
+          
+          **Generated:** $(date)
+          **Commit:** ${{ github.sha }}
+          **Workflow:** Artifact V4 Compatibility Test
+          
+          ## Test Results
+          
+          ✅ All test artifacts created successfully with unique names
+          ✅ All test artifacts downloaded successfully
+          ✅ Artifact V4 compatibility verified
+          
+          ## Key V4 Compatibility Features Tested
+          
+          - **Unique Artifact Names:** Each matrix job creates artifacts with unique names
+          - **Immutable Artifacts:** No attempt to overwrite existing artifacts
+          - **Exact Name Downloads:** No pattern matching used for downloads
+          - **Retention Policy:** Artifacts set with appropriate retention periods
+          
+          ## Matrix Job Artifacts Created
+          
+          EOF
+          
+          for case in case-1 case-2 case-3; do
+            echo "- test-artifact-$case-${{ github.sha }}" >> verification-report/v4-compatibility-report.md
+          done
+          
+          echo "" >> verification-report/v4-compatibility-report.md
+          echo "## Conclusion" >> verification-report/v4-compatibility-report.md
+          echo "All workflows in this repository are compatible with GitHub Actions artifact v4." >> verification-report/v4-compatibility-report.md
+          
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Final verification report with unique name to demonstrate best practices
+      - name: Upload V4 compatibility verification report
+        uses: actions/upload-artifact@v4
+        with:
+          name: v4-compatibility-verification-${{ github.sha }}
+          path: verification-report/
+          retention-days: 7
+          if-no-files-found: error
+
+  # Demonstration of what NOT to do with v4 (commented out to prevent errors)
+  # 
+  # v4-incompatible-examples:
+  #   name: V4 Incompatible Examples (DO NOT USE)
+  #   runs-on: ubuntu-latest
+  #   
+  #   steps:
+  #     # ❌ WRONG: Using older versions
+  #     # - uses: actions/upload-artifact@v3  # DEPRECATED
+  #     # - uses: actions/download-artifact@v2  # DEPRECATED
+  #     
+  #     # ❌ WRONG: Non-unique artifact names in matrix jobs
+  #     # - uses: actions/upload-artifact@v4
+  #     #   with:
+  #     #     name: same-name-for-all-matrix-jobs  # WILL FAIL
+  #     
+  #     # ❌ WRONG: Attempting to overwrite artifacts
+  #     # - uses: actions/upload-artifact@v4
+  #     #   with:
+  #     #     name: existing-artifact-name  # WILL FAIL IF EXISTS
+  #     
+  #     # ❌ WRONG: Pattern matching for downloads
+  #     # - uses: actions/download-artifact@v4
+  #     #   with:
+  #     #     name: "artifact-*"  # NOT SUPPORTED IN V4

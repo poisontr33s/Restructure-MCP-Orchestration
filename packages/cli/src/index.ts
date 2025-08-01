@@ -213,7 +213,12 @@ program
         name: 'monitorPort',
         message: 'Enter the port for the monitor dashboard:',
         default: defaultConfig.monitor.port,
-        validate: (value) => value > 0 && value < 65536 ? true : 'Please enter a valid port number'
+        validate: (value: any): boolean | string => {
+          if (typeof value !== 'number' || value <= 0 || value >= 65536) {
+            return 'Please enter a valid port number (1-65535)';
+          }
+          return true;
+        }
       },
       {
         type: 'checkbox',

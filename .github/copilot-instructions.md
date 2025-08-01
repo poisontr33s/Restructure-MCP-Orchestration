@@ -62,13 +62,9 @@
 
 ---
 
-## 5. Dependabot (Automatic Dependency Updates)
+## 5. ~~Dependabot (Automatic Dependency Updates)~~ (REMOVED)
 
-- **File:** `.github/dependabot.yml`
-- **What to do:**
-  - For every `package.json` (root and each package), add a stanza under `updates:` specifying the directory.
-  - The root always gets its own stanza (directory: "/").
-  - Each package with a `package.json` also gets a stanza (e.g., directory: "/packages/cli").
+- All automated dependency management has been completely removed to restore the creative development flow and eliminate external automation interference.
 
 ---
 
@@ -81,7 +77,7 @@
 - **pnpm-workspace.yaml:**
   - Lists all your packages, typically with `packages/*`.
 - **.vscode/tasks.json:**
-  - Optional! Custom VS Code tasks for your workflow.
+  - Optional! Custom VS Code tasks for development workflow.
 
 ---
 

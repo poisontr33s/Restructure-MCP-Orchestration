@@ -80,25 +80,9 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 - No redundant devDependencies from root unless required for versioning
 - **Status:** To be verified
 
-### 5. Dependabot Configuration (`.github/dependabot.yml`)
-- Should cover root and all packages:
-  ```yaml
-  version: 2
-  updates:
-    - package-ecosystem: "npm"
-      directory: "/"
-      schedule:
-        interval: "weekly"
-    - package-ecosystem: "npm"
-      directory: "/packages/core"
-      schedule:
-        interval: "weekly"
-    - package-ecosystem: "npm"
-      directory: "/packages/cli"
-      schedule:
-        interval: "weekly"```
-
-- **Status:** To be verified
+### 5. ~~Dependabot Configuration~~ (REMOVED)
+- All automated dependency management has been removed to restore creative development flow
+- **Status:** ✅ Completely removed
 
 ### 6. Documentation & Session Continuity
 - This file serves as an ongoing log and context anchor
@@ -113,8 +97,8 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 - [ ] pnpm-workspace.yaml exists and correct
 - [ ] .eslintrc.json and .prettierrc at root
 - [ ] Each package’s package.json minimal and correct
-- [ ] .github/dependabot.yml covers all package.json files
-- [ ] (Optional) .github/workflows/ci.yml for CI/CD
+- [ ] ~~.github/dependabot.yml covers all package.json files~~ (REMOVED)
+- [ ] ~~(Optional) .github/workflows/ci.yml for CI/CD~~ (REMOVED)
 - [ ] README.md and CONTRIBUTING.md up to date
 
 ---

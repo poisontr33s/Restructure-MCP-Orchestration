@@ -4,8 +4,6 @@
  * Main entry point for the MCP Orchestration System
  */
 
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
 import { OrchestrationHub } from '@mcp/core';
 import { ServerManager } from '@mcp/core';
 import { MonitorServer } from '@mcp/core';
@@ -14,9 +12,6 @@ import { defaultConfig } from '@mcp/shared';
 // Import server implementations
 import SequentialThinkingServer from '@mcp/server-sequential-thinking';
 import DuckDuckGoServer from '@mcp/server-duckduckgo';
-
-// Get the current directory
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Print banner
 console.log(`

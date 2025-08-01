@@ -316,7 +316,7 @@ export class OrchestrationHub {
       }
       
       try {
-        const response = await this.checkServerStatus(serverInfo.port);
+        await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
       } catch (error) {
         // Set server as 'not responding' if it was previously running
@@ -332,6 +332,7 @@ export class OrchestrationHub {
    * Check a server's status by making an HTTP request
    * @param port - The port to check
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async checkServerStatus(port: number): Promise<any> {
     return new Promise((resolve, reject) => {
       const options = {

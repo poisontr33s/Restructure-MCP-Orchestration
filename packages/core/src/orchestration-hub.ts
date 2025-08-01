@@ -7,7 +7,6 @@ import { createLogger } from './logger';
 import { 
   type ServerConfig, 
   type ServerInfo, 
-  type ServerStatus, 
   type FullStatus, 
   type SystemInfo
 } from '@mcp/shared';

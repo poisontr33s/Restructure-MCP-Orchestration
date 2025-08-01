@@ -1,4 +1,4 @@
-import { ServerConfig, ServerStatus } from '@mcp/shared';
+import { ServerConfig } from '@mcp/shared';
 import { createLogger } from './logger';
 
 // Create logger instance

@@ -17,7 +17,27 @@
     "prepare": "husky install",
     "start": "node packages/cli/dist/index.js start",
     "clean": "pnpm clean:all",
-    "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
+    "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml",
+    "cleanup-branches": "scripts/cleanup-branches.sh",
+    "cleanup-branches:dry": "scripts/cleanup-branches.sh --dry-run",
+    "cleanup-branches:force": "scripts/cleanup-branches.sh --force",
+    "universal-cleanup": "scripts/universal-branch-manager.sh",
+    "universal-cleanup:dry": "scripts/universal-branch-manager.sh --dry-run",
+    "universal-cleanup:all": "scripts/universal-branch-manager.sh --operation cleanup --repositories ALL",
+    "universal-list": "scripts/universal-branch-manager.sh --operation list --repositories ALL",
+    "cross-repo:init": "scripts/cross-repo-bridge.sh analyze",
+    "cross-repo:validate": "scripts/cross-repo-bridge.sh lint",
+    "cross-repo:sync": "scripts/cross-repo-bridge.sh sync",
+    "cross-repo:build": "scripts/cross-repo-bridge.sh build",
+    "pre-merge-check": "scripts/cross-repo-bridge.sh all",
+    "universal:analyze": "scripts/cross-repo-bridge.sh analyze",
+    "universal:install": "scripts/cross-repo-bridge.sh install",
+    "universal:build": "scripts/cross-repo-bridge.sh build",
+    "universal:test": "scripts/cross-repo-bridge.sh test",
+    "universal:lint": "scripts/cross-repo-bridge.sh lint",
+    "universal:status": "scripts/cross-repo-bridge.sh status",
+    "universal:sync": "scripts/cross-repo-bridge.sh sync",
+    "universal:all": "scripts/cross-repo-bridge.sh all"
   },
   "keywords": [
     "mcp",
@@ -28,7 +48,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.11.30",
+    "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.56.0",
@@ -38,7 +58,7 @@
     "prettier": "^3.2.5",
     "tsup": "^8.0.2",
     "turbo": "^2.0.0",
-    "typescript": "^5.3.3",
+    "typescript": "5.9.1-rc",
     "vitest": "^3.2.4"
   },
   "lint-staged": {

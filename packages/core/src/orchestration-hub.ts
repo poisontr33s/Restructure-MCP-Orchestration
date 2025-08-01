@@ -7,7 +7,6 @@ import { createLogger } from './logger';
 import { 
   type ServerConfig, 
   type ServerInfo, 
-  type ServerStatus, 
   type FullStatus, 
   type SystemInfo
 } from '@mcp/shared';
@@ -317,7 +316,7 @@ export class OrchestrationHub {
       }
       
       try {
-        const response = await this.checkServerStatus(serverInfo.port);
+        await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
       } catch (error) {
         // Set server as 'not responding' if it was previously running
@@ -333,7 +332,7 @@ export class OrchestrationHub {
    * Check a server's status by making an HTTP request
    * @param port - The port to check
    */
-  private async checkServerStatus(port: number): Promise<any> {
+  private async checkServerStatus(port: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const options = {
         hostname: 'localhost',
@@ -349,18 +348,8 @@ export class OrchestrationHub {
           return;
         }
 
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-
         res.on('end', () => {
-          try {
-            const response = JSON.parse(data);
-            resolve(response);
-          } catch (error) {
-            reject(new Error('Invalid response from server'));
-          }
+          resolve(true);
         });
       });
 

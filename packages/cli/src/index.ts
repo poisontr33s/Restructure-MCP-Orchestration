@@ -16,63 +16,68 @@ program
   .description('MCP Orchestration System CLI')
   .version('1.0.0');
 
+// Function to start the MCP Orchestration System
+async function startOrchestrationSystem(port = defaultConfig.monitor.port) {
+  const spinner = ora('Starting MCP Orchestration System...').start();
+  
+  try {
+    // Create orchestration hub
+    const orchestrationHub = new OrchestrationHub(defaultConfig.servers, {
+      monitorPort: port,
+      checkInterval: defaultConfig.healthCheck.interval
+    });
+    
+    // Initialize orchestration hub
+    await orchestrationHub.initialize();
+    
+    // Create monitor server
+    const monitorServer = new MonitorServer(orchestrationHub, {
+      port: port
+    });
+    
+    // Start monitor server
+    await monitorServer.start();
+    
+    // Start all servers
+    await orchestrationHub.startAllServers();
+    
+    spinner.succeed(chalk.green('MCP Orchestration System started successfully'));
+    
+    console.log(`
+${chalk.cyan('Dashboard:')} ${chalk.underline(`http://localhost:${port}`)}
+
+Press ${chalk.yellow('Ctrl+C')} to stop the MCP Orchestration System
+    `);
+    
+    // Handle process shutdown
+    process.on('SIGINT', async () => {
+      console.log('\n');
+      const shutdownSpinner = ora('Shutting down MCP Orchestration System...').start();
+      
+      try {
+        await orchestrationHub.shutdown();
+        await monitorServer.stop();
+        
+        shutdownSpinner.succeed(chalk.green('MCP Orchestration System shutdown complete'));
+        process.exit(0);
+      } catch (error) {
+        shutdownSpinner.fail(chalk.red(`Failed to shutdown: ${error instanceof Error ? error.message : String(error)}`));
+        process.exit(1);
+      }
+    });
+  } catch (error) {
+    spinner.fail(chalk.red(`Failed to start: ${error instanceof Error ? error.message : String(error)}`));
+    process.exit(1);
+  }
+}
+
 // Define commands
 program
   .command('start')
   .description('Start the MCP Orchestration System')
   .option('-p, --port <port>', 'Monitor server port', defaultConfig.monitor.port.toString())
   .action(async (options) => {
-    const spinner = ora('Starting MCP Orchestration System...').start();
-    
-    try {
-      // Create orchestration hub
-      const orchestrationHub = new OrchestrationHub(defaultConfig.servers, {
-        monitorPort: parseInt(options.port, 10),
-        checkInterval: defaultConfig.healthCheck.interval
-      });
-      
-      // Initialize orchestration hub
-      await orchestrationHub.initialize();
-      
-      // Create monitor server
-      const monitorServer = new MonitorServer(orchestrationHub, {
-        port: parseInt(options.port, 10)
-      });
-      
-      // Start monitor server
-      await monitorServer.start();
-      
-      // Start all servers
-      await orchestrationHub.startAllServers();
-      
-      spinner.succeed(chalk.green('MCP Orchestration System started successfully'));
-      
-      console.log(`
-${chalk.cyan('Dashboard:')} ${chalk.underline(`http://localhost:${options.port}`)}
-
-Press ${chalk.yellow('Ctrl+C')} to stop the MCP Orchestration System
-      `);
-      
-      // Handle process shutdown
-      process.on('SIGINT', async () => {
-        console.log('\n');
-        const shutdownSpinner = ora('Shutting down MCP Orchestration System...').start();
-        
-        try {
-          await orchestrationHub.shutdown();
-          await monitorServer.stop();
-          
-          shutdownSpinner.succeed(chalk.green('MCP Orchestration System shutdown complete'));
-          process.exit(0);
-        } catch (error) {
-          shutdownSpinner.fail(chalk.red(`Failed to shutdown: ${error instanceof Error ? error.message : String(error)}`));
-          process.exit(1);
-        }
-      });
-    } catch (error) {
-      spinner.fail(chalk.red(`Failed to start: ${error instanceof Error ? error.message : String(error)}`));
-      process.exit(1);
-    }
+    await startOrchestrationSystem(parseInt(options.port, 10));
   });
 
 program
@@ -95,7 +100,7 @@ program
       
       console.log('\n' + chalk.bold('MCP Servers:'));
       
-      status.servers.forEach((server: any) => {
+      status.servers.forEach((server: { name: string; type: string; status: string; port: number; pid?: number }) => {
         let statusColor;
         
         switch (server.status) {
@@ -208,7 +213,7 @@ program
         name: 'monitorPort',
         message: 'Enter the port for the monitor dashboard:',
         default: defaultConfig.monitor.port,
-        validate: (value) => value > 0 && value < 65536 ? true : 'Please enter a valid port number'
+        validate: (value) => (value != null && value > 0 && value < 65536) ? true : 'Please enter a valid port number'
       },
       {
         type: 'checkbox',
@@ -235,7 +240,7 @@ program
     
     if (answers.startNow) {
       // Start the MCP Orchestration System
-      program.execCommand('start');
+      await startOrchestrationSystem();
     } else {
       console.log(`\nYou can start the MCP Orchestration System later with: ${chalk.cyan('mcp start')}`);
     }

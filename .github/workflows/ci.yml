@@ -1,0 +1,199 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  build:
+    name: Build (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        run: pnpm run build
+        working-directory: packages/${{ matrix.package }}
+        
+      # ARTIFACT V4 COMPATIBILITY NOTE: 
+      # v4 requires unique artifact names across all jobs and does not allow overwriting
+      # Using matrix.package in artifact name ensures uniqueness per package build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.package }}-${{ github.sha }}
+          path: packages/${{ matrix.package }}/dist/
+          retention-days: 7
+          if-no-files-found: error
+
+  test:
+    name: Test (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    needs: build
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Downloading artifacts built in previous job using unique names
+      # v4 artifacts are immutable - cannot be modified once uploaded
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.package }}-${{ github.sha }}
+          path: packages/${{ matrix.package }}/dist/
+          
+      - name: Run tests
+        run: pnpm run test
+        working-directory: packages/${{ matrix.package }}
+        
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Test results uploaded with unique names to avoid conflicts
+      # Each matrix job must have distinct artifact names
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.package }}-${{ github.sha }}
+          path: packages/${{ matrix.package }}/coverage/
+          retention-days: 7
+          if-no-files-found: warn
+
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run ESLint
+        run: pnpm run lint
+        
+      - name: Check Prettier formatting
+        run: pnpm run format -- --check
+
+  # Integration job that downloads all build artifacts for final packaging
+  package:
+    name: Package Distribution
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # ARTIFACT V4 COMPATIBILITY NOTE: 
+      # Downloading multiple artifacts - each must be downloaded separately by name
+      # v4 does not support pattern matching for artifact names
+      - name: Download core build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-core-${{ github.sha }}
+          path: dist/core/
+          
+      - name: Download CLI build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-cli-${{ github.sha }}
+          path: dist/cli/
+          
+      - name: Download monitor build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-monitor-${{ github.sha }}
+          path: dist/monitor/
+          
+      - name: Download shared build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-shared-${{ github.sha }}
+          path: dist/shared/
+          
+      - name: Download servers/base build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-servers/base-${{ github.sha }}
+          path: dist/servers/base/
+          
+      - name: Download servers/duckduckgo build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-servers/duckduckgo-${{ github.sha }}
+          path: dist/servers/duckduckgo/
+          
+      - name: Download servers/sequential-thinking build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-servers/sequential-thinking-${{ github.sha }}
+          path: dist/servers/sequential-thinking/
+          
+      - name: Create distribution package
+        run: |
+          tar -czf mcp-orchestration-dist.tar.gz dist/
+          
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Final distribution artifact with unique name including commit SHA
+      # v4 artifacts are immutable - this ensures no conflicts with concurrent builds
+      - name: Upload distribution package
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-orchestration-distribution-${{ github.sha }}
+          path: mcp-orchestration-dist.tar.gz
+          retention-days: 30

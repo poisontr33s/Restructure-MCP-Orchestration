@@ -123,9 +123,10 @@ export class DuckDuckGoServer extends BaseServer {
    * @param safeSearch Safe search level
    * @returns Array of search results
    */
-  private async simulateSearch(query: string, limit: number, safeSearch: string): Promise<any[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async simulateSearch(query: string, _limit: number, _safeSearch: string): Promise<any[]> {
     // Enforce limit
-    const actualLimit = Math.min(Math.max(1, limit), this.MAX_RESULTS);
+    const actualLimit = Math.min(Math.max(1, _limit), this.MAX_RESULTS);
     
     // Generate fake results based on the query
     // In a real implementation, you would call the actual DuckDuckGo API
@@ -146,7 +147,8 @@ export class DuckDuckGoServer extends BaseServer {
    * @param safeSearch Safe search level
    * @returns Search results
    */
-  private async callDuckDuckGoApi(query: string, limit: number, safeSearch: string): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async callDuckDuckGoApi(query: string, _limit: number, _safeSearch: string): Promise<any> {
     try {
       // This is a simplified example and would need to be replaced with
       // the actual DuckDuckGo API integration in a production environment

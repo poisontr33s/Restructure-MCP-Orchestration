@@ -7,6 +7,7 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
@@ -27,17 +28,18 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
     "turbo": "^2.0.0",
-    "typescript": "^5.3.3",
-    "vitest": "^1.4.0",
-    "tsup": "^8.0.0"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx}": "eslint --fix",

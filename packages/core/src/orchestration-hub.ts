@@ -7,7 +7,6 @@ import { createLogger } from './logger';
 import { 
   type ServerConfig, 
   type ServerInfo, 
-  type ServerStatus, 
   type FullStatus, 
   type SystemInfo
 } from '@mcp/shared';
@@ -317,7 +316,7 @@ export class OrchestrationHub {
       }
       
       try {
-        const response = await this.checkServerStatus(serverInfo.port);
+        await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
       } catch (error) {
         // Set server as 'not responding' if it was previously running
@@ -333,6 +332,7 @@ export class OrchestrationHub {
    * Check a server's status by making an HTTP request
    * @param port - The port to check
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async checkServerStatus(port: number): Promise<any> {
     return new Promise((resolve, reject) => {
       const options = {
@@ -398,7 +398,7 @@ export class OrchestrationHub {
     this.monitorServer = http.createServer((req, res) => {
       // Set CORS headers
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
       
       // Handle preflight requests
@@ -408,7 +408,7 @@ export class OrchestrationHub {
         return;
       }
       
-      if (req.method !== 'GET') {
+      if (req.method !== 'GET' && req.method !== 'POST') {
         res.writeHead(405);
         res.end(JSON.stringify({ error: 'Method not allowed' }));
         return;

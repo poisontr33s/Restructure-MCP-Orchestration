@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "createdAt": "2025-08-10T00:00:00Z",
+    "os": "Windows",
+    "shell": "pwsh",
+    "repo": "Restructure-MCP-Orchestration",
+    "branch": "poisontr33s/issue46"
+  },
+  "invariants": {
+    "uvxPath": "C:/Users/erdno/.local/bin/uvx.exe",
+  "mcpConfig": ".vscode/mcp.json",
+  "mcpConfigDynamic": ".vscode/mcp.generated.json",
+    "terminalPersistence": true,
+    "snapshotDir": ".vscode/.session"
+  },
+  "mcp": {
+    "servers": [
+      {
+        "name": "fetch",
+        "command": "C:/Users/erdno/.local/bin/uvx.exe",
+        "args": ["--from", "mcp-server-fetch==0.1.0", "mcp-server-fetch"]
+      }
+    ]
+  },
+  "tasks": [
+    "Dev: Monitor UI",
+    "Build: All",
+    "MCP: Status",
+    "Env: Check PATH (uv)",
+    "Session: Save MCP Snapshot",
+    "Session: Restore Kickoff",
+  "Session: Auto Restore on Open",
+  "MCP: Generate Dynamic Config"
+  ],
+  "session": {
+    "lastSnapshot": "mcp-status-YYYYMMDD-HHMMSS.txt",
+    "status": "restorable"
+  },
+  "guidance": {
+    "reloadPolicy": "Avoid when possible; use terminal persistent sessions and absolute uvx in mcp.json",
+    "restoreFlow": [
+      "Auto restore task runs on folderOpen",
+      "Run 'MCP: Status' if needed",
+      "Start UI via 'Dev: Monitor UI'"
+    ],
+    "experimentalGate": "Set MCP_EXPERIMENTAL=1 to allow experimental ML servers when available; otherwise only known-safe servers are included"
+  }
+}

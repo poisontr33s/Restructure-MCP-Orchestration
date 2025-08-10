@@ -1,0 +1,138 @@
+{
+  "files": {
+    "package.json": {
+      "sig": "1754767763004.0332:1384"
+    },
+    "packages\\cli\\package.json": {
+      "sig": "1754767763005.033:709"
+    },
+    "packages\\core\\package.json": {
+      "sig": "1754767763005.033:707"
+    },
+    "packages\\monitor\\package.json": {
+      "sig": "1754767763007.033:895"
+    },
+    "packages\\servers\\base\\package.json": {
+      "sig": "1754767763010.0332:454"
+    },
+    "packages\\servers\\duckduckgo\\package.json": {
+      "sig": "1754767763010.0332:517"
+    },
+    "packages\\servers\\kraken\\package.json": {
+      "sig": "1754787063894.7024:440"
+    },
+    "packages\\servers\\sequential-thinking\\package.json": {
+      "sig": "1754767763011.033:506"
+    },
+    "packages\\shared\\package.json": {
+      "sig": "1754767763012.0332:438"
+    }
+  },
+  "packages": [
+    {
+      "name": "mcp-orchestration-system",
+      "version": "1.0.0",
+      "private": true,
+      "scripts": {
+        "dev": "turbo run dev --parallel",
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
+        "prepare": "husky install",
+        "start": "node packages/cli/dist/index.js start",
+        "clean": "pnpm clean:all",
+        "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
+      },
+      "dir": ""
+    },
+    {
+      "name": "@mcp/cli",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\cli"
+    },
+    {
+      "name": "@mcp/core",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\core"
+    },
+    {
+      "name": "@mcp/monitor",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint src --ext .ts,.tsx"
+      },
+      "dir": "packages\\monitor"
+    },
+    {
+      "name": "@mcp/server-base",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\base"
+    },
+    {
+      "name": "@mcp/server-duckduckgo",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\duckduckgo"
+    },
+    {
+      "name": "@mcp/kraken",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\kraken"
+    },
+    {
+      "name": "@mcp/server-sequential-thinking",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\sequential-thinking"
+    },
+    {
+      "name": "@mcp/shared",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\shared"
+    }
+  ]
+}

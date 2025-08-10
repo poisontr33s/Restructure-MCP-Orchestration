@@ -53,7 +53,7 @@ export class Logger {
       const consoleMethod = level === 'ERROR' ? 'error' : 
                            level === 'WARN' ? 'warn' : 
                            level === 'DEBUG' ? 'debug' : 'info';
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console -- Logger console output
       console[consoleMethod](`[${entry.timestamp}] [${entry.level}] [${entry.service}] ${entry.message}`);
     }
   }

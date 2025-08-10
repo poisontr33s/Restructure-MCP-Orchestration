@@ -158,51 +158,19 @@ jobs:
           # Create focused prompts based on analysis focus
           case "$analysis_focus" in
             "code-quality")
-              prompt="Analyze this TypeScript/JavaScript code for:
-- Code quality and maintainability
-- TypeScript best practices and type safety
-- Error handling patterns
-- Code organization and structure
-- Potential bugs or issues
-- ESLint rule compliance
-
-Provide specific, actionable recommendations with code examples where helpful."
+              prompt="Analyze this TypeScript/JavaScript code for code quality and maintainability, TypeScript best practices and type safety, error handling patterns, code organization and structure, potential bugs or issues, and ESLint rule compliance. Provide specific, actionable recommendations with code examples where helpful."
               ;;
               
             "architecture")
-              prompt="Review the system architecture and design patterns:
-- Module organization and dependencies
-- Design patterns usage
-- Separation of concerns
-- API design and interfaces
-- Scalability considerations
-- Architecture anti-patterns
-
-Focus on high-level structural improvements and design recommendations."
+              prompt="Review the system architecture and design patterns including module organization and dependencies, design patterns usage, separation of concerns, API design and interfaces, scalability considerations, and architecture anti-patterns. Focus on high-level structural improvements and design recommendations."
               ;;
               
             "performance")
-              prompt="Analyze code for performance optimization opportunities:
-- Algorithmic complexity
-- Memory usage patterns
-- Async/await usage
-- Bundle size considerations
-- Database query patterns (if applicable)
-- Performance bottlenecks
-
-Suggest specific optimizations with performance impact estimates."
+              prompt="Analyze code for performance optimization opportunities including algorithmic complexity, memory usage patterns, async/await usage, bundle size considerations, database query patterns (if applicable), and performance bottlenecks. Suggest specific optimizations with performance impact estimates."
               ;;
               
             "refactoring")
-              prompt="Identify refactoring opportunities:
-- Code duplication
-- Long functions/classes
-- Complex conditional logic
-- Naming improvements
-- Extract method/class opportunities
-- Modern JavaScript/TypeScript features adoption
-
-Provide step-by-step refactoring guidance."
+              prompt="Identify refactoring opportunities including code duplication, long functions/classes, complex conditional logic, naming improvements, extract method/class opportunities, and modern JavaScript/TypeScript features adoption. Provide step-by-step refactoring guidance."
               ;;
           esac
           
@@ -236,22 +204,28 @@ Provide step-by-step refactoring guidance."
           echo ""
           
           # Create comprehensive analysis prompt
-          cat > analysis_prompt.txt << 'EOF'
-${{ steps.context.outputs.prompt }}
-
-## Project Context
-This is a TypeScript monorepo for MCP (Model Context Protocol) orchestration system with packages:
-- core: Core orchestration functionality
-- cli: Command-line interface
-- monitor: System monitoring and dashboard
-- shared: Shared utilities and types
-- servers: Various MCP server implementations
-
-## Analysis Scope
-${{ needs.analyze-scope.outputs.scope_summary }}
-
-## Files to Analyze
-EOF
+          echo "Claude Code Analysis" > analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
+          echo "Analysis Focus:" >> analysis_prompt.txt
+          echo "The focus of this analysis is to examine TypeScript/JavaScript code for the specified criteria and provide actionable recommendations." >> analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
+          echo "Project Context:" >> analysis_prompt.txt
+          echo "This is a TypeScript monorepo for MCP (Model Context Protocol) orchestration system with packages:" >> analysis_prompt.txt
+          echo "* core: Core orchestration functionality" >> analysis_prompt.txt
+          echo "* cli: Command-line interface" >> analysis_prompt.txt
+          echo "* monitor: System monitoring and dashboard" >> analysis_prompt.txt
+          echo "* shared: Shared utilities and types" >> analysis_prompt.txt
+          echo "* servers: Various MCP server implementations" >> analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
+          echo "Instructions:" >> analysis_prompt.txt
+          echo "Please analyze the provided code files and provide detailed, specific recommendations based on the analysis focus area." >> analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
+          
+          # Add the specific prompt based on analysis focus
+          echo "$prompt" >> analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
+          echo "Analysis Scope: $scope_summary" >> analysis_prompt.txt
+          echo "" >> analysis_prompt.txt
           
           # Add file contents to prompt for context-aware analysis
           echo "Analyzing the following files:" >> analysis_prompt.txt
@@ -301,18 +275,16 @@ EOF
       - name: Process and enhance results
         run: |
           # Create enhanced analysis report with metadata
-          cat > enhanced-claude-analysis.md << EOF
-# Claude Code Analysis Report
-
-**Generated:** $(date)  
-**Commit:** ${{ github.sha }}  
-**Analysis Focus:** ${{ steps.context.outputs.analysis_focus }}  
-**Scope:** ${{ needs.analyze-scope.outputs.scope_summary }}  
-**Files Analyzed:** ${{ steps.context.outputs.file_count }}  
-
----
-
-EOF
+          echo "# Claude Code Analysis Report" > enhanced-claude-analysis.md
+          echo "" >> enhanced-claude-analysis.md
+          echo "**Generated:** $(date)" >> enhanced-claude-analysis.md
+          echo "**Commit:** ${{ github.sha }}" >> enhanced-claude-analysis.md
+          echo "**Analysis Focus:** ${{ steps.context.outputs.analysis_focus }}" >> enhanced-claude-analysis.md
+          echo "**Scope:** ${{ needs.analyze-scope.outputs.scope_summary }}" >> enhanced-claude-analysis.md
+          echo "**Files Analyzed:** ${{ steps.context.outputs.file_count }}" >> enhanced-claude-analysis.md
+          echo "" >> enhanced-claude-analysis.md
+          echo "---" >> enhanced-claude-analysis.md
+          echo "" >> enhanced-claude-analysis.md
           
           # Append the actual analysis results
           if [ -f "claude-analysis-results.md" ]; then
@@ -376,15 +348,12 @@ EOF
                 analysis = analysis.substring(0, 65000) + '\n\n... (analysis truncated - see artifacts for full report)';
               }
               
-              const comment = `## 🤖 Claude Code Analysis Results
-              
-**Analysis Focus:** ${{ steps.context.outputs.analysis_focus }}  
-**Scope:** ${{ needs.analyze-scope.outputs.scope_summary }}
-
-${analysis}
-
----
-*Full analysis report available in workflow artifacts*`;
+              const comment = "## 🤖 Claude Code Analysis Results\n\n" +
+                            "**Analysis Focus:** ${{ steps.context.outputs.analysis_focus }}\n" +
+                            "**Scope:** ${{ needs.analyze-scope.outputs.scope_summary }}\n\n" +
+                            analysis + "\n\n" +
+                            "---\n" +
+                            "*Full analysis report available in workflow artifacts*";
 
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,

@@ -169,20 +169,11 @@ jobs:
           echo ""
           
           # Use Gemini CLI in non-interactive mode with all project files
+          echo "Running Gemini analysis with prompt: $prompt"
+          
           gemini --model=gemini-2.0-flash-exp \
                  --all-files \
-                 --prompt="$prompt
-
-Package: ${{ matrix.package }}
-Analysis Type: $analysis_type
-
-Please provide:
-1. A summary of findings
-2. Specific recommendations
-3. Priority level for any issues found
-4. Suggested improvements
-
-Format the output as structured text with clear sections." \
+                 --prompt="$prompt for package ${{ matrix.package }} (analysis type: ${analysis_type}). Please provide a summary of findings, specific recommendations, priority levels for issues, and suggested improvements." \
                  > "../gemini-analysis-${{ matrix.package }}-${analysis_type}.md" 2>&1 || true
           
           # Check if analysis was successful

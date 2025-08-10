@@ -36,24 +36,24 @@ export function createLogger(component: string) {
           logFormat
         ),
       }),
-      
+
       // File transport - all logs
-      new winston.transports.File({ 
+      new winston.transports.File({
         filename: path.join(logDir, 'combined.log'),
         maxsize: 10 * 1024 * 1024, // 10MB
         maxFiles: 5,
       }),
-      
+
       // File transport - error logs
-      new winston.transports.File({ 
+      new winston.transports.File({
         filename: path.join(logDir, 'error.log'),
         level: 'error',
         maxsize: 10 * 1024 * 1024, // 10MB
         maxFiles: 5,
       }),
-      
+
       // Component-specific log file
-      new winston.transports.File({ 
+      new winston.transports.File({
         filename: path.join(logDir, `${component}.log`),
         maxsize: 5 * 1024 * 1024, // 5MB
         maxFiles: 3,

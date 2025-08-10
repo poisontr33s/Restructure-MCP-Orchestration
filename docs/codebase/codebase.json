@@ -1,0 +1,30 @@
+{
+  "root": {
+    "package": "package.json",
+    "workspace": "pnpm-workspace.yaml",
+    "mcp": {
+      "base": ".vscode/mcp.json",
+      "generated": ".vscode/mcp.generated.json",
+      "policy": ".vscode/mcp.policy.json"
+    },
+    "tasks": ".vscode/tasks.json"
+  },
+  "packages": {
+    "core": "packages/core",
+    "cli": "packages/cli",
+    "monitor": "packages/monitor",
+    "shared": "packages/shared",
+    "servers": [
+      "packages/servers/base",
+      "packages/servers/duckduckgo",
+      "packages/servers/kraken",
+      "packages/servers/sequential-thinking"
+    ]
+  },
+  "docs": {
+    "sessionBlueprint": "docs/session-blueprint",
+    "sessionLog": "docs/session-log/session.jsonl",
+    "repoIndex": "docs/repo-index/index.json",
+    "codebase": "docs/codebase"
+  }
+}

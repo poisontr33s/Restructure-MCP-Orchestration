@@ -1,0 +1,72 @@
+{
+  "description": "Dynamic MCP policy: derive additional servers from repo context and env.",
+  "uvxPath": "C:/Users/erdno/.local/bin/uvx.exe",
+  "allowExperimentalEnvVar": "MCP_EXPERIMENTAL",
+  "rules": [
+    {
+      "id": "local-server-duckduckgo",
+      "enableIf": { "pathExists": "packages/servers/duckduckgo/dist/index.js" },
+      "serverKey": "duckduckgo",
+      "command": "node",
+      "args": ["packages/servers/duckduckgo/dist/index.js"]
+    },
+    {
+      "id": "local-server-sequential-thinking",
+      "enableIf": { "pathExists": "packages/servers/sequential-thinking/dist/index.js" },
+      "serverKey": "sequential-thinking",
+      "command": "node",
+      "args": ["packages/servers/sequential-thinking/dist/index.js"]
+    },
+    {
+      "id": "local-server-base",
+      "enableIf": { "pathExists": "packages/servers/base/dist/index.js" },
+      "serverKey": "server-base",
+      "command": "node",
+      "args": ["packages/servers/base/dist/index.js"]
+    },
+    {
+      "id": "local-server-kraken",
+      "enableIf": { "pathExists": "packages/servers/kraken/dist/index.js" },
+      "serverKey": "kraken",
+      "command": "node",
+      "args": ["packages/servers/kraken/dist/index.js"]
+    },
+    {
+      "id": "ml-openai-tools",
+      "enableIf": { "env": ["OPENAI_API_KEY"] },
+      "serverKey": "openai-tools",
+      "command": "{uvx}",
+      "args": ["--from", "mcp-openai-tools==0.1.0", "mcp-openai-tools"]
+    },
+    {
+      "id": "ml-gemini-tools",
+      "enableIf": { "env": ["GEMINI_API_KEY"] },
+      "serverKey": "gemini-tools",
+      "command": "{uvx}",
+      "args": ["--from", "mcp-gemini-tools==0.1.0", "mcp-gemini-tools"]
+    },
+    {
+      "id": "ml-claude-tools",
+      "enableIf": { "env": ["ANTHROPIC_API_KEY"] },
+      "serverKey": "claude-tools",
+      "command": "{uvx}",
+      "args": ["--from", "mcp-claude-tools==0.1.0", "mcp-claude-tools"]
+    },
+    {
+      "id": "ml-ollama-local",
+      "experimental": true,
+      "enableIf": { "commandAvailable": "ollama" },
+      "serverKey": "ollama-local",
+      "command": "{uvx}",
+      "args": ["--from", "mcp-ollama==0.1.0", "mcp-ollama"]
+    },
+    {
+      "id": "ml-llamacpp-local",
+      "experimental": true,
+      "enableIf": { "commandAvailable": "llama" },
+      "serverKey": "llama-cpp",
+      "command": "{uvx}",
+      "args": ["--from", "mcp-llama-cpp==0.1.0", "mcp-llama-cpp"]
+    }
+  ]
+}

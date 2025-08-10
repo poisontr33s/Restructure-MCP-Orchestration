@@ -12,6 +12,12 @@ export default {
       },
     },
     extend: {
+      width: {
+        '3': '0.75rem',
+      },
+      height: {
+        '3': '0.75rem',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

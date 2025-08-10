@@ -296,6 +296,8 @@ export class OrchestrationHub {
         });
         return;
       } catch (error) {
+        // Log the error for debugging purposes
+        logger.debug(`Health check attempt failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
@@ -321,7 +323,7 @@ export class OrchestrationHub {
       } catch (error) {
         // Set server as 'not responding' if it was previously running
         if (serverInfo.status === 'running') {
-          logger.warn(`Server ${serverType} is not responding`);
+          logger.warn(`Server ${serverType} is not responding: ${error instanceof Error ? error.message : 'Unknown error'}`);
           serverInfo.status = 'not responding';
         }
       }
@@ -359,7 +361,7 @@ export class OrchestrationHub {
             const response = JSON.parse(data);
             resolve(response);
           } catch (error) {
-            reject(new Error('Invalid response from server'));
+            reject(new Error(`Invalid response from server: ${error instanceof Error ? error.message : 'Parse error'}`));
           }
         });
       });

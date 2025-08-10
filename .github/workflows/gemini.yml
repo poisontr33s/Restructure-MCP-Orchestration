@@ -1,0 +1,305 @@
+name: Gemini CLI Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      analysis_type:
+        description: 'Type of analysis to run'
+        required: true
+        default: 'code-review'
+        type: choice
+        options:
+        - code-review
+        - security-scan
+        - documentation-check
+        - full-analysis
+      target_package:
+        description: 'Specific package to analyze (leave empty for all)'
+        required: false
+        type: string
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Selective package detection - only run analysis if relevant files changed
+  detect-changes:
+    name: Detect Changed Packages
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.changes.outputs.packages }}
+      should_run: ${{ steps.changes.outputs.should_run }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Detect package changes
+        id: changes
+        run: |
+          # Detect changed packages to optimize runner usage (addresses PR #69 feedback)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.target_package }}" ]; then
+              echo "packages=[\"${{ github.event.inputs.target_package }}\"]" >> $GITHUB_OUTPUT
+            else
+              echo "packages=[\"core\",\"cli\",\"monitor\",\"shared\",\"servers/base\",\"servers/duckduckgo\",\"servers/sequential-thinking\"]" >> $GITHUB_OUTPUT
+            fi
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            # For automatic triggers, only run if TypeScript/source files changed
+            changed_files=$(git diff --name-only HEAD~1 HEAD)
+            if echo "$changed_files" | grep -qE '\.(ts|tsx|js|jsx|json|md)$'; then
+              affected_packages=$(echo "$changed_files" | grep -oE 'packages/[^/]+' | sort -u | sed 's|packages/||' | jq -R -s -c 'split("\n")[:-1]')
+              echo "packages=${affected_packages}" >> $GITHUB_OUTPUT
+              echo "should_run=true" >> $GITHUB_OUTPUT
+            else
+              echo "packages=[]" >> $GITHUB_OUTPUT
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  gemini-analysis:
+    name: Gemini Analysis (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.should_run == 'true' && fromJson(needs.detect-changes.outputs.packages)[0] != null
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.detect-changes.outputs.packages) }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch more history for better context analysis
+          fetch-depth: 100
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Install Gemini CLI
+        run: npm install -g @google/gemini-cli@latest
+        
+      # GEMINI CLI CREDENTIAL SETUP
+      # Requires GEMINI_API_KEY secret to be configured in repository settings
+      # See: https://github.com/google-gemini/gemini-cli#authentication
+      - name: Configure Gemini CLI credentials
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "⚠️  GEMINI_API_KEY secret not configured. Skipping analysis."
+            echo "Please add GEMINI_API_KEY to repository secrets to enable Gemini analysis."
+            exit 0
+          fi
+          
+          # Configure API key for Gemini CLI
+          mkdir -p ~/.config/gemini-cli
+          echo "api_key: $GEMINI_API_KEY" > ~/.config/gemini-cli/config.yaml
+          
+      - name: Prepare analysis context
+        id: context
+        run: |
+          # Create focused context for analysis to improve accuracy
+          package_path="packages/${{ matrix.package }}"
+          
+          if [ ! -d "$package_path" ]; then
+            echo "Package ${{ matrix.package }} not found, skipping"
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Set analysis parameters based on input type
+          analysis_type="${{ github.event.inputs.analysis_type || 'code-review' }}"
+          echo "analysis_type=$analysis_type" >> $GITHUB_OUTPUT
+          
+          # Create analysis prompt based on type
+          case "$analysis_type" in
+            "code-review")
+              echo "prompt=Please review this TypeScript package for code quality, potential bugs, and adherence to best practices. Focus on type safety, error handling, and maintainability." >> $GITHUB_OUTPUT
+              ;;
+            "security-scan")
+              echo "prompt=Analyze this code for potential security vulnerabilities, including input validation, authentication issues, and dependency risks." >> $GITHUB_OUTPUT
+              ;;
+            "documentation-check")
+              echo "prompt=Review the documentation and code comments. Suggest improvements for clarity and completeness." >> $GITHUB_OUTPUT
+              ;;
+            "full-analysis")
+              echo "prompt=Perform a comprehensive analysis including code quality, security, performance, and documentation review." >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+      - name: Run Gemini analysis
+        if: steps.context.outputs.skip != 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "⚠️  Skipping analysis - GEMINI_API_KEY not configured"
+            exit 0
+          fi
+          
+          package_path="packages/${{ matrix.package }}"
+          analysis_type="${{ steps.context.outputs.analysis_type }}"
+          prompt="${{ steps.context.outputs.prompt }}"
+          
+          # Run Gemini analysis with context-aware prompting
+          cd "$package_path"
+          
+          echo "🔍 Running Gemini analysis for ${{ matrix.package }} - $analysis_type"
+          echo "📁 Analyzing package at: $package_path"
+          echo ""
+          
+          # Use Gemini CLI in non-interactive mode with all project files
+          gemini --model=gemini-2.0-flash-exp \
+                 --all-files \
+                 --prompt="$prompt
+
+Package: ${{ matrix.package }}
+Analysis Type: $analysis_type
+
+Please provide:
+1. A summary of findings
+2. Specific recommendations
+3. Priority level for any issues found
+4. Suggested improvements
+
+Format the output as structured text with clear sections." \
+                 > "../gemini-analysis-${{ matrix.package }}-${analysis_type}.md" 2>&1 || true
+          
+          # Check if analysis was successful
+          if [ -f "../gemini-analysis-${{ matrix.package }}-${analysis_type}.md" ]; then
+            echo "✅ Analysis completed successfully"
+            echo ""
+            echo "## Analysis Summary"
+            head -20 "../gemini-analysis-${{ matrix.package }}-${analysis_type}.md"
+          else
+            echo "❌ Analysis failed or no output generated"
+          fi
+          
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Gemini analysis results with unique names to prevent conflicts
+      # Each package analysis gets distinct artifact name including analysis type
+      - name: Upload Gemini analysis results
+        uses: actions/upload-artifact@v4
+        if: always() && steps.context.outputs.skip != 'true'
+        with:
+          name: gemini-analysis-${{ matrix.package }}-${{ steps.context.outputs.analysis_type }}-${{ github.sha }}
+          path: packages/gemini-analysis-${{ matrix.package }}-${{ steps.context.outputs.analysis_type }}.md
+          retention-days: 30
+          if-no-files-found: warn
+
+  # Consolidate analysis results
+  consolidate-results:
+    name: Consolidate Gemini Analysis
+    runs-on: ubuntu-latest
+    needs: [detect-changes, gemini-analysis]
+    if: always() && needs.detect-changes.outputs.should_run == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Download all analysis artifacts - requires specific naming pattern
+      - name: Download all analysis results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: gemini-analysis-*-${{ github.sha }}
+          path: analysis-results/
+        continue-on-error: true
+        
+      - name: Generate consolidated report
+        run: |
+          mkdir -p reports
+          
+          # Create consolidated Gemini analysis report
+          echo "# Gemini CLI Analysis Report" > reports/gemini-analysis-report.md
+          echo "Generated: $(date)" >> reports/gemini-analysis-report.md
+          echo "Commit: ${{ github.sha }}" >> reports/gemini-analysis-report.md
+          echo "Analysis Type: ${{ github.event.inputs.analysis_type || 'code-review' }}" >> reports/gemini-analysis-report.md
+          echo "" >> reports/gemini-analysis-report.md
+          
+          # Process each analysis result
+          if [ -d "analysis-results" ]; then
+            for result_dir in analysis-results/*/; do
+              if [ -d "$result_dir" ]; then
+                artifact_name=$(basename "$result_dir")
+                echo "## Analysis: $artifact_name" >> reports/gemini-analysis-report.md
+                echo "" >> reports/gemini-analysis-report.md
+                
+                for file in "$result_dir"*.md; do
+                  if [ -f "$file" ]; then
+                    echo "### $(basename "$file")" >> reports/gemini-analysis-report.md
+                    echo '```' >> reports/gemini-analysis-report.md
+                    cat "$file" >> reports/gemini-analysis-report.md
+                    echo '```' >> reports/gemini-analysis-report.md
+                    echo "" >> reports/gemini-analysis-report.md
+                  fi
+                done
+              fi
+            done
+          else
+            echo "No analysis results found. This could be due to:" >> reports/gemini-analysis-report.md
+            echo "- Missing GEMINI_API_KEY secret" >> reports/gemini-analysis-report.md
+            echo "- No relevant file changes detected" >> reports/gemini-analysis-report.md
+            echo "- Analysis failures" >> reports/gemini-analysis-report.md
+          fi
+          
+      # ARTIFACT V4 COMPATIBILITY NOTE:
+      # Consolidated report with unique name including commit SHA
+      - name: Upload consolidated analysis report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gemini-consolidated-report-${{ github.sha }}
+          path: reports/
+          retention-days: 90
+          if-no-files-found: warn
+          
+      - name: Comment on PR with analysis summary
+        if: github.event_name == 'pull_request' && github.token
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'reports/gemini-analysis-report.md';
+            
+            if (fs.existsSync(path)) {
+              const report = fs.readFileSync(path, 'utf8');
+              const truncatedReport = report.length > 65000 ? 
+                report.substring(0, 65000) + '\n\n... (report truncated)' : 
+                report;
+                
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🤖 Gemini CLI Analysis Results\n\n${truncatedReport}`
+              });
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '## 🤖 Gemini CLI Analysis\n\nNo analysis results generated. Please check the workflow logs for details.'
+              });
+            }

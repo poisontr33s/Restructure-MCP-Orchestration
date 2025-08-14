@@ -10,23 +10,25 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ system, timestamp }) => {
   // Format bytes to human-readable format
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
-  
+
   // Format timestamp to local time
   const formatTimestamp = (timestamp: string): string => {
     const date = new Date(timestamp);
     return date.toLocaleString();
   };
-  
+
   // Calculate memory usage percentage
-  const memoryUsagePercent = Math.round(((system.memory.total - system.memory.free) / system.memory.total) * 100);
-  
+  const memoryUsagePercent = Math.round(
+    ((system.memory.total - system.memory.free) / system.memory.total) * 100
+  );
+
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
       <div className="p-4 border-b border-border">
@@ -37,22 +39,22 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ system, timestamp }) => {
           <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
           <p className="text-base mt-1">{formatTimestamp(timestamp)}</p>
         </div>
-        
+
         <div>
           <p className="text-sm font-medium text-muted-foreground">Hostname</p>
           <p className="text-base mt-1">{system.hostname}</p>
         </div>
-        
+
         <div>
           <p className="text-sm font-medium text-muted-foreground">Platform</p>
           <p className="text-base mt-1 capitalize">{system.platform}</p>
         </div>
-        
+
         <div>
           <p className="text-sm font-medium text-muted-foreground">CPU Cores</p>
           <p className="text-base mt-1">{system.cpus}</p>
         </div>
-        
+
         <div>
           <p className="text-sm font-medium text-muted-foreground">Memory Usage</p>
           <div className="mt-1">
@@ -61,8 +63,8 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ system, timestamp }) => {
               <span>{memoryUsagePercent}%</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="bg-primary rounded-full h-2" 
+              <div
+                className="bg-primary rounded-full h-2"
                 style={{ width: `${memoryUsagePercent}%` }}
               ></div>
             </div>
@@ -72,7 +74,7 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ system, timestamp }) => {
             </div>
           </div>
         </div>
-        
+
         <div>
           <p className="text-sm font-medium text-muted-foreground">System Uptime</p>
           <p className="text-base mt-1">{formatUptime(system.uptime)}</p>
@@ -87,7 +89,7 @@ function formatUptime(seconds: number): string {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  
+
   if (days > 0) {
     return `${days} days, ${hours} hours, ${minutes} minutes`;
   } else if (hours > 0) {

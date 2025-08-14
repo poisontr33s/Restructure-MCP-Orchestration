@@ -24,6 +24,100 @@ Et moderne orkestreringsystem for Model Context Protocol (MCP) tjenere, designet
 ## Installasjon og bruk
 Se den tekniske dokumentasjonen i prosjektmappene for detaljerte instruksjoner.
 
+## AI-Powered Code Analysis
+
+This repository includes automated code analysis using AI-powered tools to maintain code quality and provide intelligent insights:
+
+### 🤖 Gemini CLI Integration
+
+Google's Gemini CLI provides comprehensive code analysis, review, and intelligent suggestions.
+
+**Setup:**
+1. Get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Add `GEMINI_API_KEY` to your repository secrets
+3. The workflow runs automatically on pushes and PRs
+
+**Features:**
+- **Code Review**: Automated code quality analysis
+- **Security Scanning**: Vulnerability detection and security best practices
+- **Documentation Check**: Documentation completeness and clarity review
+- **Full Analysis**: Comprehensive code, security, and documentation review
+
+**Manual Trigger:**
+```bash
+# Via GitHub UI: Actions → Gemini CLI Analysis → Run workflow
+# Select analysis type and target package
+```
+
+**Local Usage:**
+```bash
+# Install Gemini CLI
+npm install -g @google/gemini-cli
+
+# Configure API key
+export GEMINI_API_KEY="your-api-key"
+
+# Run analysis on specific package
+cd packages/core
+gemini --model=gemini-2.0-flash-exp --all-files --prompt="Review this code for quality and best practices"
+```
+
+### 🤖 Claude Code CLI Integration
+
+Anthropic's Claude provides focused code analysis with streaming output and specialized code review capabilities.
+
+**Setup:**
+1. Get an Anthropic API key from [Anthropic Console](https://console.anthropic.com/)
+2. Add `ANTHROPIC_API_KEY` to your repository secrets
+3. The workflow runs automatically on pushes and PRs with intelligent scope detection
+
+**Features:**
+- **Incremental Analysis**: Analyzes only changed files for efficiency
+- **Package-Focused**: Deep analysis of specific packages
+- **Full Codebase**: Comprehensive analysis when needed
+- **Multiple Focus Areas**: Code quality, architecture, performance, refactoring
+
+**Analysis Focus Options:**
+- `code-quality`: Best practices, type safety, error handling
+- `architecture`: System design, patterns, dependencies
+- `performance`: Optimization opportunities, bottlenecks
+- `refactoring`: Code duplication, modernization suggestions
+
+**Manual Trigger:**
+```bash
+# Via GitHub UI: Actions → Claude Code CLI Analysis → Run workflow
+# Select scope, package, and focus area
+```
+
+**Local Usage:**
+```bash
+# Install Claude CI tool
+npm install -g @mneuhaus/claude-ci
+
+# Configure API key
+export ANTHROPIC_API_KEY="your-api-key"
+
+# Run analysis with custom prompt
+echo "Analyze this code for performance issues" | claude-ci
+```
+
+### 🔧 Workflow Optimization
+
+Both AI analysis workflows are optimized to reduce resource usage (addressing CI/CD efficiency goals):
+
+- **Smart Triggering**: Only runs when relevant files change
+- **Selective Package Analysis**: Targets specific packages based on changes
+- **Intelligent Caching**: Leverages pnpm and artifact caching
+- **Configurable Scope**: Manual control over analysis breadth
+
+### 📊 Analysis Reports
+
+AI analysis results are available in multiple formats:
+- **Workflow Artifacts**: Full reports downloadable for 30-90 days
+- **PR Comments**: Summary insights posted directly to pull requests
+- **Consolidated Reports**: Combined analysis across all packages
+- **Structured Output**: Markdown format with clear sections and recommendations
+
 > Orchestration is not control; it's conversation with chaos.
 
 ## Vedlikehold: Rydding av grener

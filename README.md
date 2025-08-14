@@ -25,3 +25,13 @@ Et moderne orkestreringsystem for Model Context Protocol (MCP) tjenere, designet
 Se den tekniske dokumentasjonen i prosjektmappene for detaljerte instruksjoner.
 
 > Orchestration is not control; it's conversation with chaos.
+
+## Vedlikehold: Rydding av grener
+- Åpne GitHub → Actions → "Cleanup branches"
+- Velg input:
+	- target_branch: eksakt navn for én gren (overstyrer pattern)
+	- pattern: regex for å velge flere grener (f.eks. `^agent/|^chore/`)
+	- merged_only: true for kun sammenslåtte grener (standard)
+	- dry_run: true for forhåndsvisning (standard). Sett til false for faktisk sletting
+	- exclude_patterns: ekstra regex unntak (default beskytter main/master/develop/release/gh-pages)
+- Kjør workflow. Start med dry_run=true, verifiser listen, kjør deretter med dry_run=false når trygt.

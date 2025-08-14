@@ -4,12 +4,7 @@ import http from 'http';
 import { promises as fs } from 'fs';
 import os from 'os';
 import { createLogger } from './logger';
-import { 
-  type ServerConfig, 
-  type ServerInfo, 
-  type FullStatus, 
-  type SystemInfo
-} from '@mcp/shared';
+import { type ServerConfig, type ServerInfo, type FullStatus, type SystemInfo } from '@mcp/shared';
 
 // Create logger instance
 const logger = createLogger('orchestration-hub');
@@ -26,16 +21,16 @@ export class OrchestrationHub {
   private checkInterval: number;
   private initialized: boolean = false;
   private healthCheckTimer: NodeJS.Timeout | null = null;
-  
+
   /**
    * Constructor
    * @param configs - Server configurations
    * @param options - Options for the orchestration hub
    */
   constructor(
-    configs: ServerConfig[], 
-    options: { 
-      monitorPort?: number; 
+    configs: ServerConfig[],
+    options: {
+      monitorPort?: number;
       checkInterval?: number;
     } = {}
   ) {
@@ -55,18 +50,20 @@ export class OrchestrationHub {
     }
 
     logger.info('Initializing MCP Orchestration Hub');
-    
+
     try {
       // Create monitor server
       this.setupMonitorServer();
-      
+
       // Start health check timer
       this.startHealthChecks();
-      
+
       this.initialized = true;
       logger.info('MCP Orchestration Hub initialized successfully');
     } catch (error) {
-      logger.error(`Failed to initialize orchestration hub: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(
+        `Failed to initialize orchestration hub: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
   }
@@ -76,14 +73,16 @@ export class OrchestrationHub {
    */
   public async startAllServers(): Promise<void> {
     logger.info('Starting all MCP servers');
-    
+
     for (const config of this.serverConfigs) {
       if (config.enabled !== false) {
         try {
           await this.startServer(config);
           logger.info(`Started server: ${config.name}`);
         } catch (error) {
-          logger.error(`Failed to start server ${config.name}: ${error instanceof Error ? error.message : String(error)}`);
+          logger.error(
+            `Failed to start server ${config.name}: ${error instanceof Error ? error.message : String(error)}`
+          );
         }
       } else {
         logger.info(`Skipping disabled server: ${config.name}`);
@@ -97,7 +96,7 @@ export class OrchestrationHub {
    */
   public async startServer(config: ServerConfig): Promise<void> {
     const serverType = config.type;
-    
+
     // Check if server is already running
     if (this.servers.has(serverType)) {
       const serverInfo = this.servers.get(serverType)!;
@@ -106,34 +105,41 @@ export class OrchestrationHub {
         return;
       }
     }
-    
+
     try {
       // Get the path to the server script
-      const serverScriptPath = path.resolve(process.cwd(), 'packages', 'servers', serverType, 'dist', 'index.js');
-      
+      const serverScriptPath = path.resolve(
+        process.cwd(),
+        'packages',
+        'servers',
+        serverType,
+        'dist',
+        'index.js'
+      );
+
       // Check if the server script exists
       await fs.access(serverScriptPath);
-      
+
       // Create environment variables for the server process
       const env = { ...process.env };
       env.PORT = config.port.toString();
-      
+
       // Spawn the server process
       const serverProcess = spawn('node', [serverScriptPath], {
         env,
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
 
       // Store server process info
       const serverInfo: ServerInfo = {
-        config: { ...config },  // Clone config to prevent mutations
+        config: { ...config }, // Clone config to prevent mutations
         process: serverProcess,
         status: 'starting',
         port: config.port,
         startTime: new Date(),
-        pid: serverProcess.pid || undefined
+        pid: serverProcess.pid || undefined,
       };
-      
+
       this.servers.set(serverType, serverInfo);
 
       // Setup logging for server output
@@ -151,7 +157,7 @@ export class OrchestrationHub {
         if (code !== 0) {
           logger.error(`[${config.type}] Server exited with code ${code}`);
         }
-        
+
         // Update server status on close
         if (this.servers.has(serverType)) {
           const server = this.servers.get(serverType)!;
@@ -163,16 +169,17 @@ export class OrchestrationHub {
       await this.waitForServer(config.port);
       serverInfo.status = 'running';
       logger.info(`Server ${config.name} started successfully on port ${config.port}`);
-
     } catch (error) {
-      logger.error(`Failed to start server ${config.name}: ${error instanceof Error ? error.message : String(error)}`);
-      
+      logger.error(
+        `Failed to start server ${config.name}: ${error instanceof Error ? error.message : String(error)}`
+      );
+
       // Update server status on error
       if (this.servers.has(serverType)) {
         const server = this.servers.get(serverType)!;
         server.status = 'error';
       }
-      
+
       throw error;
     }
   }
@@ -232,13 +239,13 @@ export class OrchestrationHub {
    */
   public async stopAllServers(): Promise<void> {
     logger.info('Stopping all MCP servers');
-    
+
     const stopPromises: Promise<void>[] = [];
-    
+
     for (const [serverType] of this.servers) {
       stopPromises.push(this.stopServer(serverType));
     }
-    
+
     await Promise.all(stopPromises);
     logger.info('All servers stopped');
   }
@@ -248,16 +255,16 @@ export class OrchestrationHub {
    */
   public async shutdown(): Promise<void> {
     logger.info('Shutting down MCP Orchestration Hub');
-    
+
     // Stop health check timer
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
       this.healthCheckTimer = null;
     }
-    
+
     // Stop all servers
     await this.stopAllServers();
-    
+
     // Stop monitor server
     if (this.monitorServer) {
       await new Promise<void>((resolve) => {
@@ -268,7 +275,7 @@ export class OrchestrationHub {
         });
       });
     }
-    
+
     this.initialized = false;
     logger.info('MCP Orchestration Hub shutdown complete');
   }
@@ -296,10 +303,10 @@ export class OrchestrationHub {
         });
         return;
       } catch (error) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    
+
     throw new Error(`Server on port ${port} failed to start after ${maxAttempts} attempts`);
   }
 
@@ -308,13 +315,13 @@ export class OrchestrationHub {
    */
   private async checkServerHealth(): Promise<void> {
     logger.debug('Checking server health');
-    
+
     for (const [serverType, serverInfo] of this.servers) {
       // Skip checking servers that are already known to be stopped
       if (serverInfo.status === 'stopped') {
         continue;
       }
-      
+
       try {
         await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
@@ -381,13 +388,15 @@ export class OrchestrationHub {
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
     }
-    
+
     this.healthCheckTimer = setInterval(() => {
       this.checkServerHealth().catch((error) => {
-        logger.error(`Error checking server health: ${error instanceof Error ? error.message : String(error)}`);
+        logger.error(
+          `Error checking server health: ${error instanceof Error ? error.message : String(error)}`
+        );
       });
     }, this.checkInterval);
-    
+
     logger.info(`Health checks started with interval: ${this.checkInterval}ms`);
   }
 
@@ -400,36 +409,36 @@ export class OrchestrationHub {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-      
+
       // Handle preflight requests
       if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
         return;
       }
-      
+
       if (req.method !== 'GET' && req.method !== 'POST') {
         res.writeHead(405);
         res.end(JSON.stringify({ error: 'Method not allowed' }));
         return;
       }
-      
+
       const url = req.url || '';
-      
+
       // Handle API routes
       if (url === '/api/status') {
         const status = this.getFullStatus();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(status));
       } else if (url === '/api/servers') {
-        const servers = Array.from(this.servers.values()).map(server => ({
+        const servers = Array.from(this.servers.values()).map((server) => ({
           name: server.config.name,
           type: server.config.type,
           port: server.config.port,
           status: server.status,
-          pid: server.pid
+          pid: server.pid,
         }));
-        
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(servers));
       } else if (url === '/api/start' && req.method === 'POST') {
@@ -442,12 +451,12 @@ export class OrchestrationHub {
         res.end(JSON.stringify({ error: 'Not found' }));
       }
     });
-    
+
     this.monitorServer.listen(this.monitorPort, () => {
       logger.info(`Monitor server started on port ${this.monitorPort}`);
     });
   }
-  
+
   /**
    * Get the full status of the orchestration hub and all servers
    */
@@ -463,19 +472,19 @@ export class OrchestrationHub {
       },
       cpus: os.cpus().length,
     };
-    
+
     // Get server statuses
-    const servers = Array.from(this.servers.values()).map(server => ({
+    const servers = Array.from(this.servers.values()).map((server) => ({
       name: server.config.name,
       type: server.config.type,
       port: server.port,
       status: server.status,
-      uptime: server.startTime 
-        ? Math.floor((new Date().getTime() - server.startTime.getTime()) / 1000) 
+      uptime: server.startTime
+        ? Math.floor((new Date().getTime() - server.startTime.getTime()) / 1000)
         : undefined,
-      pid: server.pid
+      pid: server.pid,
     }));
-    
+
     return {
       timestamp: new Date().toISOString(),
       servers,

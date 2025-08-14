@@ -16,9 +16,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
           </div>
           <h1 className="text-xl font-bold">MCP Orchestration System</h1>
         </div>
-        <div className="flex items-center gap-2">
-          {children}
-        </div>
+        <div className="flex items-center gap-2">{children}</div>
       </div>
     </header>
   );

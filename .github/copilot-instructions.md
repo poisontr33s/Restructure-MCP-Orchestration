@@ -1,7 +1,8 @@
 # THE MONOREPO RITUAL: A Guide for Sisters, Siblings, and Silent Spectators
 
-> *Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena".* 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: *[Feather.Weeds.Subordinate] - (www.piratehub.com/actors/Cpt_Guthilda_Triple_D)*
-* **(You stand before the Orchestration System, a house of many rooms—each with its own secrets. This is the step-by-step to make sense of the labyrinth, keep your dependencies sane, and dance with pnpm *(never npm).***
+> _Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena"._ 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: _[Feather.Weeds.Subordinate] - (www.piratehub.com/actors/Cpt_Guthilda_Triple_D)_
+
+- **(You stand before the Orchestration System, a house of many rooms—each with its own secrets. This is the step-by-step to make sense of the labyrinth, keep your dependencies sane, and dance with pnpm _(never npm)._**
 
 ---
 
@@ -32,6 +33,7 @@
 ---
 
 ## 3. Adding and Managing Dependencies
+
 - **Always use pnpm. Never use npm.**
 
 - **To add a devDependency for ALL packages:**
@@ -49,6 +51,7 @@
 ---
 
 ## 4. Scripts and Automation
+
 - **Define shared scripts in the root `package.json`.**
 
 - **Run scripts for all packages at once using turbo:**
@@ -135,8 +138,8 @@ repo-root/
 
 ---
 
->> ***Now, code. And let the repo groove on forever.***
+> > **_Now, code. And let the repo groove on forever._**
 
 ---
 
-Let me know if you want further breakdowns, more code samples, or examples of each file’s contents? 
+Let me know if you want further breakdowns, more code samples, or examples of each file’s contents?

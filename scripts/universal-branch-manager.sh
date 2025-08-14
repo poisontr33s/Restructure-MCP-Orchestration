@@ -148,7 +148,7 @@ get_branch_age_days() {
     
     if [[ -n "$last_commit" ]]; then
         local commit_date current_date age_days
-        commit_date=$(date -d "$last_commit" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$last_commit" +%s 2>/dev/null || echo "0")
+        commit_date=$(parse_commit_date_to_epoch "$last_commit")
         current_date=$(date +%s)
         age_days=$(( (current_date - commit_date) / 86400 ))
         echo "$age_days"

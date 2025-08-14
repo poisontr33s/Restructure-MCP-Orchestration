@@ -1,5 +1,5 @@
 import http from 'http';
-import { type ServerConfig, type ServerStatus } from '@mcp/shared';
+import { type ServerConfig, type ServerStatus, Logger } from '@mcp/shared';
 
 /**
  * Base Server Options interface
@@ -18,6 +18,7 @@ export abstract class BaseServer {
   protected host: string;
   protected status: ServerStatus = 'starting';
   protected startTime: Date = new Date();
+  protected logger: Logger;
   
   /**
    * Constructor
@@ -28,6 +29,7 @@ export abstract class BaseServer {
     this.port = options.port || config.port;
     this.host = options.host || 'localhost';
     this.server = http.createServer(this.handleRequest.bind(this));
+    this.logger = new Logger(config.name);
     
     // Setup error handling
     this.server.on('error', this.handleServerError.bind(this));
@@ -112,7 +114,7 @@ export abstract class BaseServer {
    * Log a message
    */
   protected log(message: string, level: 'INFO' | 'ERROR' | 'WARN' | 'DEBUG' = 'INFO'): void {
-    console.log(`[${new Date().toISOString()}] [${level}] [${this.config.type}] ${message}`);
+    this.logger[level.toLowerCase() as 'info' | 'error' | 'warn' | 'debug'](message);
   }
 }
 

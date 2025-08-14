@@ -31,3 +31,46 @@ export const LogEntry = z.object({
 });
 
 export type LogEntry = z.infer<typeof LogEntry>;
+
+/**
+ * Simple logger implementation
+ */
+export class Logger {
+  constructor(private service: string, private config: Partial<LoggerConfig> = {}) {
+    this.config = { ...LoggerConfig.parse({}), ...config };
+  }
+
+  private log(level: LogLevel, message: string): void {
+    const entry: LogEntry = {
+      timestamp: new Date().toISOString(),
+      level,
+      service: this.service,
+      message,
+    };
+
+    if (this.config.console) {
+      // Use appropriate console method based on level
+      const consoleMethod = level === 'ERROR' ? 'error' : 
+                           level === 'WARN' ? 'warn' : 
+                           level === 'DEBUG' ? 'debug' : 'info';
+      // eslint-disable-next-line no-console -- Logger console output
+      console[consoleMethod](`[${entry.timestamp}] [${entry.level}] [${entry.service}] ${entry.message}`);
+    }
+  }
+
+  info(message: string): void {
+    this.log('INFO', message);
+  }
+
+  warn(message: string): void {
+    this.log('WARN', message);
+  }
+
+  error(message: string): void {
+    this.log('ERROR', message);
+  }
+
+  debug(message: string): void {
+    this.log('DEBUG', message);
+  }
+}

@@ -129,6 +129,78 @@ jobs:
             fs.writeFileSync("stale_prs.json",JSON.stringify(stale,null,2));
           '
 
+      - name: Compute branch value metrics (diff stats + score)
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEFAULT_BRANCH='${{ steps.prep.outputs.default_branch }}'
+          # Header
+          echo "branch,score,ahead,behind,files_changed,lines_added,lines_deleted,days_since_last_commit,touches_core,touches_cli,contains_tests,contains_docs,has_open_pr" > branch_value.csv
+
+          # Helper: membership check for open PR heads
+          touch open_pr_heads_sorted.txt
+
+          # Iterate branches from branch_report.csv (skip header)
+          tail -n +2 branch_report.csv | while IFS=, read -r BR MERGED AHEAD BEHIND DATE AUTHOR SUBJECT; do
+            BR_TRIM=$(echo "$BR" | tr -d '\r')
+            # Diff stats for unique changes on branch vs default
+            # Note: symmetric diff 'A...B' lists changes reachable from one side only
+            NUMSTAT=$(git diff --numstat "origin/${DEFAULT_BRANCH}...origin/${BR_TRIM}" || true)
+            if [[ -z "$NUMSTAT" ]]; then
+              FILES=0; ADDED=0; DELETED=0
+            else
+              FILES=$(echo "$NUMSTAT" | wc -l | tr -d ' ')
+              ADDED=$(echo "$NUMSTAT" | awk '{sum+=$1} END{print sum+0}')
+              DELETED=$(echo "$NUMSTAT" | awk '{sum+=$2} END{print sum+0}')
+            fi
+
+            # Flags based on touched paths
+            TOUCHES_CORE=0; TOUCHES_CLI=0; HAS_TESTS=0; HAS_DOCS=0
+            if echo "$NUMSTAT" | grep -q '^\S\+\s\+\S\+\s\+packages/core/'; then TOUCHES_CORE=1; fi
+            if echo "$NUMSTAT" | grep -q '^\S\+\s\+\S\+\s\+packages/cli/'; then TOUCHES_CLI=1; fi
+            if echo "$NUMSTAT" | grep -Eqi '\.(test|spec)\.(ts|tsx|js|jsx)$|__tests__/'; then HAS_TESTS=1; fi
+            if echo "$NUMSTAT" | grep -Eqi '(^|/)README\.md$|^docs/'; then HAS_DOCS=1; fi
+
+            # Recency: days since last commit
+            if [[ -n "$DATE" ]]; then
+              LAST_TS=$(date -d "$DATE" +%s || echo 0)
+            else
+              LAST_TS=0
+            fi
+            NOW_TS=$(date +%s)
+            if [[ $LAST_TS -gt 0 ]]; then
+              DAYS=$(( (NOW_TS - LAST_TS) / 86400 ))
+            else
+              DAYS=9999
+            fi
+
+            # Open PR membership
+            if grep -qx "$BR_TRIM" open_pr_heads_sorted.txt 2>/dev/null; then HAS_OPEN_PR=1; else HAS_OPEN_PR=0; fi
+
+            # Score components (integers)
+            AHEAD_INT=${AHEAD:-0}; BEHIND_INT=${BEHIND:-0}
+            SCORE=$(( AHEAD_INT * 3 ))
+            SCORE=$(( SCORE + FILES ))
+            SCORE=$(( SCORE + ( (ADDED + DELETED) / 50 ) ))
+            # Recency bonus
+            if [[ $DAYS -le 7 ]]; then SCORE=$(( SCORE + 5 )); elif [[ $DAYS -le 14 ]]; then SCORE=$(( SCORE + 3 )); elif [[ $DAYS -le 30 ]]; then SCORE=$(( SCORE + 1 )); fi
+            # Area bonuses
+            if [[ $TOUCHES_CORE -eq 1 ]]; then SCORE=$(( SCORE + 5 )); fi
+            if [[ $TOUCHES_CLI -eq 1 ]]; then SCORE=$(( SCORE + 3 )); fi
+            if [[ $HAS_TESTS -eq 1 ]]; then SCORE=$(( SCORE + 2 )); fi
+            # Slight bonus if it already has an open PR (review traction)
+            if [[ $HAS_OPEN_PR -eq 1 ]]; then SCORE=$(( SCORE + 1 )); fi
+
+            echo "$BR_TRIM,$SCORE,$AHEAD_INT,$BEHIND_INT,$FILES,$ADDED,$DELETED,$DAYS,$TOUCHES_CORE,$TOUCHES_CLI,$HAS_TESTS,$HAS_DOCS,$HAS_OPEN_PR" >> branch_value.csv
+          done
+
+          # Top candidates by score
+          { echo "branch,score"; tail -n +2 branch_value.csv | sort -t, -k2,2nr | head -n 20 | cut -d, -f1,2; } > high_value_candidates.csv
+          cut -d, -f1 high_value_candidates.csv | sed '1d' > high_value_candidates.txt
+
+          echo "\nTop high-value candidates (by score):" >> "$GITHUB_STEP_SUMMARY"
+          column -s, -t high_value_candidates.csv | sed -e 's/^/  /' >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload hygiene artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -141,3 +213,6 @@ jobs:
             pr_report.json
             issue_report.json
             stale_prs.json
+            branch_value.csv
+            high_value_candidates.csv
+            high_value_candidates.txt

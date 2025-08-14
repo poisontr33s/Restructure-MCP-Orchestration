@@ -1,0 +1,143 @@
+name: Repository hygiene report
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: 'Regex to select branches to include in the report (e.g., ^feature/|^agent/). Empty=all.'
+        required: false
+        default: ''
+      stale_days:
+        description: 'Consider PRs stale if last updated earlier than this many days.'
+        required: false
+        default: '30'
+      exclude_patterns:
+        description: 'Comma-separated regex patterns to exclude (e.g., ^main$,^master$,^develop$,^release/.*,^gh-pages$)'
+        required: false
+        default: '^main$,^master$,^develop$,^release/.*,^gh-pages$'
+  schedule:
+    - cron: '0 5 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine default branch
+        id: prep
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+          git fetch --all --prune
+          if [[ -z "${DEFAULT_BRANCH}" ]]; then
+            DEFAULT_BRANCH=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's#^origin/##')
+          fi
+          echo "default_branch=${DEFAULT_BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Classify branches (ahead/behind/merged)
+        id: classify
+        shell: bash
+        env:
+          PATTERN: ${{ inputs.pattern }}
+          EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
+        run: |
+          set -euo pipefail
+          DEFAULT_BRANCH='${{ steps.prep.outputs.default_branch }}'
+          IFS=',' read -r -a EXCLUDE_ARR <<< "${EXCLUDE_PATTERNS}"
+          EXCLUDE_REGEX="$(printf '%s|' "${EXCLUDE_ARR[@]}")"; EXCLUDE_REGEX="${EXCLUDE_REGEX%|}"
+
+          RAW=$(git branch -r | sed 's/^ *//' | grep -vE '^origin/HEAD ->')
+          BRANCHES=$(echo "${RAW}" | sed 's#^origin/##' | sort -u | grep -vE "^${DEFAULT_BRANCH}$" || true)
+          if [[ -n "${EXCLUDE_REGEX}" ]]; then
+            BRANCHES=$(echo "${BRANCHES}" | grep -vE "${EXCLUDE_REGEX}" || true)
+          fi
+          if [[ -n "${PATTERN}" ]]; then
+            BRANCHES=$(echo "${BRANCHES}" | grep -E "${PATTERN}" || true)
+          fi
+
+          echo "branch,merged,ahead,behind,last_commit,author,subject" > branch_report.csv
+          echo "| Branch | Merged | Ahead | Behind | Last Commit | Author | Subject |" > branch_report.md
+          echo "|---|---:|---:|---:|---|---|---|" >> branch_report.md
+
+          echo "${BRANCHES}" | while IFS= read -r BR; do
+            [[ -z "$BR" ]] && continue
+            git fetch origin "$BR":"refs/remotes/origin/$BR" --prune >/dev/null 2>&1 || true
+            set +e
+            COUNTS=$(git rev-list --left-right --count "origin/${DEFAULT_BRANCH}...origin/${BR}" 2>/dev/null)
+            STATUS=$?
+            set -e
+            if [[ "$STATUS" -ne 0 || -z "$COUNTS" ]]; then BEHIND=0; AHEAD=0; else BEHIND=${COUNTS%% *}; AHEAD=${COUNTS##* }; fi
+            if git merge-base --is-ancestor "origin/${BR}" "origin/${DEFAULT_BRANCH}" 2>/dev/null; then MERGED=yes; else MERGED=no; fi
+            INFO=$(git log -1 --format='%ci|%an|%s' "origin/${BR}" 2>/dev/null || echo '||')
+            DATE=${INFO%%|*}; REST=${INFO#*|}; AUTHOR=${REST%%|*}; SUBJECT=${REST#*|}
+            echo "${BR},${MERGED},${AHEAD},${BEHIND},${DATE},${AUTHOR},${SUBJECT}" >> branch_report.csv
+            echo "| ${BR} | ${MERGED} | ${AHEAD} | ${BEHIND} | ${DATE} | ${AUTHOR} | ${SUBJECT} |" >> branch_report.md
+          done
+
+          awk -F, 'NR==1{next} $2=="yes" && $3==0 {print $1}' branch_report.csv > recommend_delete.txt || true
+          awk -F, 'NR==1{next} $3>0 {print $1}' branch_report.csv > ahead_branches.txt || true
+
+          echo "\nBranch classification summary:" >> "$GITHUB_STEP_SUMMARY"
+          cat branch_report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fetch PRs and issues
+        id: fetch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'all', per_page: 100 });
+            const detailed = [];
+            for (const pr of prs) {
+              const { data } = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+              detailed.push(data);
+            }
+            const issues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'all', per_page: 100 });
+            const pureIssues = issues.filter(i => !i.pull_request);
+            fs.writeFileSync('pr_report.json', JSON.stringify(detailed, null, 2));
+            fs.writeFileSync('issue_report.json', JSON.stringify(pureIssues, null, 2));
+            const openHeads = detailed.filter(p => p.state === 'open').map(p => p.head.ref);
+            fs.writeFileSync('open_pr_heads.txt', openHeads.join('\n'));
+
+      - name: Derive orphan branches and stale PRs
+        shell: bash
+        env:
+          STALE_DAYS: ${{ inputs.stale_days }}
+        run: |
+          set -euo pipefail
+          grep -v '^$' open_pr_heads.txt | sort -u > open_pr_heads_sorted.txt || true
+          awk -F, 'NR==1{next} $3>0 {print $1}' branch_report.csv | sort -u > ahead_only.txt || true
+          comm -23 ahead_only.txt open_pr_heads_sorted.txt > orphan_branches.txt || true
+
+          node -e '
+            const fs=require("fs");
+            const days=parseInt(process.env.STALE_DAYS||"30",10);
+            const cutoff=Date.now()-days*24*60*60*1000;
+            const prs=JSON.parse(fs.readFileSync("pr_report.json","utf8"));
+            const stale=prs.filter(p=>p.state==="open" && new Date(p.updated_at).getTime()<cutoff)
+              .map(p=>({number:p.number,title:p.title,head:p.head.ref,base:p.base.ref,updated_at:p.updated_at,draft:p.draft,mergeable_state:p.mergeable_state}));
+            fs.writeFileSync("stale_prs.json",JSON.stringify(stale,null,2));
+          '
+
+      - name: Upload hygiene artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-hygiene-report
+          path: |
+            branch_report.md
+            branch_report.csv
+            recommend_delete.txt
+            orphan_branches.txt
+            pr_report.json
+            issue_report.json
+            stale_prs.json

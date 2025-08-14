@@ -120,6 +120,67 @@ jobs:
           # Save to file for the next step
           echo "${CANDIDATES}" | sed '/^$/d' > branches.txt
 
+      - name: Classify candidate branches (merged/ahead/behind)
+        if: steps.compute.outputs.count != '0'
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEFAULT_BRANCH='${{ steps.prep.outputs.default_branch }}'
+          echo "Generating branch classification report against origin/${DEFAULT_BRANCH}"
+
+          echo "| Branch | Merged | Ahead | Behind | Last Commit | Author | Subject |" > branch_report.md
+          echo "|---|---:|---:|---:|---|---|---|" >> branch_report.md
+          echo "branch,merged,ahead,behind,last_commit,author,subject" > branch_report.csv
+
+          while IFS= read -r BR; do
+            [[ -z "$BR" ]] && continue
+            # Ensure we have the remote ref locally
+            git fetch origin "$BR":"refs/remotes/origin/$BR" --prune >/dev/null 2>&1 || true
+            # ahead/behind counts relative to default
+            set +e
+            COUNTS=$(git rev-list --left-right --count "origin/${DEFAULT_BRANCH}...origin/${BR}" 2>/dev/null)
+            STATUS=$?
+            set -e
+            if [[ "$STATUS" -ne 0 || -z "$COUNTS" ]]; then
+              AHEAD=0; BEHIND=0
+            else
+              BEHIND=${COUNTS%% *}
+              AHEAD=${COUNTS##* }
+            fi
+            # merged status: is branch fully merged into default?
+            if git merge-base --is-ancestor "origin/${BR}" "origin/${DEFAULT_BRANCH}" 2>/dev/null; then
+              MERGED=yes
+            else
+              MERGED=no
+            fi
+            # last commit info
+            INFO=$(git log -1 --format='%ci|%an|%s' "origin/${BR}" 2>/dev/null || echo "||")
+            DATE=${INFO%%|*}
+            REST=${INFO#*|}
+            AUTHOR=${REST%%|*}
+            SUBJECT=${REST#*|}
+            # Append to reports
+            echo "| ${BR} | ${MERGED} | ${AHEAD} | ${BEHIND} | ${DATE} | ${AUTHOR} | ${SUBJECT} |" >> branch_report.md
+            echo "${BR},${MERGED},${AHEAD},${BEHIND},${DATE},${AUTHOR},${SUBJECT}" >> branch_report.csv
+          done < branches.txt
+
+          # Emit markdown table to job summary
+          {
+            echo ""
+            echo "Branch classification summary:"
+            cat branch_report.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload branch report artifact
+        if: steps.compute.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-classification
+          path: |
+            branch_report.md
+            branch_report.csv
+
       - name: Show plan (dry-run preview)
         if: inputs.dry_run == true
         run: |
@@ -143,4 +204,4 @@ jobs:
             else
               echo "Failed to delete ${BR} (may be protected or already gone)" >&2
             fi
-+          done < branches.txt
+          done < branches.txt

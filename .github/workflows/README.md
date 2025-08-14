@@ -5,31 +5,37 @@ This directory contains GitHub Actions workflows that have been updated to use `
 ## Workflows Overview
 
 ### 1. `ci.yml` - CI/CD Pipeline
+
 - **Purpose:** Build and test all packages in the monorepo
 - **Artifact Usage:** Shares build artifacts between jobs, uploads test results
 - **V4 Compatibility:** ✅ Uses unique artifact names per matrix job with commit SHA
 
-### 2. `release.yml` - Release Pipeline  
+### 2. `release.yml` - Release Pipeline
+
 - **Purpose:** Build platform-specific release packages
 - **Artifact Usage:** Creates platform-specific builds, consolidates for release
 - **V4 Compatibility:** ✅ Uses unique names per platform target
 
 ### 3. `security.yml` - Security Scanning
+
 - **Purpose:** Vulnerability scanning and license compliance
 - **Artifact Usage:** Collects scan results, generates consolidated reports
 - **V4 Compatibility:** ✅ Unique names per package scan
 
 ### 4. `performance.yml` - Performance Testing
+
 - **Purpose:** Performance tests and benchmarking
 - **Artifact Usage:** Stores performance metrics and benchmark results
 - **V4 Compatibility:** ✅ Component-specific artifact names
 
 ### 5. `codeql.yml` - Code Scanning
+
 - **Purpose:** CodeQL security analysis
 - **Artifact Usage:** None (updated with v4 compatibility notes)
 - **V4 Compatibility:** ✅ Documented for future use
 
 ### 6. `artifact-v4-test.yml` - V4 Compatibility Test
+
 - **Purpose:** Demonstrates and tests v4 compatibility
 - **Artifact Usage:** Creates test artifacts to verify v4 behavior
 - **V4 Compatibility:** ✅ Full demonstration of v4 features
@@ -48,6 +54,7 @@ This directory contains GitHub Actions workflows that have been updated to use `
 All workflows in this repository follow these v4 best practices:
 
 #### 1. Unique Artifact Names
+
 ```yaml
 # ✅ CORRECT: Unique names using matrix variables and commit SHA
 name: build-artifacts-${{ matrix.package }}-${{ github.sha }}
@@ -57,6 +64,7 @@ name: build-artifacts
 ```
 
 #### 2. Exact Downloads
+
 ```yaml
 # ✅ CORRECT: Exact artifact name
 - uses: actions/download-artifact@v4
@@ -66,18 +74,19 @@ name: build-artifacts
 # ❌ WRONG: Pattern matching (not supported in v4)
 - uses: actions/download-artifact@v4
   with:
-    name: "build-artifacts-*"
+    name: 'build-artifacts-*'
 ```
 
 #### 3. Updated Action Versions
+
 ```yaml
 # ✅ CORRECT: Using v4
 - uses: actions/upload-artifact@v4
 - uses: actions/download-artifact@v4
 
 # ❌ WRONG: Deprecated versions
-- uses: actions/upload-artifact@v3  # DEPRECATED
-- uses: actions/download-artifact@v2  # DEPRECATED
+- uses: actions/upload-artifact@v3 # DEPRECATED
+- uses: actions/download-artifact@v2 # DEPRECATED
 ```
 
 ### 🔍 V4 Compatibility Comments
@@ -91,6 +100,7 @@ Throughout the workflows, you'll find comments highlighting v4 compatibility:
 ```
 
 These comments identify:
+
 - Where unique artifact names are required
 - Locations where old v3 logic would break in v4
 - Best practices for v4 compatibility

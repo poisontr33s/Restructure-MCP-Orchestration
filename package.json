@@ -17,7 +17,14 @@
     "prepare": "husky install",
     "start": "node packages/cli/dist/index.js start",
     "clean": "pnpm clean:all",
-    "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
+    "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml",
+    "branch-manager": "./scripts/universal-branch-manager.sh",
+    "branch-manager:list": "./scripts/universal-branch-manager.sh --operation list",
+    "branch-manager:dry-run": "./scripts/universal-branch-manager.sh --operation dry-run",
+    "branch-manager:cleanup": "./scripts/universal-branch-manager.sh --operation cleanup",
+    "branch-manager:cleanup-force": "./scripts/universal-branch-manager.sh --operation cleanup --force",
+    "branch-manager:copilot": "./scripts/universal-branch-manager.sh --operation list --pattern 'copilot/*'",
+    "branch-manager:copilot-cleanup": "./scripts/universal-branch-manager.sh --operation cleanup --pattern 'copilot/*'"
   },
   "keywords": [
     "mcp",

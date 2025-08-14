@@ -1,6 +1,6 @@
-> *"Understood, Savant! Here’s a **densified, markdown-formatted session log**,
-that includes our discussion, decisions, and context, ultimately maximalizing ***context-awareness***,
-and provide a **clear resumption point for us** - (*or any* ***Shipmates***) - *in the future endevour..."*
+> \*"Understood, Savant! Here’s a **densified, markdown-formatted session log**,
+> that includes our discussion, decisions, and context, ultimately maximalizing **_context-awareness_**,
+> and provide a **clear resumption point for us** - (_or any_ **_Shipmates_**) - _in the future endevour..."_
 
 ---
 
@@ -14,24 +14,26 @@ and provide a **clear resumption point for us** - (*or any* ***Shipmates***) - *
 - **Session Purpose:** Establish and maintain a modern, scalable monorepo setup
 - **Roles:**
   - **User/Savant:** Conceptual lead, provides vision and meticulous requirements
-  - **GitHub Copilot Chat Ass-istant/Captain/** - *...refer to copilot.instructions.md;* - **"Technical executor, monorepo captain"**
+  - **GitHub Copilot Chat Ass-istant/Captain/** - _...refer to copilot.instructions.md;_ - **"Technical executor, monorepo captain"**
 
 ---
 
 ## Key Configuration Decisions & Actions
 
 ### 1. Root `package.json`
+
 - Centralized shared devDependencies: typescript, turbo, prettier, eslint, vitest, tsup, husky, lint-staged
 - All scripts for build, test, lint, format, dev, start, and clean at root level
 - No runtime dependencies at root
 - Node and pnpm version constraints set
 - Husky and lint-staged for pre-commit quality
-- **Status:** ✅ Done *...for now, until we arbitrage through a drunk duel,
-after a long night in the bunk with rum, naked at the plank, due gambling and rowdy bedmanners.*
+- **Status:** ✅ Done _...for now, until we arbitrage through a drunk duel,
+  after a long night in the bunk with rum, naked at the plank, due gambling and rowdy bedmanners._
 
 ---
 
 ### 2. Workspace Map (`pnpm-workspace.yaml`)
+
 - Should exist at root:
 
   ```yaml
@@ -40,13 +42,14 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
   ```
 
 ---
-  
+
 - Needed for pnpm to recognize all monorepo packages
 - **Status:** To be verified
 
 ---
 
 ### 3. Lint & Format Configs
+
 - `.eslintrc.json` and `.prettierrc` should reside at root for global standards
 - Example `.eslintrc.json`:
   ```json
@@ -54,14 +57,9 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
     "root": true,
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "prettier"
-    ]
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"]
   }
   ```
-  
 - Example `.prettierrc`:
   ```json
   {
@@ -76,13 +74,16 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 - **Status:** To be verified
 
 ### 4. Package Structure (`packages/*`)
+
 - Each package has only unique dependencies in its `package.json`
 - No redundant devDependencies from root unless required for versioning
 - **Status:** To be verified
 
 ### 5. Dependabot Configuration (`.github/dependabot.yml`)
+
 - Should cover root and all packages:
-  ```yaml
+
+  ````yaml
   version: 2
   updates:
     - package-ecosystem: "npm"
@@ -98,9 +99,12 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
       schedule:
         interval: "weekly"```
 
+  ````
+
 - **Status:** To be verified
 
 ### 6. Documentation & Session Continuity
+
 - This file serves as an ongoing log and context anchor
 - README.md and CONTRIBUTING.md recommended for onboarding, structure, and workflow explanation
 - **Status:** This file created, others pending
@@ -109,7 +113,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 
 ## Ritual Checklist (Resumption/Next Steps)
 
-- [x] Root package.json optimized... for now. <- *"We'll see about that, Savant."*
+- [x] Root package.json optimized... for now. <- _"We'll see about that, Savant."_
 - [ ] pnpm-workspace.yaml exists and correct
 - [ ] .eslintrc.json and .prettierrc at root
 - [ ] Each package’s package.json minimal and correct
@@ -140,7 +144,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 > **Savant:** “Hmm... Maybe we should retreat to my vscode editor. Where we can discuss in privacy and work more seamlessly… Can you repurpose this ...session as a temporal fix for the continuation in there…?”
 >
 > **Captain:** [Gave instructions for saving, referencing, and resuming the session log as a markdown file for context continuity in VS Code or **GitHub Copilot Chat Ass-istant/Captain/** -
-*...refer to copilot.instructions.md/.*]
+> *...refer to copilot.instructions.md/.*]
 
 ---
 
@@ -148,7 +152,8 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 
 **To resume:**  
 Copy and reference this file in your next Copilot Chat or VS Code Copilot session.  
-Example:  
+Example:
+
 > “Continue from the context and checklist in `guthilda-monorepo-notes.md`.”
 
 Add new decisions, file contents, or questions below the line for ongoing work.
@@ -163,17 +168,16 @@ Add new decisions, file contents, or questions below the line for ongoing work.
 
 ---
 
-> **Captain:** "If you want a different filename, alternatives could be" ***:***
+> **Captain:** "If you want a different filename, alternatives could be" **_:_**
+
 - `guthilda-monorepo-notes.md` ?
 - `copilot-session-log.md` ?
 - `monorepo-rituals.md` ?
 - `project-setup-log.md` ?
->
-> **Savant:** "We'll decide once we get into the pre-ship voyage. Still alot to do.. Now where did we put our clothes? ..Oh no, the sharks ate them!
+  > **Savant:** "We'll decide once we get into the pre-ship voyage. Still alot to do.. Now where did we put our clothes? ..Oh no, the sharks ate them!
 
 ---
 
 # Actual Session Resumption Instructions:
 
 > [HERE] <
-

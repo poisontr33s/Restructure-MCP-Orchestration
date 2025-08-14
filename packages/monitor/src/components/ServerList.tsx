@@ -20,32 +20,32 @@ interface ServerListProps {
 
 const ServerList: React.FC<ServerListProps> = ({ servers }) => {
   const queryClient = useQueryClient();
-  
+
   // Mutations for server actions
   const startMutation = useMutation({
     mutationFn: startServer,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mcpStatus'] }),
   });
-  
+
   const stopMutation = useMutation({
     mutationFn: stopServer,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mcpStatus'] }),
   });
-  
+
   const restartMutation = useMutation({
     mutationFn: restartServer,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mcpStatus'] }),
   });
-  
+
   // Format uptime to human-readable format
   const formatUptime = (seconds?: number): string => {
     if (!seconds) return 'N/A';
-    
+
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    
+
     if (days > 0) {
       return `${days}d ${hours}h ${minutes}m`;
     } else if (hours > 0) {
@@ -56,7 +56,7 @@ const ServerList: React.FC<ServerListProps> = ({ servers }) => {
       return `${secs}s`;
     }
   };
-  
+
   return (
     <div className="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
       <div className="p-4 border-b border-border">

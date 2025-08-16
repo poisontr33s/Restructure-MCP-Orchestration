@@ -1,0 +1,50 @@
+{
+  "mainRepository": {
+    "owner": "your-org",
+    "name": "main-orchestration-repo",
+    "organization": "your-org"
+  },
+  "connectedRepositories": [
+    {
+      "owner": "your-org",
+      "name": "api-service",
+      "type": "service",
+      "branchPatterns": ["copilot/*", "feature/*", "hotfix/*"],
+      "enabled": true
+    },
+    {
+      "owner": "your-org",
+      "name": "web-frontend",
+      "type": "service",
+      "branchPatterns": ["copilot/*", "feature/*"],
+      "enabled": true
+    },
+    {
+      "owner": "your-org",
+      "name": "shared-library",
+      "type": "dependency",
+      "branchPatterns": ["copilot/*", "hotfix/*"],
+      "enabled": true
+    },
+    {
+      "owner": "your-org",
+      "name": "deployment-configs",
+      "type": "infrastructure",
+      "branchPatterns": ["copilot/*", "infrastructure/*"],
+      "enabled": true
+    },
+    {
+      "owner": "your-org",
+      "name": "project-documentation",
+      "type": "documentation",
+      "branchPatterns": ["copilot/*", "docs/*"],
+      "enabled": false
+    }
+  ],
+  "bridgeConfig": {
+    "defaultBranchPatterns": ["copilot/*", "feature/*", "hotfix/*"],
+    "excludeBranches": ["main", "master", "develop", "production", "staging"],
+    "defaultMinAgeDays": 7,
+    "defaultOrganization": "your-org"
+  }
+}

@@ -19,6 +19,36 @@ Et moderne orkestreringsystem for Model Context Protocol (MCP) tjenere, designet
 - **Sanntidsovervåking**: Dashboard for tjenerestatus, systemressurser og logger
 - **Helsesjekk**: Automatiske helsesjekker og statusoppdateringer
 - **CLI-støtte**: Kommandolinjebasert administrering av tjenere
+- **🌉 Repository Bridge System**: Universal bridge/route system that connects any main repository with its associated repositories for unified development workflow management
+
+## Repository Bridge System
+
+The new Repository Bridge System provides a flexible, configurable way to connect and manage any main repository with its associated repositories. This addresses the need for a universal bridge that can connect all branches of a main repository to handle development workflows across multiple repositories.
+
+### Key Features
+- **Universal Repository Bridge**: Works with any GitHub repository as the orchestration hub
+- **Dynamic Organization Support**: Automatically adapts to different GitHub organizations/users  
+- **Cross-Repository Routing**: Connects and manages branches across multiple related repositories
+- **Type-Based Organization**: Categorize repositories by type (service, dependency, module, etc.)
+- **Configuration-Driven Management**: Simple JSON configuration with CLI tools
+
+### Quick Start
+
+```bash
+# Initialize a repository bridge
+npm run bridge:init -- --main-repo "your-org/main-repo" --org "your-org"
+
+# Add connected repositories
+npm run bridge:config -- --add-repo "your-org/service1:service"
+npm run bridge:config -- --add-repo "your-org/library1:dependency"
+
+# Manage branches across all bridge repositories
+npm run bridge:list          # List branches
+npm run bridge:dry-run       # Preview cleanup
+npm run bridge:cleanup       # Clean up old branches
+```
+
+See [Repository Bridge System Documentation](docs/REPOSITORY_BRIDGE_SYSTEM.md) for complete details.
 
 ## Relasjoner
 

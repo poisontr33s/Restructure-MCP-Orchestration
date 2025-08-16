@@ -6,3 +6,4 @@
 export * from './orchestration-hub';
 export * from './server-manager';
 export * from './monitor-server';
+export * from './repository-bridge';

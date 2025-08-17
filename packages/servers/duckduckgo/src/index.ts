@@ -211,7 +211,7 @@ export class DuckDuckGoServer extends BaseServer {
         throw new Error(`DuckDuckGo API error: ${response.statusText}`);
       }
 
-      return response.json();
+      return response.json() as Promise<DuckDuckGoApiResponse>;
     } catch (error) {
       this.log(
         `DuckDuckGo API error: ${error instanceof Error ? error.message : String(error)}`,

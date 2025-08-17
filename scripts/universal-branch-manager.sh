@@ -275,12 +275,13 @@ process_repository() {
                 if gh api -X DELETE "repos/$org/$repo/git/refs/heads/$branch" &>/dev/null; then
                     log_success "Deleted: $branch"
                 else
-                response=$(gh api -X DELETE "repos/$org/$repo/git/refs/heads/$branch" 2>&1)
-                if [[ $? -eq 0 ]]; then
-                    log_success "Deleted: $branch"
-                else
-                    log_error "Failed to delete: $branch"
-                    log_error "API response: $response"
+                    response=$(gh api -X DELETE "repos/$org/$repo/git/refs/heads/$branch" 2>&1)
+                    if [[ $? -eq 0 ]]; then
+                        log_success "Deleted: $branch"
+                    else
+                        log_error "Failed to delete: $branch"
+                        log_error "API response: $response"
+                    fi
                 fi
             done
             ;;

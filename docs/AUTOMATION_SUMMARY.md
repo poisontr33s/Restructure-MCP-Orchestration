@@ -1,8 +1,8 @@
-# Universal Branch Management System
+# Universal Branch Management & Intelligence System
 
 ## Overview
 
-This system addresses issue #30 by providing unified automation for branch deletion across all repositories from this central location. It eliminates the need for manual intervention that was previously required for branch management.
+This system provides comprehensive branch management automation across all repositories from this central location, including advanced branch intelligence, chaos prevention, and cross-repository analysis capabilities. It addresses the need for both reactive cleanup and proactive branch health monitoring.
 
 ## Key Features
 
@@ -11,6 +11,14 @@ This system addresses issue #30 by providing unified automation for branch delet
 - **Local Control**: Command-line script with full functionality
 - **Package Scripts**: Integrated npm commands for common operations
 - **GitHub Actions**: Remote automation with manual and scheduled triggers
+
+### 🧠 **Branch Intelligence & Analysis**
+
+- **Complexity Scoring**: Multi-factor analysis of branch complexity and deviation
+- **PR/Issue Correlation**: Automatic linking of branches with related PRs and Issues
+- **Chaos Prevention**: Detect "branches gone wild" scenarios before they become problems
+- **Cross-Repository Intelligence**: Unified analysis across all organization repositories
+- **Predictive Analytics**: Identify branches likely to become problematic
 
 ### 🛡️ **Safety & Protection**
 
@@ -29,6 +37,8 @@ This system addresses issue #30 by providing unified automation for branch delet
 
 ## Quick Start Commands
 
+### Branch Management (Cleanup & Maintenance)
+
 ```bash
 # List all copilot branches across all repositories
 npm run branch-manager:copilot
@@ -43,6 +53,25 @@ npm run branch-manager:dry-run
 ./scripts/universal-branch-manager.sh --operation cleanup --pattern "feature/*"
 ```
 
+### Branch Intelligence & Analysis
+
+```bash
+# Analyze all branches for complexity and health
+npm run branch-intelligence:analyze
+
+# Generate comprehensive markdown report
+npm run branch-intelligence:report
+
+# Check for "branches gone wild" chaos scenarios
+npm run branch-intelligence:chaos-check
+
+# Get structured JSON output for automation
+npm run branch-intelligence:json
+
+# Focus on PR/Issue correlation analysis
+npm run branch-intelligence:correlate
+```
+
 ## Automation Triggers
 
 ### Manual Triggers
@@ -53,9 +82,18 @@ npm run branch-manager:dry-run
 
 ### Automatic Triggers
 
+#### Branch Management
+
 - **Weekly Cleanup**: Every Sunday at 2 AM UTC
 - **Post-PR Merge**: Automatic cleanup of merged branches
 - **Custom Scheduling**: Configurable via workflow modification
+
+#### Branch Intelligence
+
+- **Daily Analysis**: Every day at 6 AM UTC for proactive monitoring
+- **PR Analysis**: Automatic complexity analysis on PR creation/updates
+- **Chaos Detection**: Scheduled chaos prevention scans
+- **Escalation Alerts**: Automatic issue creation for high-complexity branches
 
 ## Configuration Examples
 
@@ -99,6 +137,14 @@ npm run branch-manager:dry-run
 - Provides unified management interface
 - Supports diverse project architectures
 
+### Branch Intelligence Integration
+
+- **Proactive Analysis**: Intelligence-driven cleanup decisions
+- **Chaos Prevention**: Early detection of problematic branches
+- **Correlation Tracking**: Links branch health to PR/Issue workflow
+- **Automated Escalation**: Smart alerts for branches requiring attention
+- **Cross-Repository Learning**: Pattern recognition across all repositories
+
 ## Meta-Automation Capabilities
 
 ### Self-Improving System
@@ -117,10 +163,12 @@ npm run branch-manager:dry-run
 
 ## Documentation
 
-- **Complete Guide**: `docs/UNIVERSAL_BRANCH_MANAGEMENT.md`
+- **Branch Management Guide**: `docs/UNIVERSAL_BRANCH_MANAGEMENT.md`
+- **Branch Intelligence System**: `docs/BRANCH_INTELLIGENCE_SYSTEM.md`
 - **Script Help**: `./scripts/universal-branch-manager.sh --help`
+- **Intelligence Help**: `./scripts/branch-intelligence-system.sh --help`
 - **Package Scripts**: Listed in `package.json`
-- **Workflow Configuration**: `.github/workflows/universal-branch-manager.yml`
+- **Workflows**: `.github/workflows/universal-branch-manager.yml` and `.github/workflows/branch-intelligence.yml`
 
 ## Resolution of Issue #30
 

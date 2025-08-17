@@ -1,0 +1,319 @@
+name: Branch Intelligence System
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Intelligence operation to perform'
+        required: true
+        default: 'analyze'
+        type: choice
+        options:
+          - analyze
+          - report
+          - correlate
+          - escalate
+          - compare
+          - chaos-check
+      repositories:
+        description: 'Target repositories (comma-separated or "ALL")'
+        required: true
+        default: 'ALL'
+        type: string
+      compare_with:
+        description: 'Base branch for comparison'
+        required: false
+        default: 'main'
+        type: string
+      output_format:
+        description: 'Output format'
+        required: false
+        default: 'markdown'
+        type: choice
+        options:
+          - table
+          - json
+          - markdown
+      threshold_commits:
+        description: 'Commit count threshold for complexity scoring'
+        required: false
+        default: '50'
+        type: string
+      threshold_files:
+        description: 'File count threshold for complexity scoring'
+        required: false
+        default: '20'
+        type: string
+      escalation_score:
+        description: 'Score threshold for automatic escalation'
+        required: false
+        default: '8'
+        type: string
+  schedule:
+    # Run daily intelligence analysis at 6 AM UTC
+    - cron: '0 6 * * *'
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main, develop]
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  branch-intelligence:
+    name: Branch Intelligence Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup analysis parameters
+        id: params
+        run: |
+          # Set defaults for scheduled runs
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "operation=analyze" >> $GITHUB_OUTPUT
+            echo "repositories=ALL" >> $GITHUB_OUTPUT
+            echo "compare_with=main" >> $GITHUB_OUTPUT
+            echo "output_format=markdown" >> $GITHUB_OUTPUT
+            echo "threshold_commits=50" >> $GITHUB_OUTPUT
+            echo "threshold_files=20" >> $GITHUB_OUTPUT
+            echo "escalation_score=8" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "operation=analyze" >> $GITHUB_OUTPUT
+            echo "repositories=${{ github.repository }}" >> $GITHUB_OUTPUT
+            echo "compare_with=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+            echo "output_format=json" >> $GITHUB_OUTPUT
+            echo "threshold_commits=30" >> $GITHUB_OUTPUT
+            echo "threshold_files=15" >> $GITHUB_OUTPUT
+            echo "escalation_score=6" >> $GITHUB_OUTPUT
+          else
+            echo "operation=${{ inputs.operation }}" >> $GITHUB_OUTPUT
+            echo "repositories=${{ inputs.repositories }}" >> $GITHUB_OUTPUT
+            echo "compare_with=${{ inputs.compare_with }}" >> $GITHUB_OUTPUT
+            echo "output_format=${{ inputs.output_format }}" >> $GITHUB_OUTPUT
+            echo "threshold_commits=${{ inputs.threshold_commits }}" >> $GITHUB_OUTPUT
+            echo "threshold_files=${{ inputs.threshold_files }}" >> $GITHUB_OUTPUT
+            echo "escalation_score=${{ inputs.escalation_score }}" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Make script executable
+        run: chmod +x ./scripts/branch-intelligence-system.sh
+        
+      - name: Run branch intelligence analysis
+        id: analysis
+        run: |
+          echo "Running branch intelligence analysis..."
+          
+          OPERATION="${{ steps.params.outputs.operation }}"
+          REPOSITORIES="${{ steps.params.outputs.repositories }}"
+          COMPARE_WITH="${{ steps.params.outputs.compare_with }}"
+          OUTPUT_FORMAT="${{ steps.params.outputs.output_format }}"
+          THRESHOLD_COMMITS="${{ steps.params.outputs.threshold_commits }}"
+          THRESHOLD_FILES="${{ steps.params.outputs.threshold_files }}"
+          ESCALATION_SCORE="${{ steps.params.outputs.escalation_score }}"
+          
+          # Extract just the repository name if full repository path is provided
+          if [[ "$REPOSITORIES" == *"/"* ]]; then
+            REPOSITORIES=$(basename "$REPOSITORIES")
+          fi
+          
+          echo "Configuration:"
+          echo "  Operation: $OPERATION"
+          echo "  Repositories: $REPOSITORIES"
+          echo "  Compare with: $COMPARE_WITH"
+          echo "  Output format: $OUTPUT_FORMAT"
+          echo "  Thresholds: commits=$THRESHOLD_COMMITS, files=$THRESHOLD_FILES"
+          echo "  Escalation score: $ESCALATION_SCORE"
+          
+          # Run the analysis and capture output
+          OUTPUT_FILE="branch-intelligence-report.${OUTPUT_FORMAT}"
+          
+          ./scripts/branch-intelligence-system.sh \
+            --operation "$OPERATION" \
+            --repositories "$REPOSITORIES" \
+            --compare-with "$COMPARE_WITH" \
+            --output-format "$OUTPUT_FORMAT" \
+            --threshold-commits "$THRESHOLD_COMMITS" \
+            --threshold-files "$THRESHOLD_FILES" \
+            --escalation-score "$ESCALATION_SCORE" > "$OUTPUT_FILE" 2>&1
+          
+          echo "Analysis completed. Output saved to $OUTPUT_FILE"
+          
+          # Check if any escalation is required
+          if grep -q "ESCALATION_REQUIRED" "$OUTPUT_FILE"; then
+            echo "escalation_required=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Branches requiring escalation detected!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "escalation_required=false" >> $GITHUB_OUTPUT
+            echo "✅ All branches within normal parameters" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Add summary to step output
+          if [ "$OUTPUT_FORMAT" = "markdown" ]; then
+            echo "## Branch Intelligence Analysis Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            tail -n +1 "$OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+      - name: Create escalation issue
+        if: steps.analysis.outputs.escalation_required == 'true' && github.event_name != 'pull_request'
+        run: |
+          echo "Creating escalation issue for branches requiring attention..."
+          
+          TITLE="🚨 Branch Escalation Required - $(date +%Y-%m-%d)"
+          BODY="Branch intelligence analysis has detected branches requiring immediate attention.
+          
+          **Analysis Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Trigger:** ${{ github.event_name }}
+          **Repository Scope:** ${{ steps.params.outputs.repositories }}
+          
+          Please review the attached analysis report and take appropriate action on the flagged branches.
+          
+          ## Next Steps
+          
+          1. Review the branch analysis report
+          2. Coordinate with branch owners for resolution
+          3. Consider implementing additional branch policies
+          4. Schedule follow-up analysis
+          
+          ## Automation
+          
+          This issue was automatically created by the Branch Intelligence System. For more information, see the workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          # Create the issue
+          gh issue create \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --label "branch-management,escalation,automated" \
+            --assignee "${{ github.actor }}"
+          
+      - name: Upload analysis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-intelligence-report-${{ steps.params.outputs.operation }}-${{ github.sha }}
+          path: branch-intelligence-report.*
+          retention-days: 30
+          if-no-files-found: warn
+          
+      - name: Comment on PR with analysis
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Adding branch intelligence analysis to PR..."
+          
+          COMMENT="## 🧠 Branch Intelligence Analysis
+          
+          **Analysis completed for PR:** #${{ github.event.number }}
+          **Base branch:** ${{ github.base_ref }}
+          **Head branch:** ${{ github.head_ref }}
+          **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ### Analysis Results
+          
+          \`\`\`json
+          $(cat branch-intelligence-report.json)
+          \`\`\`
+          
+          ### Recommendations
+          
+          - Review any branches with high complexity scores
+          - Ensure proper correlation with issues and PRs
+          - Consider breaking down large changes into smaller commits
+          
+          *This analysis was automatically generated by the Branch Intelligence System.*"
+          
+          # Comment on the PR
+          gh pr comment ${{ github.event.number }} --body "$COMMENT"
+
+  chaos-detection:
+    name: Chaos Detection & Prevention
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.operation == 'chaos-check')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Make script executable
+        run: chmod +x ./scripts/branch-intelligence-system.sh
+        
+      - name: Run chaos detection
+        run: |
+          echo "Running chaos detection analysis..."
+          
+          # Run with more aggressive thresholds for chaos detection
+          ./scripts/branch-intelligence-system.sh \
+            --operation chaos-check \
+            --repositories ALL \
+            --threshold-commits 30 \
+            --threshold-files 15 \
+            --escalation-score 6 \
+            --output-format markdown > chaos-analysis-report.md
+          
+          echo "Chaos detection completed"
+          
+      - name: Check for chaos scenarios
+        id: chaos_check
+        run: |
+          if grep -q "ESCALATION_REQUIRED" chaos-analysis-report.md; then
+            echo "chaos_detected=true" >> $GITHUB_OUTPUT
+            CHAOS_COUNT=$(grep -c "ESCALATION_REQUIRED" chaos-analysis-report.md)
+            echo "chaos_count=$CHAOS_COUNT" >> $GITHUB_OUTPUT
+            echo "🚨 $CHAOS_COUNT branches in chaos state detected!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "chaos_detected=false" >> $GITHUB_OUTPUT
+            echo "chaos_count=0" >> $GITHUB_OUTPUT
+            echo "✅ No chaos scenarios detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+      - name: Create chaos alert issue
+        if: steps.chaos_check.outputs.chaos_detected == 'true'
+        run: |
+          echo "Creating chaos alert issue..."
+          
+          TITLE="🔥 CHAOS ALERT: ${{ steps.chaos_check.outputs.chaos_count }} Branches Gone Wild"
+          BODY="**🚨 IMMEDIATE ATTENTION REQUIRED 🚨**
+          
+          The Branch Intelligence System has detected ${{ steps.chaos_check.outputs.chaos_count }} branches in a chaotic state that require immediate intervention.
+          
+          **Detection Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Chaos Level:** HIGH
+          **Affected Branches:** ${{ steps.chaos_check.outputs.chaos_count }}
+          
+          ## Immediate Actions Required
+          
+          1. 🔍 **Review**: Examine all flagged branches immediately
+          2. 🤝 **Coordinate**: Contact branch owners for status updates
+          3. 🧹 **Clean**: Merge, close, or escalate decisions on problem branches
+          4. 🛡️ **Protect**: Implement additional branch protection rules if needed
+          5. 📊 **Monitor**: Schedule more frequent intelligence analysis
+          
+          ## Prevention Measures
+          
+          - Consider implementing stricter branch policies
+          - Set up automated branch age limits
+          - Require regular branch health checks
+          - Implement mandatory code review processes
+          
+          ## Analysis Report
+          
+          See the attached chaos analysis report for detailed information about each flagged branch.
+          
+          **This is an automated alert from the Branch Intelligence System.**"
+          
+          # Create high-priority issue
+          gh issue create \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --label "critical,branch-management,chaos,automated" \
+            --assignee "${{ github.actor }}"
+          
+      - name: Upload chaos analysis report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chaos-analysis-report-${{ github.sha }}
+          path: chaos-analysis-report.md
+          retention-days: 90
+          if-no-files-found: warn

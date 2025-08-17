@@ -9,7 +9,7 @@ This system addresses issue #30 by providing unified automation for branch delet
 ### 🚀 **Immediate Automation**
 
 - **Local Control**: Command-line script with full functionality
-- **Package Scripts**: Integrated npm commands for common operations
+- **Package Scripts**: Integrated pnpm commands for common operations
 - **GitHub Actions**: Remote automation with manual and scheduled triggers
 
 ### 🛡️ **Safety & Protection**
@@ -31,13 +31,13 @@ This system addresses issue #30 by providing unified automation for branch delet
 
 ```bash
 # List all copilot branches across all repositories
-npm run branch-manager:copilot
+pnpm branch-manager:copilot
 
 # Clean up copilot branches with force
-npm run branch-manager:copilot-cleanup
+pnpm branch-manager:copilot-cleanup
 
 # Dry run to see what would be deleted
-npm run branch-manager:dry-run
+pnpm branch-manager:dry-run
 
 # Custom cleanup with manual confirmation
 ./scripts/universal-branch-manager.sh --operation cleanup --pattern "feature/*"
@@ -139,7 +139,7 @@ The system transforms the "Branch deletion requires repository admin access" lim
 All components have been tested and verified:
 
 - ✅ Script functionality and help system
-- ✅ npm script integration
+- ✅ pnpm script integration
 - ✅ GitHub Actions workflow syntax
 - ✅ Documentation completeness
 - ✅ Safety mechanism implementation

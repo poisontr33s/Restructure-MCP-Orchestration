@@ -24,7 +24,14 @@
     "branch-manager:cleanup": "./scripts/universal-branch-manager.sh --operation cleanup",
     "branch-manager:cleanup-force": "./scripts/universal-branch-manager.sh --operation cleanup --force",
     "branch-manager:copilot": "./scripts/universal-branch-manager.sh --operation list --pattern 'copilot/*'",
-    "branch-manager:copilot-cleanup": "./scripts/universal-branch-manager.sh --operation cleanup --pattern 'copilot/*'"
+    "branch-manager:copilot-cleanup": "./scripts/universal-branch-manager.sh --operation cleanup --pattern 'copilot/*'",
+    "guthilda": "node packages/guthilda/dist/cli.mjs",
+    "guthilda:status": "pnpm guthilda status",
+    "guthilda:auth": "pnpm guthilda auth setup",
+    "guthilda:orchestrate": "pnpm guthilda orchestrate",
+    "guthilda:discover": "pnpm guthilda discover",
+    "guthilda:cleanup": "pnpm guthilda cleanup",
+    "guthilda:report": "pnpm guthilda report"
   },
   "keywords": [
     "mcp",

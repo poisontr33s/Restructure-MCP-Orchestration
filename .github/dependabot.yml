@@ -59,3 +59,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+
+  # Captain Guthilda package
+  - package-ecosystem: "npm"
+    directory: "/packages/guthilda"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

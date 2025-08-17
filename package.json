@@ -24,7 +24,14 @@
     "branch-manager:cleanup": "./scripts/universal-branch-manager.sh --operation cleanup",
     "branch-manager:cleanup-force": "./scripts/universal-branch-manager.sh --operation cleanup --force",
     "branch-manager:copilot": "./scripts/universal-branch-manager.sh --operation list --pattern 'copilot/*'",
-    "branch-manager:copilot-cleanup": "./scripts/universal-branch-manager.sh --operation cleanup --pattern 'copilot/*'"
+    "branch-manager:copilot-cleanup": "./scripts/universal-branch-manager.sh --operation cleanup --pattern 'copilot/*'",
+    "bridge": "./scripts/enhanced-branch-manager.sh",
+    "bridge:init": "./scripts/enhanced-branch-manager.sh --operation bridge-init",
+    "bridge:config": "./scripts/enhanced-branch-manager.sh --operation bridge-config",
+    "bridge:list": "./scripts/enhanced-branch-manager.sh --operation list --repositories BRIDGE",
+    "bridge:dry-run": "./scripts/enhanced-branch-manager.sh --operation dry-run --repositories BRIDGE",
+    "bridge:cleanup": "./scripts/enhanced-branch-manager.sh --operation cleanup --repositories BRIDGE",
+    "bridge:cleanup-force": "./scripts/enhanced-branch-manager.sh --operation cleanup --repositories BRIDGE --force"
   },
   "keywords": [
     "mcp",

@@ -284,7 +284,7 @@ add_bridge_repository() {
             "branchPatterns": .bridgeConfig.defaultBranchPatterns,
             "enabled": true
         }] | 
-        .connectedRepositories |= unique_by(.owner + "/" + .name)
+        .connectedRepositories |= (sort_by(.owner, .name) | group_by([.owner, .name]) | map(.[0]))
     ' "$bridge_config_file" > "$temp_file"
     
     if mv "$temp_file" "$bridge_config_file"; then

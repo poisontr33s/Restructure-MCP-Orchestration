@@ -302,8 +302,9 @@ export class OrchestrationHub {
           req.end();
         });
         return;
-      } catch (_error) {
+      } catch (error) {
         // Intentionally ignore error and retry
+        logger.debug(`Health check attempt failed: ${error instanceof Error ? error.message : String(error)}`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -326,10 +327,10 @@ export class OrchestrationHub {
       try {
         await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
-      } catch (_error) {
+      } catch (error) {
         // Set server as 'not responding' if it was previously running
         if (serverInfo.status === 'running') {
-          logger.warn(`Server ${serverType} is not responding`);
+          logger.warn(`Server ${serverType} is not responding: ${error instanceof Error ? error.message : String(error)}`);
           serverInfo.status = 'not responding';
         }
       }
@@ -366,8 +367,8 @@ export class OrchestrationHub {
           try {
             const response = JSON.parse(data);
             resolve(response);
-          } catch (_error) {
-            reject(new Error('Invalid response from server'));
+          } catch (error) {
+            reject(new Error(`Invalid response from server: ${error instanceof Error ? error.message : String(error)}`));
           }
         });
       });

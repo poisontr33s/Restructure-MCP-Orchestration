@@ -44,6 +44,48 @@
       }
     },
     {
+      "label": "🔐 Test Microsoft 365 Intelligent Auth",
+      "type": "shell",
+      "command": "node -e \"const { VSCodeAuthManager } = require('./packages/auth/dist/index.js'); const auth = new VSCodeAuthManager(); auth.initialize().then(() => auth.authenticateWithUI('microsoft')).then(result => console.log('✅ Intelligent Microsoft auth completed:', result.account));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
+      "label": "🔐 Test Google Workspace Intelligent Auth",
+      "type": "shell",
+      "command": "node -e \"const { VSCodeAuthManager } = require('./packages/auth/dist/index.js'); const auth = new VSCodeAuthManager(); auth.initialize().then(() => auth.authenticateWithUI('google')).then(result => console.log('✅ Intelligent Google auth completed:', result.account));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
+      "label": "🔍 Discover Account Capabilities",
+      "type": "shell",
+      "command": "node -e \"const { VSCodeAuthManager } = require('./packages/auth/dist/index.js'); const auth = new VSCodeAuthManager(); auth.initialize().then(() => auth.getAvailableContent()).then(capabilities => console.log('📋 Available capabilities:', JSON.stringify(capabilities, null, 2)));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
       "label": "Microsoft 365 - Personal Account",
       "type": "shell",
       "command": "node -e \"const { M365GraphAgent } = require('./packages/agents/m365-graph/dist/index.js'); M365GraphAgent.createPersonalAccount().then(agent => console.log('✅ Personal account authenticated:', agent.getAuthInfo()?.displayName));\"",

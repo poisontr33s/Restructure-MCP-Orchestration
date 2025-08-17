@@ -11,7 +11,7 @@ import { logger } from '@mcp/shared';
 /**
  * Authentication Provider Types
  */
-export type AuthProvider = 'microsoft' | 'google';
+export type AuthProvider = 'microsoft' | 'google' | 'x';
 
 /**
  * Account Types
@@ -40,6 +40,11 @@ export interface AuthResult {
   email: string;
   provider: AuthProvider;
   accountType: AccountType;
+  account: {
+    username?: string;
+    email: string;
+    displayName: string;
+  };
 }
 
 /**
@@ -260,7 +265,12 @@ export class UnifiedAuthProvider {
       displayName: account.name || 'Unknown User',
       email: account.username,
       provider,
-      accountType: this.config.accountType
+      accountType: this.config.accountType,
+      account: {
+        username: account.username,
+        email: account.username,
+        displayName: account.name || 'Unknown User'
+      }
     };
   }
 
@@ -400,3 +410,6 @@ export function createGoogleWorkspaceAuth(accountType: AccountType = 'personal',
 }
 
 export * from './types';
+export * from './content-discovery';
+export * from './vscode-integration';
+export * from './example';

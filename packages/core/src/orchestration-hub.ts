@@ -302,9 +302,8 @@ export class OrchestrationHub {
           req.end();
         });
         return;
-      } catch (error) {
+      } catch (_error) {
         // Intentionally ignore error and retry
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -327,9 +326,8 @@ export class OrchestrationHub {
       try {
         await this.checkServerStatus(serverInfo.port);
         serverInfo.status = 'running';
-      } catch (error) {
+      } catch (_error) {
         // Set server as 'not responding' if it was previously running
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (serverInfo.status === 'running') {
           logger.warn(`Server ${serverType} is not responding`);
           serverInfo.status = 'not responding';
@@ -368,8 +366,7 @@ export class OrchestrationHub {
           try {
             const response = JSON.parse(data);
             resolve(response);
-          } catch (error) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (_error) {
             reject(new Error('Invalid response from server'));
           }
         });

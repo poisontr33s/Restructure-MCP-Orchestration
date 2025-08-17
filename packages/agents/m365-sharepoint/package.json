@@ -1,0 +1,32 @@
+{
+  "name": "@mcp/agent-m365-sharepoint",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Microsoft SharePoint agent for MCP orchestration",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --dts --watch",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "mcp",
+    "microsoft-sharepoint",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@mcp/agent-m365-graph": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

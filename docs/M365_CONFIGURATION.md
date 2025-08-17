@@ -1,120 +1,172 @@
-# Microsoft 365 Configuration Guide
+# Microsoft 365 Configuration Guide - VS Code Integrated
 
-This guide provides comprehensive instructions for configuring and using the Microsoft 365 integration agents in the MCP Orchestration System.
+This guide provides instructions for using the simplified Microsoft 365 integration in the MCP Orchestration System, designed for seamless VS Code IDE integration similar to GitHub Copilot.
 
 ## Overview
 
-The MCP Orchestration System now includes comprehensive Microsoft 365 integration through the following agents:
+The MCP Orchestration System now includes **VS Code-style authentication** for Microsoft 365 integration through the following agents:
 
-- **M365 Graph Agent** - Core authentication and Graph API operations
-- **Teams Agent** - Teams messages, meetings, channels, and presence
+- **M365 Graph Agent** - Core authentication and Graph API operations with device flow
+- **Teams Agent** - Teams messages, meetings, channels, and presence  
 - **Outlook Agent** - Email and calendar operations with full CRUD support
 - **SharePoint Agent** - Document and list management
 - **OneDrive Agent** - File storage operations
 
-## Azure App Registration Setup
+## 🚀 Quick Start (No Complex Setup Required!)
 
-### Prerequisites
+Unlike traditional Azure app registrations, this integration works like **GitHub Copilot** - simple authentication that "just works" in your development environment.
 
-1. Azure Active Directory (Azure AD) tenant
-2. Global administrator or Application administrator role
-3. Microsoft 365 subscription with appropriate licenses
-
-### Step 1: Register the Application
-
-1. Navigate to [Azure Portal](https://portal.azure.com)
-2. Go to **Azure Active Directory** > **App registrations**
-3. Click **New registration**
-4. Fill in the application details:
-   - **Name**: "MCP Orchestration M365 Integration"
-   - **Supported account types**: "Accounts in this organizational directory only"
-   - **Redirect URI**: Leave blank for now
-5. Click **Register**
-
-### Step 2: Configure API Permissions
-
-1. In your app registration, go to **API permissions**
-2. Click **Add a permission**
-3. Select **Microsoft Graph**
-4. Choose **Application permissions**
-5. Add the following permissions:
-
-#### Required Permissions
-
-##### Core Permissions
-- `User.Read.All` - Read all users' full profiles
-- `Directory.Read.All` - Read directory data
-
-##### Teams Permissions
-- `Team.ReadBasic.All` - Read the names and descriptions of teams
-- `Channel.ReadBasic.All` - Read the names and descriptions of channels
-- `ChannelMessage.Read.All` - Read all channel messages
-- `ChannelMessage.Send` - Send channel messages
-- `OnlineMeetings.ReadWrite.All` - Read and create online meetings
-
-##### Outlook Permissions
-- `Mail.Read` - Read mail in all mailboxes
-- `Mail.ReadWrite` - Read and write mail in all mailboxes
-- `Mail.Send` - Send mail as any user
-- `Calendars.Read` - Read calendars in all mailboxes
-- `Calendars.ReadWrite` - Read and write calendars in all mailboxes
-- `Contacts.Read` - Read contacts in all mailboxes
-- `Contacts.ReadWrite` - Read and write contacts in all mailboxes
-
-##### SharePoint/OneDrive Permissions
-- `Sites.Read.All` - Read items in all site collections
-- `Sites.ReadWrite.All` - Read and write items in all site collections
-- `Files.Read.All` - Read all files
-- `Files.ReadWrite.All` - Read and write all files
-
-6. Click **Grant admin consent** for your organization
-
-### Step 3: Create Client Secret
-
-1. Go to **Certificates & secrets**
-2. Click **New client secret**
-3. Add description: "MCP Orchestration Secret"
-4. Select expiration (recommended: 24 months)
-5. Click **Add**
-6. **Important**: Copy the secret value immediately - it won't be shown again
-
-### Step 4: Note Configuration Values
-
-You'll need these values for configuration:
-- **Application (client) ID** - Found on the Overview page
-- **Directory (tenant) ID** - Found on the Overview page  
-- **Client secret** - The value you just created
-
-## MCP Server Configuration
-
-### Environment Variables
-
-Set the following environment variables:
-
-```bash
-# Microsoft 365 Configuration
-M365_CLIENT_ID=your-application-client-id
-M365_CLIENT_SECRET=your-client-secret
-M365_TENANT_ID=your-tenant-id
-```
-
-### Server Configuration
-
-The M365 agents are automatically registered in the MCP orchestration system on the following ports:
-
-- **Port 3009**: Microsoft 365 Graph MCP (unified endpoint)
-- **Port 3010**: Microsoft Teams MCP
-- **Port 3011**: Microsoft Outlook MCP  
-- **Port 3012**: Microsoft SharePoint MCP
-- **Port 3013**: Microsoft OneDrive MCP
-
-### Example Usage
-
-#### Initialize M365 Graph Agent
+### Personal Microsoft Account
 
 ```typescript
 import { M365GraphAgent } from '@mcp/agents-m365-graph';
 
+// Simple one-liner for personal accounts
+const agent = await M365GraphAgent.createPersonalAccount();
+
+// Use immediately - authentication handled automatically
+const user = await agent.getCurrentUser();
+console.log(`Authenticated as: ${user.displayName}`);
+```
+
+### Business Account (.onmicrosoft.com or custom domain)
+
+```typescript
+import { M365GraphAgent } from '@mcp/agents-m365-graph';
+
+// For business accounts - specify your domain
+const agent = await M365GraphAgent.createBusinessAccount('yourcompany.onmicrosoft.com');
+
+// Or let it auto-detect business context
+const agent = await M365GraphAgent.createBusinessAccount();
+```
+
+## 🔐 Authentication Flow
+
+The authentication process is designed to be **user-friendly** and **VS Code-native**:
+
+1. **No Environment Variables** - No need to manage client secrets or tenant IDs
+2. **Device Code Flow** - Similar to `git` or `gh` CLI tools
+3. **Automatic Token Management** - Handles refresh automatically
+4. **Multiple Account Support** - Switch between personal and business accounts
+
+### First-Time Authentication
+
+When you first use any M365 agent:
+
+```bash
+🔐 Microsoft 365 authentication required...
+📱 This will open a device authentication flow (like GitHub Copilot)
+
+👉 Visit: https://microsoft.com/devicelogin
+🔑 Enter code: ABC-DEF-123
+⏱️  Code expires in 15 minutes
+
+✅ Successfully authenticated as John Doe (john@example.com)
+```
+
+### Subsequent Usage
+
+After initial authentication, tokens are managed automatically:
+
+```typescript
+// No authentication code needed - handled transparently
+const emails = await outlookAgent.getEmails();
+const meetings = await teamsAgent.getMeetings();
+```
+
+## 🏗️ Architecture Benefits
+
+### Simplified vs. Complex Approach
+
+**❌ Old Way (Complex Azure Setup):**
+```typescript
+const authConfig = {
+  clientId: 'complex-app-registration-id',
+  clientSecret: 'secret-you-must-manage',
+  tenantId: 'tenant-you-must-find',
+  scopes: ['list-of-permissions-you-must-configure']
+};
+
+const agent = new M365GraphAgent(authConfig);
+```
+
+**✅ New Way (VS Code Integrated):**
+```typescript
+// Personal account
+const agent = await M365GraphAgent.createPersonalAccount();
+
+// Business account  
+const agent = await M365GraphAgent.createBusinessAccount('yourcompany.com');
+```
+
+### Key Improvements
+
+1. **No Azure Portal Configuration** - Uses well-known public client applications
+2. **Automatic Scope Management** - Requests appropriate permissions based on usage
+3. **Unified Experience** - Same flow for personal and business accounts
+4. **VS Code Native** - Integrates with VS Code authentication providers
+5. **Secure by Design** - No secrets stored in code or environment
+
+## 🔧 Configuration Options
+
+### Account Types
+
+```typescript
+import { UnifiedAuthProvider, AccountType } from '@mcp/auth';
+
+// Personal Microsoft account
+const personalAuth = createMicrosoft365Auth('personal');
+
+// Business account with auto-detection
+const businessAuth = createMicrosoft365Auth('business');
+
+// Business account with specific domain
+const domainAuth = createMicrosoft365Auth('business', 'contoso.onmicrosoft.com');
+```
+
+### Google Workspace Integration
+
+The same pattern works for Google Workspace:
+
+```typescript
+import { createGoogleWorkspaceAuth } from '@mcp/auth';
+
+// Personal Google account
+const personalGoogle = createGoogleWorkspaceAuth('personal');
+
+// Google Workspace account
+const workspaceGoogle = createGoogleWorkspaceAuth('business', 'company.com');
+```
+
+## 📡 MCP Server Configuration
+
+The M365 agents integrate automatically with the MCP orchestration system:
+
+```typescript
+// Server configuration is unchanged
+const servers = [
+  { name: 'Microsoft 365 Graph MCP', type: 'm365-graph', port: 3009, enabled: true },
+  { name: 'Microsoft Teams MCP', type: 'm365-teams', port: 3010, enabled: true },
+  { name: 'Microsoft Outlook MCP', type: 'm365-outlook', port: 3011, enabled: true },
+];
+```
+
+**No environment variables required!** Authentication is handled through the device flow.
+
+## 🔄 Migration from Complex Setup
+
+If you're migrating from the previous Azure app registration setup:
+
+### Before (Complex)
+```bash
+# Environment variables you can remove
+M365_CLIENT_ID=your-application-client-id
+M365_CLIENT_SECRET=your-client-secret  
+M365_TENANT_ID=your-tenant-id
+```
+
+```typescript
 const authConfig = {
   clientId: process.env.M365_CLIENT_ID!,
   clientSecret: process.env.M365_CLIENT_SECRET!,
@@ -125,143 +177,113 @@ const graphAgent = new M365GraphAgent(authConfig);
 await graphAgent.initialize();
 ```
 
-#### Send Teams Message
+### After (Simple)
+```typescript
+// Remove environment variables entirely
+// Simple one-liner replacement
+const graphAgent = await M365GraphAgent.createBusinessAccount();
+```
 
+## 🛠️ Usage Examples
+
+### Send Teams Message
 ```typescript
 import { M365TeamsAgent } from '@mcp/agents-m365-teams';
 
-const teamsAgent = new M365TeamsAgent(authConfig);
-await teamsAgent.initialize();
+const teams = new M365TeamsAgent({ accountType: 'business' });
+await teams.initialize();
 
-// Send message to a channel
-await teamsAgent.sendChannelMessage(
+await teams.sendChannelMessage(
   'team-id',
   'channel-id', 
-  'Hello from MCP!',
+  'Hello from MCP! 🚀',
   'text'
 );
 ```
 
-#### Send Email
-
+### Send Email
 ```typescript
 import { M365OutlookAgent } from '@mcp/agents-m365-outlook';
 
-const outlookAgent = new M365OutlookAgent(authConfig);
-await outlookAgent.initialize();
+const outlook = new M365OutlookAgent({ accountType: 'personal' });
+await outlook.initialize();
 
-// Send email
-await outlookAgent.sendEmail(
+await outlook.sendEmail(
   ['recipient@example.com'],
   'Test Email',
-  'This is a test email from MCP Orchestration System',
+  'This email was sent through simplified MCP authentication!',
   'text'
 );
 ```
 
-## API Endpoints
+### Access OneDrive Files
+```typescript
+import { M365OneDriveAgent } from '@mcp/agents-m365-onedrive';
 
-### M365 Graph MCP Server (Port 3009)
+const oneDrive = new M365OneDriveAgent({ accountType: 'business' });
+await oneDrive.initialize();
 
-The unified M365 server provides access to all services:
+const files = await oneDrive.listFiles();
+console.log('Your files:', files);
+```
 
-#### Status and Health
-- `GET /api/status` - Get server and agent status
-- `GET /api/health` - Health check
-
-#### Teams Operations
-- `GET /api/teams/teams` - Get user's teams
-- `GET /api/teams/presence` - Get presence status
-- `GET /api/teams/meetings` - Get upcoming meetings
-- `POST /api/teams/message` - Send channel message
-- `POST /api/teams/meeting` - Create meeting
-
-#### Outlook Operations
-- `GET /api/outlook/emails` - Get emails
-- `GET /api/outlook/calendar` - Get calendar events
-- `GET /api/outlook/contacts` - Get contacts
-- `POST /api/outlook/send` - Send email
-- `POST /api/outlook/event` - Create calendar event
-
-#### SharePoint Operations
-- `GET /api/sharepoint/sites` - Get SharePoint sites
-
-#### OneDrive Operations
-- `GET /api/onedrive/files` - Get root files
-- `GET /api/onedrive/recent` - Get recent files
-
-#### Graph Operations
-- `GET /api/graph/me` - Get current user
-
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-#### Authentication Errors
+**Authentication Fails**
+```bash
+❌ Authentication cancelled by user
+```
+- Solution: Complete the device code flow in your browser
 
-1. **Invalid client secret**: Ensure the secret hasn't expired
-2. **Insufficient permissions**: Verify all required permissions are granted
-3. **Tenant ID mismatch**: Check the tenant ID is correct
+**Wrong Account Type**
+```bash
+❌ Access denied: User account not found
+```
+- Solution: Use `'business'` for work accounts, `'personal'` for Microsoft accounts
 
-#### API Permission Issues
+**Network Issues**
+```bash
+❌ Device code request failed
+```
+- Solution: Check internet connection and firewall settings
 
-1. **Access denied**: Ensure admin consent is granted
-2. **Scope errors**: Verify the application has the required permissions
+### Debug Mode
 
-#### Network Issues
-
-1. **Connection timeouts**: Check firewall and proxy settings
-2. **SSL errors**: Ensure proper certificate configuration
-
-### Logging
-
-Enable debug logging by setting the log level:
-
+Enable detailed logging:
 ```typescript
 import { logger } from '@mcp/shared';
 
 logger.setLevel('DEBUG');
+const agent = await M365GraphAgent.createPersonalAccount();
 ```
 
-### Support
+## 🎯 VS Code Extension (Coming Soon)
 
-For technical support:
-1. Check the application logs
-2. Verify Azure AD configuration
-3. Test with minimal permissions first
-4. Contact your Azure administrator if needed
+The authentication will be further enhanced with a VS Code extension that provides:
 
-## Security Considerations
+- **Native VS Code Authentication UI** - Like GitHub Copilot's sign-in experience
+- **Account Management** - Switch between multiple accounts easily  
+- **Status Bar Integration** - See authentication status at a glance
+- **Command Palette** - Sign in/out via VS Code commands
 
-1. **Secret Management**: Store client secrets securely, never in source code
-2. **Principle of Least Privilege**: Only grant necessary permissions
-3. **Regular Secret Rotation**: Update client secrets regularly
-4. **Audit Logs**: Monitor application usage in Azure AD
-5. **Network Security**: Use HTTPS for all communications
+## 🔒 Security & Privacy
 
-## Production Deployment
+- **No Secrets in Code** - Uses public client application flow
+- **Limited Scope Permissions** - Only requests permissions as needed
+- **Secure Token Storage** - Tokens stored securely by OS credential manager
+- **User Consent** - Clear permission prompts during authentication
+- **Easy Revocation** - Disconnect access through Microsoft/Google account settings
 
-### Recommendations
+## 🌟 Benefits Summary
 
-1. Use Azure Key Vault for secret storage
-2. Implement proper error handling and retry logic
-3. Set up monitoring and alerting
-4. Use separate Azure AD applications for different environments
-5. Implement rate limiting to respect Microsoft Graph throttling limits
+✅ **No Complex Azure Setup** - No app registrations or tenant configuration
+✅ **No Environment Variables** - No secrets to manage
+✅ **Works Like Copilot** - Familiar authentication experience
+✅ **Multi-Account Support** - Switch between personal and business accounts
+✅ **Automatic Token Management** - Handles refresh automatically
+✅ **Google Workspace Ready** - Same pattern for Google integration
+✅ **VS Code Native** - Designed for IDE integration
 
-### Performance Optimization
-
-1. Cache authentication tokens appropriately
-2. Use batch requests when possible
-3. Implement proper pagination for large result sets
-4. Monitor and respect rate limits
-
-## Compliance and Governance
-
-Ensure compliance with your organization's:
-- Data governance policies
-- Privacy requirements
-- Security standards
-- Regulatory requirements
-
-Review and update permissions regularly to maintain security posture.
+This simplified approach removes the complexity barriers while maintaining enterprise-grade security and functionality.

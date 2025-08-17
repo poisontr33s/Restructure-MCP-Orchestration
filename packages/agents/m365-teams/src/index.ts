@@ -1,9 +1,9 @@
 /**
- * Microsoft Teams Agent
- * Handles Teams messages, meetings, channels, and presence
+ * Microsoft Teams Agent - VS Code Integrated
+ * Teams messages, meetings, channels with simplified authentication
  */
 
-import { M365GraphAgent, type M365AuthConfig, type GraphApiResponse } from '@mcp/agents-m365-graph';
+import { M365GraphAgent, type M365Config, type GraphApiResponse } from '@mcp/agents-m365-graph';
 import { logger } from '@mcp/shared';
 
 /**
@@ -68,9 +68,9 @@ export interface TeamsMeeting {
 export class M365TeamsAgent {
   private graphAgent: M365GraphAgent;
 
-  constructor(authConfig: M365AuthConfig) {
-    this.graphAgent = new M365GraphAgent(authConfig);
-    logger.info('M365TeamsAgent initialized');
+  constructor(config: M365Config = {}) {
+    this.graphAgent = new M365GraphAgent(config);
+    logger.info('M365TeamsAgent initialized with VS Code-integrated authentication');
   }
 
   /**

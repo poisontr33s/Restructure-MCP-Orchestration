@@ -1,13 +1,13 @@
 /**
- * Microsoft 365 Graph MCP Server
- * Unified MCP server for all Microsoft 365 services integration
+ * Microsoft 365 Graph MCP Server - VS Code Integrated
+ * Unified MCP server for all Microsoft 365 services with simplified authentication
  */
 
 import { type IncomingMessage, type ServerResponse } from 'http';
 import { URL } from 'url';
 import BaseServer from '@mcp/server-base';
 import { type ServerConfig } from '@mcp/shared';
-import { M365GraphAgent, type M365AuthConfig } from '@mcp/agents-m365-graph';
+import { M365GraphAgent, type M365Config } from '@mcp/agents-m365-graph';
 import { M365TeamsAgent } from '@mcp/agents-m365-teams';
 import { M365OutlookAgent } from '@mcp/agents-m365-outlook';
 import { M365SharePointAgent } from '@mcp/agents-m365-sharepoint';
@@ -17,7 +17,7 @@ import { M365OneDriveAgent } from '@mcp/agents-m365-onedrive';
  * M365 Server Configuration extending base server config
  */
 export interface M365ServerConfig extends ServerConfig {
-  m365?: M365AuthConfig;
+  m365?: M365Config;
 }
 
 /**

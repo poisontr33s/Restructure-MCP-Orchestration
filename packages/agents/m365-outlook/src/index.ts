@@ -1,9 +1,9 @@
 /**
- * Microsoft Outlook Agent
- * Manages emails, calendar events, contacts with full CRUD operations
+ * Microsoft Outlook Agent - VS Code Integrated
+ * Email, calendar, contacts with simplified authentication
  */
 
-import { M365GraphAgent, type M365AuthConfig, type GraphApiResponse } from '@mcp/agents-m365-graph';
+import { M365GraphAgent, type M365Config, type GraphApiResponse } from '@mcp/agents-m365-graph';
 import { logger } from '@mcp/shared';
 
 /**
@@ -98,9 +98,9 @@ export interface Contact {
 export class M365OutlookAgent {
   private graphAgent: M365GraphAgent;
 
-  constructor(authConfig: M365AuthConfig) {
-    this.graphAgent = new M365GraphAgent(authConfig);
-    logger.info('M365OutlookAgent initialized');
+  constructor(config: M365Config = {}) {
+    this.graphAgent = new M365GraphAgent(config);
+    logger.info('M365OutlookAgent initialized with VS Code-integrated authentication');
   }
 
   /**

@@ -1,9 +1,9 @@
 /**
- * Microsoft SharePoint Agent
- * Access documents, lists, sites, and search functionality
+ * Microsoft SharePoint Agent - VS Code Integrated
+ * Access documents, lists, sites with simplified authentication
  */
 
-import { M365GraphAgent, type M365AuthConfig, type GraphApiResponse } from '@mcp/agents-m365-graph';
+import { M365GraphAgent, type M365Config, type GraphApiResponse } from '@mcp/agents-m365-graph';
 import { logger } from '@mcp/shared';
 
 /**
@@ -55,9 +55,9 @@ export interface SharePointDocument {
 export class M365SharePointAgent {
   private graphAgent: M365GraphAgent;
 
-  constructor(authConfig: M365AuthConfig) {
-    this.graphAgent = new M365GraphAgent(authConfig);
-    logger.info('M365SharePointAgent initialized');
+  constructor(config: M365Config = {}) {
+    this.graphAgent = new M365GraphAgent(config);
+    logger.info('M365SharePointAgent initialized with VS Code-integrated authentication');
   }
 
   /**

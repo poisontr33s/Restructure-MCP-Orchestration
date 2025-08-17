@@ -1,9 +1,9 @@
 /**
- * Microsoft OneDrive Agent
- * File operations including upload, download, folder management
+ * Microsoft OneDrive Agent - VS Code Integrated
+ * File operations with simplified authentication
  */
 
-import { M365GraphAgent, type M365AuthConfig, type GraphApiResponse } from '@mcp/agents-m365-graph';
+import { M365GraphAgent, type M365Config, type GraphApiResponse } from '@mcp/agents-m365-graph';
 import { logger } from '@mcp/shared';
 
 /**
@@ -38,9 +38,9 @@ export interface OneDriveItem {
 export class M365OneDriveAgent {
   private graphAgent: M365GraphAgent;
 
-  constructor(authConfig: M365AuthConfig) {
-    this.graphAgent = new M365GraphAgent(authConfig);
-    logger.info('M365OneDriveAgent initialized');
+  constructor(config: M365Config = {}) {
+    this.graphAgent = new M365GraphAgent(config);
+    logger.info('M365OneDriveAgent initialized with VS Code-integrated authentication');
   }
 
   /**

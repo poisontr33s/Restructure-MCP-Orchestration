@@ -1,19 +1,19 @@
 /**
- * Microsoft 365 Graph API Agent
- * Core authentication and Graph API operations
+ * Microsoft 365 Graph API Agent - VS Code Integrated
+ * Simplified authentication using unified auth provider
  */
 
 import fetch from 'node-fetch';
 import { logger } from '@mcp/shared';
+import { UnifiedAuthProvider, createMicrosoft365Auth } from '@mcp/auth';
+import type { AccountType, AuthResult } from '@mcp/auth';
 
 /**
- * M365 Authentication Configuration
+ * Simple M365 Configuration for VS Code Integration
  */
-export interface M365AuthConfig {
-  clientId: string;
-  clientSecret: string;
-  tenantId: string;
-  scopes?: string[];
+export interface M365Config {
+  accountType?: AccountType;
+  domain?: string; // For business accounts (.onmicrosoft.com domain)
 }
 
 /**
@@ -31,101 +31,63 @@ export interface GraphApiResponse<T = unknown> {
 }
 
 /**
- * Microsoft 365 Graph API Agent
- * Provides core authentication and API access for all M365 services
+ * Microsoft 365 Graph API Agent - VS Code Integrated
+ * Provides simple authentication similar to GitHub Copilot
  */
 export class M365GraphAgent {
-  private accessToken: string | null = null;
-  private tokenExpiry: Date | null = null;
+  private authProvider: UnifiedAuthProvider;
   private readonly baseUrl = 'https://graph.microsoft.com/v1.0';
-  private readonly authUrl = 'https://login.microsoftonline.com';
 
-  constructor(private config: M365AuthConfig) {
-    logger.info('M365GraphAgent initialized');
+  constructor(config: M365Config = {}) {
+    this.authProvider = createMicrosoft365Auth(
+      config.accountType || 'personal',
+      config.domain
+    );
+    
+    logger.info('M365GraphAgent initialized with VS Code-integrated authentication');
   }
 
   /**
-   * Initialize the agent and authenticate
+   * Initialize the agent with user-friendly authentication
+   * Similar to how GitHub Copilot works in VS Code
    */
   public async initialize(): Promise<void> {
     try {
-      await this.authenticate();
-      logger.info('M365GraphAgent authenticated successfully');
-    } catch (error) {
-      logger.error(`M365GraphAgent initialization failed: ${error instanceof Error ? error.message : String(error)}`);
-      throw error;
-    }
-  }
-
-  /**
-   * Authenticate with Microsoft Graph API using client credentials flow
-   */
-  private async authenticate(): Promise<void> {
-    const tokenUrl = `${this.authUrl}/${this.config.tenantId}/oauth2/v2.0/token`;
-    
-    const params = new URLSearchParams({
-      client_id: this.config.clientId,
-      client_secret: this.config.clientSecret,
-      scope: this.config.scopes?.join(' ') || 'https://graph.microsoft.com/.default',
-      grant_type: 'client_credentials'
-    });
-
-    try {
-      const response = await fetch(tokenUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: params.toString()
-      });
-
-      if (!response.ok) {
-        throw new Error(`Authentication failed: ${response.statusText}`);
+      if (!this.authProvider.isAuthenticated()) {
+        logger.info('🔐 Microsoft 365 authentication required...');
+        logger.info('📱 This will open a device authentication flow (like GitHub Copilot)');
+        
+        await this.authProvider.authenticate();
+        
+        const authInfo = this.authProvider.getCurrentAuth();
+        logger.info(`✅ Successfully authenticated as ${authInfo?.displayName} (${authInfo?.email})`);
+      } else {
+        const authInfo = this.authProvider.getCurrentAuth();
+        logger.info(`✅ Already authenticated as ${authInfo?.displayName}`);
       }
-
-      const data = await response.json() as {
-        access_token: string;
-        expires_in: number;
-        token_type: string;
-      };
-
-      this.accessToken = data.access_token;
-      this.tokenExpiry = new Date(Date.now() + (data.expires_in * 1000));
-      
-      logger.info('M365 authentication successful');
     } catch (error) {
-      logger.error(`M365 authentication error: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(`❌ M365GraphAgent authentication failed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
 
   /**
-   * Check if token needs renewal and refresh if necessary
-   */
-  private async ensureValidToken(): Promise<void> {
-    if (!this.accessToken || !this.tokenExpiry || this.tokenExpiry < new Date()) {
-      await this.authenticate();
-    }
-  }
-
-  /**
-   * Make a request to Microsoft Graph API
+   * Make a request to Microsoft Graph API with automatic token management
    */
   public async makeRequest<T>(
     endpoint: string, 
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' = 'GET',
     body?: unknown
   ): Promise<GraphApiResponse<T>> {
-    await this.ensureValidToken();
-
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-    
-    const headers: Record<string, string> = {
-      'Authorization': `Bearer ${this.accessToken}`,
-      'Content-Type': 'application/json'
-    };
-
     try {
+      const accessToken = await this.authProvider.getAccessToken();
+      const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+      
+      const headers: Record<string, string> = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      };
+
       const response = await fetch(url, {
         method,
         headers,
@@ -170,7 +132,43 @@ export class M365GraphAgent {
    * Get authentication status
    */
   public isAuthenticated(): boolean {
-    return this.accessToken !== null && this.tokenExpiry !== null && this.tokenExpiry > new Date();
+    return this.authProvider.isAuthenticated();
+  }
+
+  /**
+   * Get current authentication info
+   */
+  public getAuthInfo(): AuthResult | undefined {
+    return this.authProvider.getCurrentAuth();
+  }
+
+  /**
+   * Sign out (useful for switching accounts)
+   */
+  public async signOut(): Promise<void> {
+    await this.authProvider.signOut();
+    logger.info('🔓 Signed out from Microsoft 365');
+  }
+
+  /**
+   * Quick setup helper for personal accounts
+   */
+  public static async createPersonalAccount(): Promise<M365GraphAgent> {
+    const agent = new M365GraphAgent({ accountType: 'personal' });
+    await agent.initialize();
+    return agent;
+  }
+
+  /**
+   * Quick setup helper for business accounts
+   */
+  public static async createBusinessAccount(domain?: string): Promise<M365GraphAgent> {
+    const agent = new M365GraphAgent({ 
+      accountType: 'business',
+      domain 
+    });
+    await agent.initialize();
+    return agent;
   }
 }
 

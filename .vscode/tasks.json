@@ -4,7 +4,10 @@
     {
       "label": "Build MCP System",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm build",
+      "command": "pnpm build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": ["$tsc"],
       "group": {
         "kind": "build",
@@ -14,7 +17,10 @@
     {
       "label": "Start MCP System",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm start",
+      "command": "pnpm start",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
       "isBackground": true,
       "presentation": {
@@ -26,7 +32,10 @@
     {
       "label": "Dev MCP System",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm start:dev",
+      "command": "pnpm start:dev",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
       "isBackground": true,
       "presentation": {
@@ -35,9 +44,40 @@
       }
     },
     {
+      "label": "Microsoft 365 - Personal Account",
+      "type": "shell",
+      "command": "node -e \"const { M365GraphAgent } = require('./packages/agents/m365-graph/dist/index.js'); M365GraphAgent.createPersonalAccount().then(agent => console.log('✅ Personal account authenticated:', agent.getAuthInfo()?.displayName));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
+      "label": "Microsoft 365 - Business Account",
+      "type": "shell",
+      "command": "node -e \"const { M365GraphAgent } = require('./packages/agents/m365-graph/dist/index.js'); M365GraphAgent.createBusinessAccount().then(agent => console.log('✅ Business account authenticated:', agent.getAuthInfo()?.displayName));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
       "label": "Check MCP Status",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm exec mcp status",
+      "command": "pnpm exec mcp status",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": []
     }
   ]

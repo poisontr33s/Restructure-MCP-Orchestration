@@ -12,6 +12,11 @@ export const ServerType = z.enum([
   'knowledge-graph-memory',
   'compass',
   'playwright',
+  'm365-graph',
+  'm365-teams',
+  'm365-outlook',
+  'm365-sharepoint',
+  'm365-onedrive',
 ]);
 
 export type ServerType = z.infer<typeof ServerType>;

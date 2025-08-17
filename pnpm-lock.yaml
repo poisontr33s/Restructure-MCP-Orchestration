@@ -45,6 +45,71 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.1.0)
 
+  packages/agents/m365-graph:
+    dependencies:
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
+  packages/agents/m365-onedrive:
+    dependencies:
+      '@mcp/agents-m365-graph':
+        specifier: workspace:*
+        version: link:../m365-graph
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
+  packages/agents/m365-outlook:
+    dependencies:
+      '@mcp/agents-m365-graph':
+        specifier: workspace:*
+        version: link:../m365-graph
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
+  packages/agents/m365-sharepoint:
+    dependencies:
+      '@mcp/agents-m365-graph':
+        specifier: workspace:*
+        version: link:../m365-graph
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
+  packages/agents/m365-teams:
+    dependencies:
+      '@mcp/agents-m365-graph':
+        specifier: workspace:*
+        version: link:../m365-graph
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
   packages/cli:
     dependencies:
       '@mcp/core':
@@ -167,6 +232,34 @@ importers:
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
+
+  packages/servers/m365-graph:
+    dependencies:
+      '@mcp/agents-m365-graph':
+        specifier: workspace:*
+        version: link:../../agents/m365-graph
+      '@mcp/agents-m365-onedrive':
+        specifier: workspace:*
+        version: link:../../agents/m365-onedrive
+      '@mcp/agents-m365-outlook':
+        specifier: workspace:*
+        version: link:../../agents/m365-outlook
+      '@mcp/agents-m365-sharepoint':
+        specifier: workspace:*
+        version: link:../../agents/m365-sharepoint
+      '@mcp/agents-m365-teams':
+        specifier: workspace:*
+        version: link:../../agents/m365-teams
+      '@mcp/server-base':
+        specifier: workspace:*
+        version: link:../base
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
 
   packages/servers/sequential-thinking:
     dependencies:

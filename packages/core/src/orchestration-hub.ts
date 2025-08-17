@@ -303,6 +303,8 @@ export class OrchestrationHub {
         });
         return;
       } catch (error) {
+        // Intentionally ignore error and retry
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -327,6 +329,7 @@ export class OrchestrationHub {
         serverInfo.status = 'running';
       } catch (error) {
         // Set server as 'not responding' if it was previously running
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (serverInfo.status === 'running') {
           logger.warn(`Server ${serverType} is not responding`);
           serverInfo.status = 'not responding';
@@ -366,6 +369,7 @@ export class OrchestrationHub {
             const response = JSON.parse(data);
             resolve(response);
           } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             reject(new Error('Invalid response from server'));
           }
         });

@@ -72,6 +72,34 @@
       "dependsOn": ["Build MCP System"]
     },
     {
+      "label": "Google Workspace - Personal Account",
+      "type": "shell",
+      "command": "node -e \"const { GoogleWorkspaceAgent } = require('./packages/agents/google-workspace/dist/index.js'); GoogleWorkspaceAgent.createPersonalAccount().then(agent => console.log('✅ Google personal account authenticated:', agent.getAuthInfo()?.displayName));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
+      "label": "Google Workspace - Business Account",
+      "type": "shell",
+      "command": "node -e \"const { GoogleWorkspaceAgent } = require('./packages/agents/google-workspace/dist/index.js'); GoogleWorkspaceAgent.createWorkspaceAccount().then(agent => console.log('✅ Google Workspace authenticated:', agent.getAuthInfo()?.displayName));\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build MCP System"]
+    },
+    {
       "label": "Check MCP Status",
       "type": "shell",
       "command": "pnpm exec mcp status",

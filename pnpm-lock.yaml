@@ -45,6 +45,22 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.1.0)
 
+  packages/agents/google-workspace:
+    dependencies:
+      '@mcp/auth':
+        specifier: workspace:*
+        version: link:../../auth
+      '@mcp/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      googleapis:
+        specifier: ^156.0.0
+        version: 156.0.0
+    devDependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
+
   packages/agents/m365-graph:
     dependencies:
       '@mcp/auth':

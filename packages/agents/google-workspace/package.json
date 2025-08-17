@@ -1,0 +1,32 @@
+{
+  "name": "@mcp/agents-google-workspace",
+  "version": "1.0.0",
+  "description": "Google Workspace integration agent for MCP with VS Code authentication",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@mcp/auth": "workspace:*",
+    "googleapis": "^156.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0"
+  },
+  "keywords": [
+    "google-workspace",
+    "gmail",
+    "google-drive",
+    "google-calendar",
+    "mcp",
+    "agent",
+    "vscode"
+  ],
+  "author": "",
+  "license": "MIT"
+}

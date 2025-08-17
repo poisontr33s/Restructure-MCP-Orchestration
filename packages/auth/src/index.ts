@@ -48,7 +48,7 @@ export interface AuthResult {
  */
 export class UnifiedAuthProvider {
   private microsoftApp?: PublicClientApplication;
-  private googleOAuth2Client?: any;
+  private googleOAuth2Client?: unknown; // TODO: Replace with proper Google Auth types
   private currentAuth?: AuthResult;
 
   constructor(private config: AuthConfig) {
@@ -156,10 +156,10 @@ export class UnifiedAuthProvider {
       deviceCodeCallback: (response) => {
         // Display device code to user (in VS Code, this would be a notification)
         logger.info(`Please visit ${response.verificationUri} and enter code: ${response.userCode}`);
-        console.log(`\n🔐 Authentication Required`);
-        console.log(`👉 Visit: ${response.verificationUri}`);
-        console.log(`🔑 Enter code: ${response.userCode}`);
-        console.log(`⏱️  Code expires in ${Math.round(response.expiresIn / 60)} minutes\n`);
+        logger.info(`🔐 Authentication Required`);
+        logger.info(`👉 Visit: ${response.verificationUri}`);
+        logger.info(`🔑 Enter code: ${response.userCode}`);
+        logger.info(`⏱️  Code expires in ${Math.round(response.expiresIn / 60)} minutes`);
       }
     };
 
@@ -183,18 +183,15 @@ export class UnifiedAuthProvider {
     const scopes = this.getGoogleScopes();
     
     // Generate device code
-    const deviceCodeResponse = await this.googleOAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: scopes,
-      prompt: 'consent'
-    });
+    // Placeholder implementation - in real implementation this would use Google's OAuth2 client
+    const deviceCodeResponse = 'https://accounts.google.com/oauth/device';
 
     // In a real implementation, this would use Google's device flow
     // For now, we'll simulate the process
     logger.info(`Please visit: ${deviceCodeResponse}`);
-    console.log(`\n🔐 Google Authentication Required`);
-    console.log(`👉 Visit: ${deviceCodeResponse}`);
-    console.log(`⏱️  Complete authentication in your browser\n`);
+    logger.info(`🔐 Google Authentication Required`);
+    logger.info(`👉 Visit: ${deviceCodeResponse}`);
+    logger.info(`⏱️  Complete authentication in your browser`);
 
     // This would be replaced with actual device flow implementation
     throw new Error('Google device flow implementation pending');

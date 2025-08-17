@@ -19,7 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [root, core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph, agents/m365-graph, agents/m365-teams, agents/m365-outlook, agents/m365-sharepoint, agents/m365-onedrive]
+        package: [
+          root, auth, core, cli, monitor, shared,
+          agents/google-workspace, agents/m365-graph, agents/m365-onedrive, agents/m365-outlook, agents/m365-sharepoint, agents/m365-teams,
+          servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph
+        ]
     
     steps:
       - name: Checkout repository

@@ -17,7 +17,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+        package: [
+          auth, core, cli, monitor, shared,
+          agents/google-workspace, agents/m365-graph, agents/m365-onedrive, agents/m365-outlook, agents/m365-sharepoint, agents/m365-teams,
+          servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph
+        ]
     
     steps:
       - name: Checkout repository
@@ -27,10 +31,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         
       - name: Build package
         run: pnpm run build
@@ -55,7 +64,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+        package: [
+          auth, core, cli, monitor, shared,
+          agents/google-workspace, agents/m365-graph, agents/m365-onedrive, agents/m365-outlook, agents/m365-sharepoint, agents/m365-teams,
+          servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph
+        ]
         
     steps:
       - name: Checkout repository
@@ -142,6 +155,12 @@ jobs:
       # ARTIFACT V4 COMPATIBILITY NOTE: 
       # Downloading multiple artifacts - each must be downloaded separately by name
       # v4 does not support pattern matching for artifact names
+      - name: Download auth build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-auth-${{ github.sha }}
+          path: dist/auth/
+          
       - name: Download core build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -166,6 +185,44 @@ jobs:
           name: build-artifacts-shared-${{ github.sha }}
           path: dist/shared/
           
+      # Agent packages
+      - name: Download agents/google-workspace build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/google-workspace-${{ github.sha }}
+          path: dist/agents/google-workspace/
+          
+      - name: Download agents/m365-graph build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/m365-graph-${{ github.sha }}
+          path: dist/agents/m365-graph/
+          
+      - name: Download agents/m365-onedrive build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/m365-onedrive-${{ github.sha }}
+          path: dist/agents/m365-onedrive/
+          
+      - name: Download agents/m365-outlook build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/m365-outlook-${{ github.sha }}
+          path: dist/agents/m365-outlook/
+          
+      - name: Download agents/m365-sharepoint build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/m365-sharepoint-${{ github.sha }}
+          path: dist/agents/m365-sharepoint/
+          
+      - name: Download agents/m365-teams build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-agents/m365-teams-${{ github.sha }}
+          path: dist/agents/m365-teams/
+          
+      # Server packages
       - name: Download servers/base build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -183,6 +240,12 @@ jobs:
         with:
           name: build-artifacts-servers/sequential-thinking-${{ github.sha }}
           path: dist/servers/sequential-thinking/
+          
+      - name: Download servers/m365-graph build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-servers/m365-graph-${{ github.sha }}
+          path: dist/servers/m365-graph/
           
       - name: Create distribution package
         run: |

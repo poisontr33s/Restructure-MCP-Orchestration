@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Session Log Entry",
+  "type": "object",
+  "required": ["timestamp", "topic", "summary", "actor"],
+  "properties": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "topic": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "actor": { "type": "string", "minLength": 1 },
+    "details": {},
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "level": { "type": "string", "enum": ["info", "warn", "error"] },
+    "source": { "type": "string" }
+  },
+  "additionalProperties": true
+}

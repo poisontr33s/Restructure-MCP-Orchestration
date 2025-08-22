@@ -25,7 +25,13 @@ function Invoke-CommandSafe {
 
 $claude = [ordered]@{ available = Test-Command 'claude'; check = $null }
 if ($claude.available) {
-  $claude.check = Invoke-CommandSafe -Exe 'claude' -Arguments @('doctor')
+  # Use non-interactive checks to avoid Ink raw mode issues in CI/terminal
+  $ver = Invoke-CommandSafe -Exe 'claude' -Arguments @('--version')
+  if (-not $ver.ok) {
+    # fallback to a simple config list which is also non-interactive
+    $ver = Invoke-CommandSafe -Exe 'claude' -Arguments @('config','list')
+  }
+  $claude.check = $ver
 } else {
   $claude.check = [ordered]@{ ok = $false; exitCode = $null; output = $null; error = 'claude command not found' }
 }
@@ -46,7 +52,7 @@ $summary = 'Providers verification: ' + (
 
 # Emit to console
 Write-Host $summary
-if ($claude.available) { Write-Host "Claude doctor exit=$($claude.check.exitCode)"; if ($claude.check.output) { Write-Host ($claude.check.output) } }
+if ($claude.available) { Write-Host "Claude check exit=$($claude.check.exitCode)"; if ($claude.check.output) { Write-Host ($claude.check.output) } }
 if ($gemini.available) { Write-Host "Gemini version exit=$($gemini.check.exitCode)"; if ($gemini.check.output) { Write-Host ($gemini.check.output) } }
 
 # Append to session log

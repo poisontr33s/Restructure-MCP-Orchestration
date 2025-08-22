@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(powershell:*)",
+      "Bash(claude --version)",
+      "Bash(claude doctor)",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm build:*)",
+      "Bash(gemini:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm update:*)",
+      "Bash(pwsh:*)",
+      "Bash(find:*)",
+      "Bash(pnpm run:*)",
+      "Bash(true)",
+      "Bash(pnpm add:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(claude --resume)",
+      "Bash(claude --continue)",
+      "WebSearch",
+      "Bash(where claude)",
+      "Bash(dir:*)"
+    ],
+    "deny": []
+  }
+}

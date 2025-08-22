@@ -1,0 +1,98 @@
+{
+  "name": "gemini-ide-helper",
+  "displayName": "Gemini IDE Helper (workspace-local)",
+  "version": "0.0.1",
+  "private": true,
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "geminiCli.chatView",
+          "name": "Gemini CLI",
+          "icon": "resources/gemini.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "geminiIde.start",
+        "title": "Gemini: Start IDE Mode"
+      },
+      {
+        "command": "geminiIde.restart",
+        "title": "Gemini: Restart IDE Mode"
+      },
+      {
+        "command": "geminiIde.kill",
+        "title": "Gemini: Kill Gemini Process(es)"
+      },
+      { "command": "geminiIde.status", "title": "Gemini: Status" },
+      { "command": "geminiCli.openView", "title": "Gemini: Open Sidebar" },
+      { "command": "geminiCli.askSelection", "title": "Gemini: Ask About Selection/File" },
+      { "command": "geminiCli.askFile", "title": "Gemini: Ask About Active File" },
+      { "command": "geminiCli.applyLastCodeblock", "title": "Gemini: Apply Last Code Block" }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "geminiCli.openView",
+          "when": "view == geminiCli.chatView",
+          "group": "navigation@0"
+        }
+      ],
+      "editor/context": [
+        { "command": "geminiCli.askSelection", "group": "navigation@9" },
+        { "command": "geminiCli.applyLastCodeblock", "group": "navigation@10" }
+      ],
+      "editor/title": [
+        { "command": "geminiCli.askFile", "group": "navigation@9" }
+      ]
+    },
+    "configuration": {
+      "title": "Gemini IDE Helper",
+      "properties": {
+        "geminiIde.includeDirectories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["packages", "scripts", "docs", ".vscode"],
+          "description": "Directories to pass to gemini --ide-mode-feature --include-directories"
+        },
+        "geminiIde.autoStartOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically start Gemini IDE Mode when the workspace opens"
+        },
+        "geminiIde.envPathPrefix": {
+          "type": "string",
+          "default": "C:/Users/erdno/.local/bin",
+          "description": "Optional PATH prefix to locate the gemini binary on Windows"
+        },
+        "geminiIde.statusRefreshMs": {
+          "type": "number",
+          "default": 15000,
+          "minimum": 1000,
+          "description": "How often to refresh Gemini status (ms)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js",
+    "watch": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.23.1",
+    "typescript": "^5.8.3"
+  }
+}

@@ -7,6 +7,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 $logFile = "docs/session-log/session.jsonl"
+# Ensure directory exists
+$logDir = Split-Path -Parent $logFile
+if (-not (Test-Path $logDir)) {
+  New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+}
 $ts = (Get-Date).ToString("o")
 
 # try to collect minimal env
@@ -28,5 +33,31 @@ $entry = [ordered]@{
 }
 
 $line = ($entry | ConvertTo-Json -Depth 6 -Compress)
-Add-Content -Path $logFile -Value $line
-Write-Host "Appended session log entry -> $logFile"
+$last = $null
+if (Test-Path $logFile) {
+  try { $last = Get-Content -Path $logFile -Tail 1 -ErrorAction Stop } catch { $last = $null }
+}
+if ($last) {
+  try {
+    $lastObj = $last | ConvertFrom-Json -ErrorAction Stop
+    $same = $false
+    if ($lastObj) {
+      $lastTopic = $lastObj.topic
+      $lastSummary = $lastObj.summary
+      $lastDetails = $lastObj.details.free
+      if (($lastTopic -eq $entry.topic) -and ($lastSummary -eq $entry.summary) -and ($lastDetails -eq $entry.details.free)) { $same = $true }
+    }
+    if ($same) {
+      Write-Host "Skipped duplicate session log entry (same as last)"
+    } else {
+      Add-Content -Path $logFile -Value $line
+      Write-Host "Appended session log entry -> $logFile"
+    }
+  } catch {
+    Add-Content -Path $logFile -Value $line
+    Write-Host "Appended session log entry -> $logFile"
+  }
+} else {
+  Add-Content -Path $logFile -Value $line
+  Write-Host "Appended session log entry -> $logFile"
+}

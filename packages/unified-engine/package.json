@@ -1,0 +1,17 @@
+{
+  "name": "@mcp/unified-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unified, hardware-aware AI engine with pluggable backends (remote and local)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --format esm --dts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "vitest run"
+  },
+  "keywords": ["ai", "router", "engine", "hardware", "cuda", "vulkan", "directml", "onnx", "llama"],
+  "author": "",
+  "license": "MIT"
+}

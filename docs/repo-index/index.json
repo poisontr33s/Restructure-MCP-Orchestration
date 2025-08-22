@@ -1,11 +1,13 @@
 {
-  "generatedAt": "2025-08-10T15:04:34.200Z",
+  "generatedAt": "2025-08-13T02:18:05.011Z",
   "packages": [
     {
       "name": "mcp-orchestration-system",
       "version": "1.0.0",
       "private": true,
       "scripts": {
+        "build:gemini-cli-ext": "pnpm --dir ./.vscode/extensions/gemini-ide-helper run build",
+        "watch:gemini-cli-ext": "pnpm --dir ./.vscode/extensions/gemini-ide-helper run watch",
         "dev": "turbo run dev --parallel",
         "build": "turbo run build",
         "test": "turbo run test",
@@ -17,6 +19,26 @@
         "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
       },
       "dir": ""
+    },
+    {
+      "name": "gemini-ide-helper",
+      "version": "0.0.1",
+      "private": true,
+      "scripts": {
+        "build": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js",
+        "watch": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js --watch"
+      },
+      "dir": ".vscode\\extensions\\gemini-ide-helper"
+    },
+    {
+      "name": "problems-logger",
+      "version": "0.0.1",
+      "private": true,
+      "scripts": {
+        "build": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js",
+        "watch": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js --watch"
+      },
+      "dir": ".vscode\\extensions\\problems-logger"
     },
     {
       "name": "@mcp/cli",
@@ -134,8 +156,8 @@
     }
   ],
   "sessionLog": {
-    "entries": 0,
-    "lastTs": null
+    "entries": 3,
+    "lastTs": "2025-08-12T19:20:53.3129828+02:00"
   },
   "codebase": {
     "map": "docs/codebase/codebase.json",

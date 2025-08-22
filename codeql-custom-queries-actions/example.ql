@@ -6,7 +6,7 @@
  * @id actions/example/hello-world
  */
 
-import actions
+import github.actions
 
-from File f
-select f, "Hello, world!"
+from Workflow wf
+select wf, "Hello, world!"

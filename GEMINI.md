@@ -71,6 +71,8 @@ These be the rites every soul aboard must know.
 ### Voyage: Managing the Cargo
 
 - **To bring aboard shared grog (devDependency):** I'll run `pnpm add -D <package-name>` at the root.
-- **To provision a specific cabin (package dependency):** I'll run `pnpm add <dependency-name> --filter @mcp/<package-name>`.
+- **To provision a specific cabin (package dependency):** I'll run `pnpm add <dependency-name> --filter ./packages/<package-folder>`.
+
+Note: Using a literal placeholder like `@mcp/<package-name>` here can confuse some tools that scan docs for imports. Prefer filtering by package folder path (as above) or use a concrete package name when needed (e.g., `--filter @mcp/server-duckduckgo`).
 
 ---

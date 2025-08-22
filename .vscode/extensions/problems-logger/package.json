@@ -1,0 +1,62 @@
+{
+  "name": "problems-logger",
+  "displayName": "Problems Logger (workspace-local)",
+  "version": "0.0.1",
+  "private": true,
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "problemsLogger.dump",
+        "title": "Problems: Dump to Log File"
+      },
+      {
+        "command": "problemsLogger.dumpIfChanged",
+        "title": "Problems: Dump If Changed"
+      }
+    ],
+    "configuration": {
+      "title": "Problems Logger",
+      "properties": {
+        "problemsLogger.autoDumpOnChange": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically dump problems to a log file whenever diagnostics change"
+        },
+        "problemsLogger.autoDumpCooldownMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 0,
+          "description": "Debounce/cooldown in milliseconds before auto-dumping after diagnostics change"
+        },
+        "problemsLogger.changeDetectionEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, compute a signature of current problems and only dump when it changes"
+        },
+        "problemsLogger.autoDumpFullSnapshot": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, dump terminals/tasks/editors alongside problems when changes are detected"
+        }
+      }
+    }
+  },
+  "main": "./out/extension.js",
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js",
+    "watch": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "@types/vscode": "^1.102.0",
+    "esbuild": "^0.23.1",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,307 @@
+{
+  "meta": {
+    "when": "2025-08-14T12:44:49.114Z"
+  },
+  "counts": {
+    "files": 180,
+    "duplicates": 2,
+    "mdDuplicates": 0
+  },
+  "duplicates": [
+    {
+      "hash": "7ad96e1b2bf0b7c317cc1f5f6f887ca9df0c8dd9",
+      "files": [
+        "packages/shared/tsconfig.json",
+        "packages/cli/tsconfig.json",
+        "packages/core/tsconfig.json"
+      ]
+    },
+    {
+      "hash": "42d92ad456b387ae42edfb4c66eb2cd18b9c9b08",
+      "files": [
+        "packages/servers/sequential-thinking/tsconfig.json",
+        "packages/servers/duckduckgo/tsconfig.json",
+        "packages/servers/base/tsconfig.json"
+      ]
+    }
+  ],
+  "mdDuplicates": [],
+  "rogueLockfiles": [],
+  "nestedNodeModulesRoots": [
+    "packages\\core\\node_modules\\zod",
+    "packages\\core\\node_modules\\winston",
+    "packages\\core\\node_modules\\node-fetch",
+    "packages\\core\\node_modules\\express-rate-limit",
+    "packages\\core\\node_modules\\express",
+    "packages\\shared\\node_modules\\zod",
+    "packages\\cli\\node_modules\\ora",
+    "packages\\cli\\node_modules\\inquirer",
+    "packages\\cli\\node_modules\\commander",
+    "packages\\cli\\node_modules\\chalk",
+    "packages\\monitor\\node_modules\\zustand",
+    "packages\\monitor\\node_modules\\vite",
+    "packages\\monitor\\node_modules\\tailwindcss-animate",
+    "packages\\monitor\\node_modules\\tailwindcss",
+    "packages\\monitor\\node_modules\\tailwind-merge",
+    "packages\\monitor\\node_modules\\react-dom",
+    "packages\\monitor\\node_modules\\react",
+    "packages\\monitor\\node_modules\\postcss",
+    "packages\\monitor\\node_modules\\lucide-react",
+    "packages\\monitor\\node_modules\\clsx",
+    "packages\\monitor\\node_modules\\autoprefixer",
+    "packages\\servers\\duckduckgo\\node_modules\\node-fetch",
+    "packages\\core\\node_modules\\@types\\express",
+    "packages\\core\\node_modules\\@mcp\\shared",
+    "packages\\cli\\node_modules\\@types\\inquirer",
+    "packages\\cli\\node_modules\\@mcp\\shared",
+    "packages\\cli\\node_modules\\@mcp\\core",
+    "packages\\monitor\\node_modules\\@vitejs\\plugin-react-swc",
+    "packages\\monitor\\node_modules\\@tanstack\\react-query",
+    "packages\\monitor\\node_modules\\@types\\react-dom",
+    "packages\\monitor\\node_modules\\@types\\react",
+    "packages\\monitor\\node_modules\\@tailwindcss\\postcss",
+    "packages\\monitor\\node_modules\\@mcp\\shared",
+    "packages\\servers\\sequential-thinking\\node_modules\\@mcp\\shared",
+    "packages\\servers\\sequential-thinking\\node_modules\\@mcp\\server-base",
+    "packages\\servers\\base\\node_modules\\@mcp\\shared",
+    "packages\\servers\\duckduckgo\\node_modules\\@mcp\\shared",
+    "packages\\servers\\duckduckgo\\node_modules\\@mcp\\server-base",
+    "packages\\servers\\kraken\\node_modules\\@mcp\\shared"
+  ],
+  "largeFiles": [],
+  "distDirs": [],
+  "packages": [
+    {
+      "package": "@mcp/unified-engine",
+      "dir": "packages/unified-engine",
+      "devDepDuplicatesWithRoot": [],
+      "unusedDeclared": [],
+      "missingDeclared": [
+        "child_process"
+      ]
+    },
+    {
+      "package": "@mcp/shared",
+      "dir": "packages/shared",
+      "devDepDuplicatesWithRoot": [],
+      "unusedDeclared": [],
+      "missingDeclared": []
+    },
+    {
+      "package": "@mcp/monitor",
+      "dir": "packages/monitor",
+      "devDepDuplicatesWithRoot": [],
+      "unusedDeclared": [
+        "@mcp/shared",
+        "@tanstack/react-query",
+        "zustand",
+        "@tailwindcss/postcss",
+        "@vitejs/plugin-react-swc",
+        "postcss"
+      ],
+      "missingDeclared": [
+        "@vitejs",
+        "@tailwindcss",
+        "@tanstack",
+        "@mcp"
+      ]
+    },
+    {
+      "package": "@mcp/core",
+      "dir": "packages/core",
+      "devDepDuplicatesWithRoot": [],
+      "unusedDeclared": [
+        "@mcp/shared",
+        "node-fetch",
+        "zod"
+      ],
+      "missingDeclared": [
+        "@mcp",
+        "child_process",
+        "path",
+        "http",
+        "fs",
+        "os"
+      ]
+    },
+    {
+      "package": "@mcp/cli",
+      "dir": "packages/cli",
+      "devDepDuplicatesWithRoot": [],
+      "unusedDeclared": [
+        "@mcp/core",
+        "@mcp/shared"
+      ],
+      "missingDeclared": [
+        "@mcp"
+      ]
+    }
+  ],
+  "sizeCensus": {
+    "folderSizes": [
+      {
+        "folder": "docs",
+        "size": 62288215
+      },
+      {
+        "folder": "scripts",
+        "size": 465947
+      },
+      {
+        "folder": "packages",
+        "size": 396486
+      },
+      {
+        "folder": "packages/monitor",
+        "size": 261780
+      },
+      {
+        "folder": "pnpm-lock.yaml",
+        "size": 155645
+      },
+      {
+        "folder": "packages/core",
+        "size": 51184
+      },
+      {
+        "folder": "packages/servers",
+        "size": 40274
+      },
+      {
+        "folder": "sessions",
+        "size": 23772
+      },
+      {
+        "folder": "agent",
+        "size": 22741
+      },
+      {
+        "folder": "packages/cli",
+        "size": 18233
+      },
+      {
+        "folder": "preload-sessions",
+        "size": 16351
+      },
+      {
+        "folder": "packages/shared",
+        "size": 15185
+      },
+      {
+        "folder": "session-dna",
+        "size": 14485
+      },
+      {
+        "folder": "packages/unified-engine",
+        "size": 9830
+      },
+      {
+        "folder": "MULTI-AGENT-CROSS-POLLINATION.md",
+        "size": 7218
+      },
+      {
+        "folder": "CLAUDE-SHIPWRIGHT.md",
+        "size": 7057
+      },
+      {
+        "folder": "ARBITRAGE-BRIDGE.md",
+        "size": 5513
+      },
+      {
+        "folder": "CLAUDE.md",
+        "size": 5468
+      },
+      {
+        "folder": "auto-compact-preserve",
+        "size": 5111
+      },
+      {
+        "folder": "UNIFIED-SESSION-STATE.md",
+        "size": 4778
+      },
+      {
+        "folder": "ARTIFACT-V4-MIGRATION.md",
+        "size": 3298
+      },
+      {
+        "folder": "GEMINI.md",
+        "size": 2323
+      },
+      {
+        "folder": "package.json",
+        "size": 1696
+      },
+      {
+        "folder": "README.md",
+        "size": 1350
+      },
+      {
+        "folder": "debug-dna.js",
+        "size": 1249
+      },
+      {
+        "folder": "codeql-custom-queries-actions",
+        "size": 995
+      },
+      {
+        "folder": "AUTO-COMPACT-HIJACKER.md",
+        "size": 948
+      },
+      {
+        "folder": "tsconfig.json",
+        "size": 526
+      },
+      {
+        "folder": "turbo.json",
+        "size": 428
+      },
+      {
+        "folder": "claude-recovery.bat",
+        "size": 267
+      },
+      {
+        "folder": "claude-autostart.bat",
+        "size": 137
+      },
+      {
+        "folder": "pnpm-workspace.yaml",
+        "size": 55
+      }
+    ],
+    "stats": {
+      "median": 7057,
+      "mad": 6790
+    },
+    "outliers": [
+      {
+        "folder": "docs",
+        "size": 62288215
+      },
+      {
+        "folder": "scripts",
+        "size": 465947
+      },
+      {
+        "folder": "packages",
+        "size": 396486
+      },
+      {
+        "folder": "packages/monitor",
+        "size": 261780
+      },
+      {
+        "folder": "pnpm-lock.yaml",
+        "size": 155645
+      },
+      {
+        "folder": "packages/core",
+        "size": 51184
+      }
+    ],
+    "thresholds": {
+      "LARGE": 10485760,
+      "HUGE": 1073741824
+    }
+  },
+  "hugeFiles": []
+}

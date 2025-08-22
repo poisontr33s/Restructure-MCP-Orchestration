@@ -1,10 +1,10 @@
+# Guthilda Monorepo Session Log & Discussion
+
 > *"Understood, Savant! Here’s a **densified, markdown-formatted session log**,
 that includes our discussion, decisions, and context, ultimately maximalizing ***context-awareness***,
 and provide a **clear resumption point for us** - (*or any* ***Shipmates***) - *in the future endevour..."*
 
 ---
-
-# Guthilda Monorepo Session Log & Discussion
 
 ## Repository Context
 
@@ -21,6 +21,7 @@ and provide a **clear resumption point for us** - (*or any* ***Shipmates***) - *
 ## Key Configuration Decisions & Actions
 
 ### 1. Root `package.json`
+
 - Centralized shared devDependencies: typescript, turbo, prettier, eslint, vitest, tsup, husky, lint-staged
 - All scripts for build, test, lint, format, dev, start, and clean at root level
 - No runtime dependencies at root
@@ -32,6 +33,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 ---
 
 ### 2. Workspace Map (`pnpm-workspace.yaml`)
+
 - Should exist at root:
 
   ```yaml
@@ -47,8 +49,10 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 ---
 
 ### 3. Lint & Format Configs
+
 - `.eslintrc.json` and `.prettierrc` should reside at root for global standards
 - Example `.eslintrc.json`:
+
   ```json
   {
     "root": true,
@@ -63,6 +67,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
   ```
   
 - Example `.prettierrc`:
+
   ```json
   {
     "semi": true,
@@ -76,12 +81,15 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 - **Status:** To be verified
 
 ### 4. Package Structure (`packages/*`)
+
 - Each package has only unique dependencies in its `package.json`
 - No redundant devDependencies from root unless required for versioning
 - **Status:** To be verified
 
 ### 5. Dependabot Configuration (`.github/dependabot.yml`)
+
 - Should cover root and all packages:
+
   ```yaml
   version: 2
   updates:
@@ -101,6 +109,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 - **Status:** To be verified
 
 ### 6. Documentation & Session Continuity
+
 - This file serves as an ongoing log and context anchor
 - README.md and CONTRIBUTING.md recommended for onboarding, structure, and workflow explanation
 - **Status:** This file created, others pending
@@ -159,21 +168,21 @@ Add new decisions, file contents, or questions below the line for ongoing work.
 
 ---
 
-**(Paste new configs, errors, or decisions here.)**
+### Paste new configs, errors, or decisions here
 
 ---
 
 > **Captain:** "If you want a different filename, alternatives could be" ***:***
+
 - `guthilda-monorepo-notes.md` ?
 - `copilot-session-log.md` ?
 - `monorepo-rituals.md` ?
 - `project-setup-log.md` ?
->
+
 > **Savant:** "We'll decide once we get into the pre-ship voyage. Still alot to do.. Now where did we put our clothes? ..Oh no, the sharks ate them!
 
 ---
 
-# Actual Session Resumption Instructions:
+## Actual Session Resumption Instructions
 
-> [HERE] <
-
+> [HERE] <<<

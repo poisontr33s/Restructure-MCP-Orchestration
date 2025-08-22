@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "when": "2025-08-13T15:47:06Z",
+    "os": "OS Name:                       Microsoft Windows 11 Pro; OS Version:                    10.0.26100 N/A Build 26100; BIOS Version:                  INSYDE Corp. V1.10, 7/16/2024"
+  },
+  "gpu": {
+    "present": true,
+    "cudaVersion": "13.0",
+    "gpus": [
+      {
+        "name": "NVIDIA GeForce RTX 4090 Laptop GPU",
+        "driver": "580.88",
+        "vram": "16376 MiB",
+        "computeMode": "Default"
+      }
+    ]
+  },
+  "cuda": {
+    "present": true,
+    "version": "12.9",
+    "nvcc": true
+  },
+  "cudnn": {
+    "present": false
+  },
+  "tensorrt": {
+    "present": false
+  },
+  "directx": {
+    "path": "C:\\Users\\erdno\\AppData\\Local\\Temp\\dxdiag.txt",
+    "present": true,
+    "wddm": "WDDM 3.2",
+    "directX": "DirectX 12\r"
+  },
+  "directml": {
+    "present": true,
+    "version": "1.9.0+220705-1122.1.dml-1.9.391f35b"
+  },
+  "vulkan": {
+    "present": true,
+    "source": "vulkaninfo",
+    "runtime": "1.4.313"
+  },
+  "wsl": {
+    "distros": [],
+    "present": true,
+    "status": [
+      "D\u0000e\u0000f\u0000a\u0000u\u0000l\u0000t\u0000 \u0000V\u0000e\u0000r\u0000s\u0000i\u0000o\u0000n\u0000:\u0000 \u00002\u0000\r\u0000",
+      "\u0000W\u0000S\u0000L\u00001\u0000 \u0000i\u0000s\u0000 \u0000n\u0000o\u0000t\u0000 \u0000s\u0000u\u0000p\u0000p\u0000o\u0000r\u0000t\u0000e\u0000d\u0000 \u0000w\u0000i\u0000t\u0000h\u0000 \u0000y\u0000o\u0000u\u0000r\u0000 \u0000c\u0000u\u0000r\u0000r\u0000e\u0000n\u0000t\u0000 \u0000m\u0000a\u0000c\u0000h\u0000i\u0000n\u0000e\u0000 \u0000c\u0000o\u0000n\u0000f\u0000i\u0000g\u0000u\u0000r\u0000a\u0000t\u0000i\u0000o\u0000n\u0000.\u0000\r\u0000",
+      "\u0000P\u0000l\u0000e\u0000a\u0000s\u0000e\u0000 \u0000e\u0000n\u0000a\u0000b\u0000l\u0000e\u0000 \u0000t\u0000h\u0000e\u0000 \u0000\"\u0000W\u0000i\u0000n\u0000d\u0000o\u0000w\u0000s\u0000 \u0000S\u0000u\u0000b\u0000s\u0000y\u0000s\u0000t\u0000e\u0000m\u0000 \u0000f\u0000o\u0000r\u0000 \u0000L\u0000i\u0000n\u0000u\u0000x\u0000\"\u0000 \u0000o\u0000p\u0000t\u0000i\u0000o\u0000n\u0000a\u0000l\u0000 \u0000c\u0000o\u0000m\u0000p\u0000o\u0000n\u0000e\u0000n\u0000t\u0000 \u0000t\u0000o\u0000 \u0000u\u0000s\u0000e\u0000 \u0000W\u0000S\u0000L\u00001\u0000.\u0000\r\u0000",
+      "\u0000"
+    ]
+  },
+  "tools": {
+    "pnpm": "8.15.0",
+    "python": "Python 3.13.5",
+    "cmake": null,
+    "ninja": null,
+    "node": "v22.17.0"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "name": "unified-gemini-config",
+  "version": "1.0.0",
+  "description": "Unified Gemini configuration for cross-platform TypeScript/JavaScript compatibility",
+  "main": "compiled/unified-gemini.js",
+  "types": "compiled/unified-gemini.d.ts",
+  "exports": {
+    ".": {
+      "import": "./compiled/unified-gemini.js",
+      "require": "./compiled/unified-gemini.js",
+      "types": "./compiled/unified-gemini.d.ts"
+    },
+    "./tsx": {
+      "import": "./unified-gemini-example.tsx",
+      "types": "./unified-gemini-example.tsx"
+    }
+  },
+  "files": [
+    "compiled/",
+    "unified-gemini.ts",
+    "unified-gemini.js",
+    "unified-gemini-example.tsx"
+  ],
+  "scripts": {
+    "build": "tsc unified-gemini.ts --target es2022 --module commonjs --outDir compiled --moduleResolution node --declaration --esModuleInterop --allowSyntheticDefaultImports",
+    "test": "node compiled/unified-gemini.js",
+    "test-providers": "node -e \"const { UnifiedGeminiClient } = require('./compiled/unified-gemini.js'); (async () => { const client = new UnifiedGeminiClient(); const providers = await client.listProviders(); console.log('Provider Status:', providers); })();\""
+  },
+  "keywords": [
+    "gemini",
+    "ai",
+    "typescript",
+    "google",
+    "sdk",
+    "cli",
+    "cross-platform"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@google/genai": "^1.13.0",
+    "mime": "^4.0.7",
+    "@types/node": "^24.1.0",
+    "react": ">=16.8.0",
+    "@types/react": ">=16.8.0"
+  },
+  "configuration": {
+    "gemini": {
+      "defaultModel": "gemini-2.5-pro",
+      "providers": {
+        "sdk": {
+          "endpoint": "generativelanguage.googleapis.com",
+          "features": ["streaming", "tools", "thinking"],
+          "priority": 1
+        },
+        "cli": {
+          "command": "gemini",
+          "features": ["ide-mode", "checkpointing", "extensions"],
+          "priority": 2
+        },
+        "direct-api": {
+          "endpoint": "generativelanguage.googleapis.com",
+          "features": ["basic"],
+          "priority": 3
+        }
+      },
+      "tools": {
+        "googleSearch": {
+          "enabled": true,
+          "description": "Real-time web search capability"
+        },
+        "codeExecution": {
+          "enabled": false,
+          "description": "Code execution environment"
+        }
+      },
+      "models": {
+        "gemini-2.5-pro": {
+          "maxTokens": 2048,
+          "temperature": 0.7,
+          "thinkingBudget": -1,
+          "tools": ["googleSearch"]
+        },
+        "gemini-2.5-flash": {
+          "maxTokens": 1024,
+          "temperature": 0.5,
+          "thinkingBudget": 100
+        }
+      }
+    }
+  }
+}

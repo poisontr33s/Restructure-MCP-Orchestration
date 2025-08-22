@@ -1,0 +1,128 @@
+# Google Gemini Code Assist Configuration
+# This file configures Gemini Code Assist integration for the repository
+# Documentation: https://developers.google.com/gemini-code-assist/docs/customize-gemini-behavior-github
+
+# Repository-specific Gemini Code Assist settings
+gemini_code_assist:
+  # Enable Gemini Code Assist for this repository
+  enabled: true
+  
+  # Code assistance features
+  features:
+    code_completion: true
+    code_generation: true
+    code_review_assistance: true
+    documentation_generation: true
+    bug_detection: true
+    performance_optimization: true
+    security_analysis: true
+    
+  # Repository context and preferences
+  repository:
+    # Primary programming languages in this repo
+    languages:
+      - "TypeScript"
+      - "JavaScript"
+      - "JSON"
+      - "YAML"
+      - "Markdown"
+    
+    # Framework and technology stack
+    frameworks:
+      - "Node.js"
+      - "pnpm"
+      - "Turbo"
+      - "ESLint"
+      - "Prettier"
+      - "Vitest"
+      
+    # Monorepo structure
+    workspace_type: "pnpm_monorepo"
+    packages_directory: "packages/"
+    
+    # Key areas of focus for AI assistance
+    focus_areas:
+      - "AI service orchestration"
+      - "GitHub automation"
+      - "CLI tools"
+      - "Monitoring systems"
+      - "Code quality and testing"
+      
+  # Gemini behavior customization for this repo
+  customization:
+    # Code style preferences
+    code_style:
+      prefer_typescript: true
+      prefer_functional_programming: true
+      prefer_async_await: true
+      prefer_explicit_types: true
+      
+    # Documentation preferences
+    documentation:
+      prefer_jsdoc: true
+      include_examples: true
+      include_usage_patterns: true
+      
+    # Testing preferences
+    testing:
+      framework: "vitest"
+      prefer_unit_tests: true
+      include_edge_cases: true
+      
+    # Specific to this project
+    project_patterns:
+      # Follow Captain Guthilda's pirate theme
+      naming_conventions:
+        - "Use pirate-themed variable names where appropriate"
+        - "Maintain Captain Guthilda character consistency"
+        - "Follow existing MCP orchestration patterns"
+      
+      # Architecture patterns
+      architecture:
+        - "Follow monorepo workspace patterns"
+        - "Use shared packages for common functionality"
+        - "Maintain separation of concerns between packages"
+        - "Follow existing AI service integration patterns"
+        
+      # Security considerations
+      security:
+        - "Never hardcode API keys or sensitive data"
+        - "Use environment variables for configuration"
+        - "Follow GitHub security best practices"
+        - "Validate all external inputs"
+
+  # GitHub integration settings
+  github_integration:
+    # Pull request assistance
+    pull_requests:
+      auto_review: true
+      suggest_improvements: true
+      check_security: true
+      validate_tests: true
+      
+    # Issue management
+    issues:
+      auto_triage: true
+      suggest_solutions: true
+      link_related_code: true
+      
+    # Workflow integration
+    workflows:
+      enhance_ci_cd: true
+      optimize_builds: true
+      suggest_security_scans: true
+      
+  # Related repositories for context
+  related_repositories:
+    - "poisontr33s/poisontr33s"
+    - "poisontr33s/psychonoir-kontrapunkt"
+    
+  # Exclude patterns (files/directories to ignore)
+  exclude_patterns:
+    - "node_modules/"
+    - "dist/"
+    - "build/"
+    - "*.log"
+    - ".env*"
+    - "pnpm-lock.yaml"
+    - "package-lock.json"

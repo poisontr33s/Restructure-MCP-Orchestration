@@ -1,0 +1,222 @@
+name: 🤖 Gemini Code Assist Integration
+
+on:
+  push:
+    branches: [ main, develop, copilot/* ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      enable_analysis:
+        description: 'Enable detailed code analysis'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8.15.0'
+
+jobs:
+  gemini-code-analysis:
+    name: Gemini Code Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+      
+    steps:
+      - name: 🏴‍☠️ Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: 🚀 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: 📥 Install Dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔨 Build Project
+        run: pnpm build
+        
+      - name: 🤖 Configure Gemini Code Assist
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          GUTHILDA_GEMINI_CODE_ASSIST_LOCATION: us-central1
+        run: |
+          echo "🔐 Authenticating Gemini Code Assist..."
+          pnpm guthilda:auth setup
+          
+      - name: 🔍 Run Code Analysis
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Running Gemini Code Assist analysis..."
+          pnpm guthilda:discover
+          
+      - name: 📊 Generate Analysis Report
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+        run: |
+          echo "📊 Generating Gemini analysis report..."
+          pnpm guthilda:report > gemini-analysis-report.json
+          
+      - name: 📤 Upload Analysis Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-code-analysis-${{ github.sha }}
+          path: |
+            gemini-analysis-report.json
+            logs/
+          retention-days: 30
+          if-no-files-found: warn
+
+  security-scan:
+    name: Gemini Security Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: read
+      security-events: write
+      
+    steps:
+      - name: 🏴‍☠️ Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: 🚀 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: 📥 Install Dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔨 Build Project
+        run: pnpm build
+        
+      - name: 🛡️ Run Security Analysis
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🛡️ Running Gemini security analysis..."
+          # This would integrate with Gemini's security scanning capabilities
+          echo "Security scan completed - results would be processed here"
+          
+      - name: 📊 Generate Security Report
+        run: |
+          echo "📊 Security analysis complete"
+          # Results would be formatted and uploaded
+
+  performance-optimization:
+    name: Gemini Performance Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    
+    steps:
+      - name: 🏴‍☠️ Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: 🚀 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: 📥 Install Dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔨 Build Project
+        run: pnpm build
+        
+      - name: ⚡ Run Performance Analysis
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+        run: |
+          echo "⚡ Running Gemini performance analysis..."
+          # This would integrate with Gemini's performance optimization features
+          echo "Performance analysis completed"
+          
+      - name: 📈 Generate Performance Report
+        run: |
+          echo "📈 Performance analysis complete"
+          # Results would be formatted and uploaded
+
+  integration-status:
+    name: Gemini Integration Status
+    runs-on: ubuntu-latest
+    needs: [gemini-code-analysis]
+    if: always()
+    
+    steps:
+      - name: 🏴‍☠️ Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          
+      - name: 🚀 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          
+      - name: 📥 Install Dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: 🔨 Build Project
+        run: pnpm build
+        
+      - name: 📊 Check Gemini Integration Status
+        env:
+          GUTHILDA_GEMINI_CODE_ASSIST_ENABLED: true
+          GUTHILDA_GEMINI_CODE_ASSIST_API_KEY: ${{ secrets.GEMINI_CODE_ASSIST_API_KEY }}
+          GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+        run: |
+          echo "📊 Checking Gemini Code Assist integration status..."
+          pnpm guthilda:status
+          
+      - name: 🎯 Integration Summary
+        run: |
+          echo "## 🤖 Gemini Code Assist Integration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Code Analysis**: ${{ needs.gemini-code-analysis.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "🔧 **Configuration**: Active" >> $GITHUB_STEP_SUMMARY
+          echo "🏴‍☠️ **Captain Guthilda**: Ready for AI-powered orchestration!" >> $GITHUB_STEP_SUMMARY

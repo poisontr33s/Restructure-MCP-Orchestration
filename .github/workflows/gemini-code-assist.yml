@@ -185,6 +185,9 @@ jobs:
     needs: [gemini-code-analysis]
     if: always()
     
+    permissions:
+      contents: read
+
     steps:
       - name: 🏴‍☠️ Checkout Repository
         uses: actions/checkout@v4

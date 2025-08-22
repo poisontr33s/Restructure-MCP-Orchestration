@@ -94,13 +94,24 @@ repo-root/
 | `pnpm lint` | Lint all code |
 | `pnpm format` | Format all code |
 
-### Branch Management (Legacy Integration)
+### Branch Management & Consolidation
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm branch-manager:list` | List branches across repos |
 | `pnpm branch-manager:cleanup` | Clean up old branches |
 | `pnpm branch-manager:copilot-cleanup` | Clean copilot branches |
+| `pnpm consolidation:plan` | Show emergency consolidation plan |
+| `pnpm consolidation:create` | Create consolidation branch structure |
+| `pnpm consolidation:status` | Check consolidation progress |
+
+### Dependency Management
+
+| Command | Purpose |
+|---------|---------|
+| `pnpm dependencies:analyze` | Analyze dependency update PRs |
+| `pnpm dependencies:batch` | Create batch dependency updates |
+| `pnpm dependencies:consolidate` | Execute dependency consolidation |
 
 ---
 
@@ -289,6 +300,51 @@ pnpm guthilda:report
 # Continuous monitoring
 watch -n 30 "pnpm guthilda:status"
 ```
+
+---
+
+## 🚨 Emergency Branch Consolidation
+
+Captain Guthilda has implemented an Emergency Branch Consolidation Protocol to manage repository chaos and streamline development.
+
+### Quick Consolidation Commands
+
+```bash
+# Show consolidation plan and current status
+pnpm consolidation:plan
+
+# Create hierarchical branch structure 
+pnpm consolidation:create --dry-run
+pnpm consolidation:create
+
+# Analyze dependency PRs for batch processing
+pnpm dependencies:analyze
+
+# Create dependency batch consolidation
+pnpm dependencies:batch --dry-run
+pnpm dependencies:batch
+```
+
+### Target Branch Structure
+
+```
+main/
+├── feature/
+│   ├── ai-integrations/          # AI/ML integration PRs
+│   ├── workflow-optimization/    # Workflow and automation PRs  
+│   └── monorepo-restructure/     # Monorepo structure PRs
+├── dependencies/
+│   └── batch-updates/            # Consolidated dependency updates
+└── hotfix/
+    └── critical-fixes/           # Urgent fixes and patches
+```
+
+### Consolidation Metrics
+
+- **Target**: Reduce 30+ branches → 8-12 active branches
+- **Target**: Reduce 44+ PRs → 10-15 focused PRs
+- **Target**: Batch 15+ dependency updates → 2-3 cycles
+- **Target**: Achieve 85% automated cross-repo correlation
 
 ---
 

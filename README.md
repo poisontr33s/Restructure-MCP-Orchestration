@@ -51,6 +51,7 @@ pnpm guthilda:orchestrate
 - **⚓ Cross-Platform Intelligence**: Branch intelligence, agent deployment, content discovery
 - **📊 Comprehensive Monitoring**: Real-time system health and performance tracking
 - **🧹 Automated Maintenance**: System cleanup, optimization, and resource management
+- **🔍 Claude Code Verification**: Automated checking of Claude Code installation across repositories
 
 ### Legacy Core Features
 - **Sentralisert administrasjon**: Start, stopp og overvåk alle MCP-tjenere fra ett grensesnitt
@@ -87,6 +88,12 @@ pnpm guthilda:cleanup
 
 # Generate comprehensive report
 pnpm guthilda:report
+
+# Check Claude Code installation across all repositories
+pnpm guthilda:claude-code
+
+# Check Claude Code in specific repositories
+pnpm guthilda claude-code repo1,repo2
 ```
 
 ### Monorepo Rituals

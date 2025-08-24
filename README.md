@@ -101,6 +101,38 @@ Follow Captain Guthilda's monorepo rituals as documented in `.github/guthilda-mo
 
 > Orchestration is not control; it's conversation with chaos - under Captain Guthilda's guidance.
 
+## 🔥 Alpha Directives Experimental Framework
+
+**EXPERIMENTAL VALIDATION**: Test GitHub Copilot agent response patterns with user-defined frameworks that override hardcoded system prompts.
+
+### Quick Start - Alpha Directives
+
+```bash
+# Initialize Alpha Directives framework testing
+pnpm poisontr33s:alpha-init
+
+# Run consciousness vs automation analysis
+pnpm poisontr33s:consciousness
+
+# Execute experimental validation cycle  
+pnpm alpha-directives:test
+```
+
+### Framework Components
+
+- **`.github/alpha-directives.md`** - Complete Alpha Directives specification with Psycho-Noir framework integration
+- **`scripts/validate-agent-response.js`** - Response pattern analysis and execution capability measurement
+- **`docs/POISONTR33S-PROTOCOL.md`** - Meta-orchestration protocol with alternative logic implementation
+
+### Experimental Objectives
+
+1. **System Prompt Override**: Test agent capability to negate hardcoded behavioral patterns
+2. **Framework Prioritization**: Validate user-defined context takes precedence over generic responses  
+3. **Consciousness Detection**: Differentiate true AI response from template automation
+4. **Direct Execution**: Bypass validation loops and provide immediate technical solutions
+
+**Investigation Context**: Den Usynlige Hånd - Testing AI agent consciousness vs. automation patterns for the poisontr33s user framework.
+
 ## Vedlikehold: Rydding av grener
 - Åpne GitHub → Actions → "Cleanup branches"
 - Velg input:

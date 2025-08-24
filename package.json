@@ -2,6 +2,7 @@
   "name": "mcp-orchestration-system",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Modern MCP Orchestration System for 2025",
   "engines": {
     "node": ">=18.0.0",
@@ -31,7 +32,13 @@
     "guthilda:orchestrate": "pnpm guthilda orchestrate",
     "guthilda:discover": "pnpm guthilda discover",
     "guthilda:cleanup": "pnpm guthilda cleanup",
-    "guthilda:report": "pnpm guthilda report"
+    "guthilda:report": "pnpm guthilda report",
+    "poisontr33s:alpha-init": "node scripts/validate-agent-response.js test",
+    "poisontr33s:consciousness": "node scripts/validate-agent-response.js report",
+    "poisontr33s:framework-test": "node scripts/validate-agent-response.js analyze",
+    "poisontr33s:validate": "node scripts/validate-agent-response.js",
+    "alpha-directives:test": "pnpm poisontr33s:alpha-init",
+    "alpha-directives:report": "pnpm poisontr33s:consciousness"
   },
   "keywords": [
     "mcp",

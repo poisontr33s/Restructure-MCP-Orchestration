@@ -108,6 +108,28 @@ Follow Captain Guthilda's monorepo rituals as documented in `.github/guthilda-mo
 
 > Orchestration is not control; it's conversation with chaos - under Captain Guthilda's guidance.
 
+## 📖 Documentation
+
+### GitHub Pages
+The project documentation is automatically published to GitHub Pages and available at:
+**https://poisontr33s.github.io/Restructure-MCP-Orchestration/**
+
+The documentation is automatically deployed from the `docs/` directory whenever changes are pushed to the main branch.
+
+### Updating Documentation
+To update the documentation:
+
+1. **Edit files in the `docs/` directory** - Add or modify `.md` files or update the `index.html`
+2. **Commit and push to main branch** - The GitHub Pages workflow will automatically deploy changes
+3. **Check deployment status** - Visit Actions tab to monitor deployment progress
+4. **Access updated docs** - Changes are live at the GitHub Pages URL within minutes
+
+The documentation includes:
+- **Captain Guthilda's Unified Guide** - Complete system overview and commands
+- **Universal Branch Management** - Automated branch management documentation  
+- **Automation Summary** - Overview of automation features
+- **Claude Code Checker** - Documentation for AI code checking tools
+
 ## Vedlikehold: Rydding av grener
 - Åpne GitHub → Actions → "Cleanup branches"
 - Velg input:

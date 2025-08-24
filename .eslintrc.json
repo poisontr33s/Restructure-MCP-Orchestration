@@ -16,5 +16,13 @@
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/bin/**/*.ts", "**/cli/**/*.ts", "**/servers/base/**/*.ts"],
+      "rules": {
+        "no-console": ["warn", { "allow": ["log", "warn", "error", "info"] }]
+      }
+    }
+  ]
 }

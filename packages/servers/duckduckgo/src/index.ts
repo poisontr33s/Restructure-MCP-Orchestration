@@ -5,6 +5,50 @@ import BaseServer from '@mcp/server-base';
 import { type ServerConfig } from '@mcp/shared';
 
 /**
+ * DuckDuckGo API response interface
+ */
+interface DuckDuckGoApiResponse {
+  Abstract?: string;
+  AbstractSource?: string;
+  AbstractText?: string;
+  AbstractURL?: string;
+  Answer?: string;
+  AnswerType?: string;
+  Definition?: string;
+  DefinitionSource?: string;
+  DefinitionURL?: string;
+  Entity?: string;
+  Heading?: string;
+  Image?: string;
+  ImageHeight?: number;
+  ImageIsLogo?: number;
+  ImageWidth?: number;
+  Infobox?: Record<string, unknown>;
+  Redirect?: string;
+  RelatedTopics?: Array<{
+    FirstURL?: string;
+    Icon?: {
+      Height?: string;
+      URL?: string;
+      Width?: string;
+    };
+    Result?: string;
+    Text?: string;
+  }>;
+  Results?: Array<{
+    FirstURL?: string;
+    Icon?: {
+      Height?: string;
+      URL?: string;
+      Width?: string;
+    };
+    Result?: string;
+    Text?: string;
+  }>;
+  Type?: string;
+}
+
+/**
  * DuckDuckGo MCP Server Implementation
  * Provides web search functionality with privacy protection
  */
@@ -161,7 +205,7 @@ export class DuckDuckGoServer extends BaseServer {
     query: string,
     _limit: number,
     _safeSearch: string
-  ): Promise<any> {
+  ): Promise<DuckDuckGoApiResponse> {
     try {
       // This is a simplified example and would need to be replaced with
       // the actual DuckDuckGo API integration in a production environment
@@ -175,7 +219,7 @@ export class DuckDuckGoServer extends BaseServer {
         throw new Error(`DuckDuckGo API error: ${response.statusText}`);
       }
 
-      return response.json();
+      return response.json() as Promise<DuckDuckGoApiResponse>;
     } catch (error) {
       this.log(
         `DuckDuckGo API error: ${error instanceof Error ? error.message : String(error)}`,

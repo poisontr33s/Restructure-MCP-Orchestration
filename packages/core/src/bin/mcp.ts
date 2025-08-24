@@ -12,6 +12,7 @@ import { defaultConfig } from '@mcp/shared';
 // Import server implementations
 import SequentialThinkingServer from '@mcp/server-sequential-thinking';
 import DuckDuckGoServer from '@mcp/server-duckduckgo';
+import M365GraphServer from '@mcp/server-m365-graph';
 
 // Print banner
 console.log(`
@@ -33,6 +34,7 @@ async function main() {
     // Register server types
     serverManager.registerServerType('sequential-thinking', SequentialThinkingServer);
     serverManager.registerServerType('duckduckgo', DuckDuckGoServer);
+    serverManager.registerServerType('m365-graph', M365GraphServer);
     // Register other server types here
 
     // Create orchestration hub

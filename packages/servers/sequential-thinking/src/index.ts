@@ -92,6 +92,10 @@ export class SequentialThinkingServer extends BaseServer {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(response));
       } catch (error) {
+        this.log(
+          `Sequential thinking processing error: ${error instanceof Error ? error.message : String(error)}`,
+          'ERROR'
+        );
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid JSON' }));
       }

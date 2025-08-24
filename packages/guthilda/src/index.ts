@@ -199,6 +199,84 @@ export class CaptainGuthilda {
   }
 
   /**
+   * Check Claude Code installation across repositories and branches
+   */
+  async checkClaudeCode(repositories?: string[]): Promise<any> {
+    console.log('🤖 Checking Claude Code installation across repositories...');
+    
+    const { execSync } = await import('child_process');
+    const path = await import('path');
+    
+    // Use current working directory to find script
+    const scriptPath = path.resolve(process.cwd(), 'scripts/claude-code-checker.sh');
+    
+    try {
+      // Build command arguments
+      let command = `${scriptPath} --operation report --test-mode`;
+      
+      if (repositories && repositories.length > 0) {
+        command += ` --repositories "${repositories.join(',')}"`;
+      }
+      
+      // Execute the Claude Code checker script
+      const output = execSync(command, { 
+        encoding: 'utf8',
+        cwd: process.cwd(),
+        timeout: 60000 // 60 second timeout
+      });
+      
+      // Parse the CSV output
+      const lines = output.trim().split('\n');
+      const header = lines[0];
+      const results = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line && !line.startsWith('[') && line.includes(',')) {
+          const parts = line.split(',');
+          if (parts.length >= 5) {
+            results.push({
+              repository: parts[0],
+              claudeWorkflow: parts[1] === 'true',
+              claudeReviewWorkflow: parts[2] === 'true',
+              anthropicApiKey: parts[3] === 'true',
+              totalBranches: parseInt(parts[4]) || 0,
+              status: this.determineClaudeCodeStatus(
+                parts[1] === 'true',
+                parts[2] === 'true', 
+                parts[3] === 'true'
+              )
+            });
+          }
+        }
+      }
+      
+      // Generate summary
+      const totalRepos = results.length;
+      const fullyConfigured = results.filter(r => r.status === 'fully-configured').length;
+      const partiallyConfigured = results.filter(r => r.status === 'partially-configured').length;
+      const notConfigured = results.filter(r => r.status === 'not-configured').length;
+      
+      return {
+        timestamp: new Date(),
+        summary: {
+          totalRepositories: totalRepos,
+          fullyConfigured,
+          partiallyConfigured,
+          notConfigured,
+          configurationRate: totalRepos > 0 ? Math.round((fullyConfigured / totalRepos) * 100) : 0
+        },
+        repositories: results,
+        recommendations: this.generateClaudeCodeRecommendations(results)
+      };
+      
+    } catch (error) {
+      console.error('❌ Failed to check Claude Code installation:', error);
+      throw new Error(`Claude Code check failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Generate comprehensive orchestration report
    */
   async generateReport(): Promise<any> {
@@ -377,6 +455,47 @@ export class CaptainGuthilda {
     
     if (this.status.metrics.errorCount > 10) {
       recommendations.push('Investigate recurring errors');
+    }
+    
+    return recommendations;
+  }
+
+  private determineClaudeCodeStatus(claudeWorkflow: boolean, claudeReviewWorkflow: boolean, anthropicApiKey: boolean): string {
+    if (claudeWorkflow && anthropicApiKey) {
+      return 'fully-configured';
+    } else if ((claudeWorkflow || claudeReviewWorkflow) || anthropicApiKey) {
+      return 'partially-configured';
+    } else {
+      return 'not-configured';
+    }
+  }
+
+  private generateClaudeCodeRecommendations(results: any[]): string[] {
+    const recommendations = [];
+    
+    const notConfigured = results.filter(r => r.status === 'not-configured');
+    const partiallyConfigured = results.filter(r => r.status === 'partially-configured');
+    const missingSecrets = results.filter(r => !r.anthropicApiKey);
+    const missingWorkflows = results.filter(r => !r.claudeWorkflow && !r.claudeReviewWorkflow);
+    
+    if (notConfigured.length > 0) {
+      recommendations.push(`Configure Claude Code in ${notConfigured.length} repositories: ${notConfigured.map(r => r.repository).join(', ')}`);
+    }
+    
+    if (partiallyConfigured.length > 0) {
+      recommendations.push(`Complete Claude Code setup in ${partiallyConfigured.length} partially configured repositories`);
+    }
+    
+    if (missingSecrets.length > 0) {
+      recommendations.push(`Add ANTHROPIC_API_KEY secret to ${missingSecrets.length} repositories`);
+    }
+    
+    if (missingWorkflows.length > 0) {
+      recommendations.push(`Add Claude Code workflows to ${missingWorkflows.length} repositories`);
+    }
+    
+    if (recommendations.length === 0) {
+      recommendations.push('All repositories have Claude Code properly configured! 🎉');
     }
     
     return recommendations;

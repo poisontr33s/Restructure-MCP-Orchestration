@@ -1,0 +1,32 @@
+{
+  "name": "@mcp/auth",
+  "version": "1.0.0",
+  "description": "Unified authentication provider for VS Code IDE integration",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@azure/msal-node": "^2.14.0",
+    "googleapis": "^156.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@types/vscode": "^1.94.0"
+  },
+  "keywords": [
+    "authentication",
+    "microsoft-365",
+    "google-workspace",
+    "vscode",
+    "ide-integration",
+    "mcp"
+  ],
+  "author": "",
+  "license": "MIT"
+}

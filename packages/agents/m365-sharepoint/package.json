@@ -1,0 +1,29 @@
+{
+  "name": "@mcp/agents-m365-sharepoint",
+  "version": "1.0.0",
+  "description": "Microsoft SharePoint integration agent for MCP",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@mcp/agents-m365-graph": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0"
+  },
+  "keywords": [
+    "microsoft-sharepoint",
+    "documents",
+    "lists",
+    "mcp",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT"
+}

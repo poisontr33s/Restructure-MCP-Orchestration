@@ -1,0 +1,29 @@
+{
+  "name": "@mcp/agents-m365-graph",
+  "version": "1.0.0",
+  "description": "Microsoft 365 Graph API integration agent for MCP",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@mcp/auth": "workspace:*",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0"
+  },
+  "keywords": [
+    "microsoft-365",
+    "graph-api",
+    "mcp",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT"
+}

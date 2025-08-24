@@ -1,0 +1,33 @@
+{
+  "name": "@mcp/server-m365-graph",
+  "version": "1.0.0",
+  "description": "Microsoft 365 Graph MCP Server - unified endpoint for all M365 services",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mcp/shared": "workspace:*",
+    "@mcp/server-base": "workspace:*",
+    "@mcp/agents-m365-graph": "workspace:*",
+    "@mcp/agents-m365-teams": "workspace:*",
+    "@mcp/agents-m365-outlook": "workspace:*",
+    "@mcp/agents-m365-sharepoint": "workspace:*",
+    "@mcp/agents-m365-onedrive": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0"
+  },
+  "keywords": [
+    "microsoft-365",
+    "graph-api",
+    "mcp",
+    "server"
+  ],
+  "author": "",
+  "license": "MIT"
+}

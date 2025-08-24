@@ -51,6 +51,7 @@ pnpm guthilda:orchestrate
 - **⚓ Cross-Platform Intelligence**: Branch intelligence, agent deployment, content discovery
 - **📊 Comprehensive Monitoring**: Real-time system health and performance tracking
 - **🧹 Automated Maintenance**: System cleanup, optimization, and resource management
+- **🔍 Claude Code Verification**: Automated checking of Claude Code installation across repositories
 
 ### Legacy Core Features
 - **Sentralisert administrasjon**: Start, stopp og overvåk alle MCP-tjenere fra ett grensesnitt
@@ -87,6 +88,12 @@ pnpm guthilda:cleanup
 
 # Generate comprehensive report
 pnpm guthilda:report
+
+# Check Claude Code installation across all repositories
+pnpm guthilda:claude-code
+
+# Check Claude Code in specific repositories
+pnpm guthilda claude-code repo1,repo2
 ```
 
 ### Monorepo Rituals
@@ -100,6 +107,28 @@ Follow Captain Guthilda's monorepo rituals as documented in `.github/guthilda-mo
 - **AI service integration** - Unified authentication and discovery
 
 > Orchestration is not control; it's conversation with chaos - under Captain Guthilda's guidance.
+
+## 📖 Documentation
+
+### GitHub Pages
+The project documentation is automatically published to GitHub Pages and available at:
+**https://poisontr33s.github.io/Restructure-MCP-Orchestration/**
+
+The documentation is automatically deployed from the `docs/` directory whenever changes are pushed to the main branch.
+
+### Updating Documentation
+To update the documentation:
+
+1. **Edit files in the `docs/` directory** - Add or modify `.md` files or update the `index.html`
+2. **Commit and push to main branch** - The GitHub Pages workflow will automatically deploy changes
+3. **Check deployment status** - Visit Actions tab to monitor deployment progress
+4. **Access updated docs** - Changes are live at the GitHub Pages URL within minutes
+
+The documentation includes:
+- **Captain Guthilda's Unified Guide** - Complete system overview and commands
+- **Universal Branch Management** - Automated branch management documentation  
+- **Automation Summary** - Overview of automation features
+- **Claude Code Checker** - Documentation for AI code checking tools
 
 ## Vedlikehold: Rydding av grener
 - Åpne GitHub → Actions → "Cleanup branches"

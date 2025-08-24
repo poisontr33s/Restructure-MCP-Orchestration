@@ -1,0 +1,26 @@
+name: Agent - Claude trigger
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    types: [labeled]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  claude:
+    if: contains(github.event.label.name, 'agent:claude')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nudge Claude via comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = "@claude Please analyze this and propose a plan. Use the existing Claude workflow.";
+            if (context.eventName === 'issues') {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.payload.pull_request.number, body });
+            }

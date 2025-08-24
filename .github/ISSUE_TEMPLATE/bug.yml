@@ -1,0 +1,22 @@
+name: Bug report
+description: Report a problem
+labels: ["type:bug","status:triage"]
+body:
+  - type: input
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+  - type: textarea
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    attributes:
+      label: Actual behavior
+  - type: input
+    attributes:
+      label: Affected area
+      placeholder: area:frontend / area:core / etc.

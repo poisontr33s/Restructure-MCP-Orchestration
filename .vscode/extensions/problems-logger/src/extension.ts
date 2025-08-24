@@ -108,6 +108,51 @@ async function dumpEditors(): Promise<string> {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  // Lightweight MCP status indicator: shows enabled server count vs budget
+  const status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
+  status.name = 'MCP';
+  status.command = undefined;
+  context.subscriptions.push(status);
+
+  async function updateMcpStatus() {
+    try {
+      const ws = getWorkspaceFolder();
+      if (!ws) { status.hide(); return; }
+      const mcpPath = path.join(ws.uri.fsPath, '.vscode', 'mcp.json');
+      const policyPath = path.join(ws.uri.fsPath, '.vscode', 'mcp.policy.json');
+      const hasMcp = fs.existsSync(mcpPath);
+      const hasPolicy = fs.existsSync(policyPath);
+      if (!hasMcp) { status.hide(); return; }
+      const cfg = JSON.parse(await fs.promises.readFile(mcpPath, 'utf8'));
+      const srv = cfg?.servers ? Object.keys(cfg.servers) : [];
+      let budget = 0;
+      if (hasPolicy) {
+        try {
+          const pol = JSON.parse(await fs.promises.readFile(policyPath, 'utf8'));
+          budget = Number(pol?.maxDynamicServers) || 0;
+        } catch {}
+      }
+      status.text = `$(server) MCP ${srv.length}${budget>0?('/'+budget):''}`;
+      status.tooltip = new vscode.MarkdownString(`Enabled servers: ${srv.join(', ') || 'none'}\n\nClick to regenerate dynamic config.`);
+      status.command = {
+        title: 'Generate Dynamic MCP',
+        command: 'workbench.action.tasks.runTask',
+        arguments: ['MCP: Generate Dynamic Config']
+      } as any;
+      status.show();
+    } catch {
+      status.hide();
+    }
+  }
+
+  void updateMcpStatus();
+  const fileWatcher = vscode.workspace.createFileSystemWatcher('**/.vscode/mcp*.json');
+  context.subscriptions.push(
+    fileWatcher.onDidCreate(updateMcpStatus),
+    fileWatcher.onDidChange(updateMcpStatus),
+    fileWatcher.onDidDelete(updateMcpStatus)
+  );
+
   function getProblemsItems(): Array<{file: string, problems: any[]}> {
     const diagnostics: ReadonlyArray<[vscode.Uri, readonly vscode.Diagnostic[]]> = vscode.languages.getDiagnostics();
     return diagnostics.map(([uri, diags]: [vscode.Uri, readonly vscode.Diagnostic[]]) => ({

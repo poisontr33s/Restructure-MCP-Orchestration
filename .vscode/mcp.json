@@ -8,6 +8,24 @@
         "mcp-server-fetch==0.1.0",
         "mcp-server-fetch"
       ]
+    },
+    "sequential-thinking": {
+      "command": "node",
+      "args": [
+        "packages/servers/sequential-thinking/dist/index.js"
+      ]
+    },
+    "duckduckgo": {
+      "command": "node",
+      "args": [
+        "packages/servers/duckduckgo/dist/index.js"
+      ]
+    },
+    "server-base": {
+      "command": "node",
+      "args": [
+        "packages/servers/base/dist/index.js"
+      ]
     }
   }
 }

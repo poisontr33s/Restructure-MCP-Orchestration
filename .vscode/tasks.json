@@ -208,6 +208,45 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "MCP: Intents (codegen+web)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"codegen,web-search"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Intents (reasoning)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"reasoning,planning"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Intents (local-llm)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"local-llm,codegen"
+			],
+			"options": { "cwd": "${workspaceFolder}" },
+			"problemMatcher": []
+		},
+		{
 			"label": "MCP: Use Base",
 			"type": "shell",
 			"command": "pwsh",
@@ -387,6 +426,13 @@
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Chat: Recommend Lean Tools",
+			"type": "shell",
+			"command": "node scripts/tools-recommendation.js",
+			"options": { "cwd": "${workspaceFolder}" },
 			"problemMatcher": []
 		},
 		{

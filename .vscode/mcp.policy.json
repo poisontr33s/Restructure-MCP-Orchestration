@@ -2,55 +2,81 @@
   "description": "Dynamic MCP policy: derive additional servers from repo context and env.",
   "uvxPath": "C:/Users/erdno/.local/bin/uvx.exe",
   "allowExperimentalEnvVar": "MCP_EXPERIMENTAL",
+  "strategy": "auto",
+  "preferBindings": true,
+  "bindStrict": false,
+  "maxDynamicServers": 4,
+  "defaultIntents": ["codegen", "web-search"],
+  "bindings": {
+    "search.web": ["duckduckgo"],
+    "code.generate": ["gemini-tools", "claude-tools", "openai-tools"],
+    "code.explain": ["claude-tools", "gemini-tools"],
+    "repo.fetch": ["fetch"],
+    "llm.local": ["ollama-local", "llama-cpp"]
+  },
   "rules": [
     {
       "id": "local-server-duckduckgo",
       "enableIf": { "pathExists": "packages/servers/duckduckgo/dist/index.js" },
       "serverKey": "duckduckgo",
       "command": "node",
-      "args": ["packages/servers/duckduckgo/dist/index.js"]
+      "args": ["packages/servers/duckduckgo/dist/index.js"],
+      "weight": 5,
+      "intents": ["web-search"]
     },
     {
       "id": "local-server-sequential-thinking",
       "enableIf": { "pathExists": "packages/servers/sequential-thinking/dist/index.js" },
       "serverKey": "sequential-thinking",
       "command": "node",
-      "args": ["packages/servers/sequential-thinking/dist/index.js"]
+      "args": ["packages/servers/sequential-thinking/dist/index.js"],
+      "weight": 3,
+      "intents": ["reasoning", "planning"]
     },
     {
       "id": "local-server-base",
       "enableIf": { "pathExists": "packages/servers/base/dist/index.js" },
       "serverKey": "server-base",
       "command": "node",
-      "args": ["packages/servers/base/dist/index.js"]
+      "args": ["packages/servers/base/dist/index.js"],
+      "weight": 2,
+      "intents": ["common"]
     },
     {
       "id": "local-server-kraken",
       "enableIf": { "pathExists": "packages/servers/kraken/dist/index.js" },
       "serverKey": "kraken",
       "command": "node",
-      "args": ["packages/servers/kraken/dist/index.js"]
+      "args": ["packages/servers/kraken/dist/index.js"],
+      "weight": 1,
+      "intents": ["experiments"]
     },
     {
       "id": "ml-openai-tools",
       "enableIf": { "env": ["OPENAI_API_KEY"] },
       "serverKey": "openai-tools",
       "command": "{uvx}",
-      "args": ["--from", "mcp-openai-tools==0.1.0", "mcp-openai-tools"]
+      "args": ["--from", "mcp-openai-tools==0.1.0", "mcp-openai-tools"],
+      "weight": 5,
+      "intents": ["codegen", "nlp"]
     },
     {
       "id": "ml-gemini-tools",
       "enableIf": { "env": ["GEMINI_API_KEY"] },
       "serverKey": "gemini-tools",
       "command": "{uvx}",
-      "args": ["--from", "mcp-gemini-tools==0.1.0", "mcp-gemini-tools"]
+      "args": ["--from", "mcp-gemini-tools==0.1.0", "mcp-gemini-tools"],
+      "weight": 5,
+      "intents": ["codegen", "vision"]
     },
     {
       "id": "ml-claude-tools",
       "enableIf": { "env": ["ANTHROPIC_API_KEY"] },
       "serverKey": "claude-tools",
       "command": "{uvx}",
-      "args": ["--from", "mcp-claude-tools==0.1.0", "mcp-claude-tools"]
+      "args": ["--from", "mcp-claude-tools==0.1.0", "mcp-claude-tools"],
+      "weight": 5,
+      "intents": ["codegen", "nlp", "analysis"]
     },
     {
       "id": "ml-ollama-local",
@@ -58,7 +84,9 @@
       "enableIf": { "commandAvailable": "ollama" },
       "serverKey": "ollama-local",
       "command": "{uvx}",
-      "args": ["--from", "mcp-ollama==0.1.0", "mcp-ollama"]
+      "args": ["--from", "mcp-ollama==0.1.0", "mcp-ollama"],
+      "weight": 4,
+      "intents": ["local-llm", "codegen"]
     },
     {
       "id": "ml-llamacpp-local",
@@ -66,7 +94,9 @@
       "enableIf": { "commandAvailable": "llama" },
       "serverKey": "llama-cpp",
       "command": "{uvx}",
-      "args": ["--from", "mcp-llama-cpp==0.1.0", "mcp-llama-cpp"]
+      "args": ["--from", "mcp-llama-cpp==0.1.0", "mcp-llama-cpp"],
+      "weight": 4,
+      "intents": ["local-llm"]
     }
   ]
 }

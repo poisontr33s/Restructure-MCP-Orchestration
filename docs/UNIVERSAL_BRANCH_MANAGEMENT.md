@@ -8,13 +8,13 @@ This system provides automated branch management across all repositories in the 
 
 ```bash
 # List all copilot branches across all repositories
-npm run branch-manager:copilot
+pnpm branch-manager:copilot
 
 # Clean up copilot branches immediately (with confirmation)
-npm run branch-manager:copilot-cleanup
+pnpm branch-manager:copilot-cleanup
 
 # Dry run to see what would be deleted
-npm run branch-manager:dry-run
+pnpm branch-manager:dry-run
 ```
 
 ### GitHub Actions (Remote Automation)
@@ -40,16 +40,16 @@ gh workflow run universal-branch-manager.yml \
 
 ## 📋 Available Operations
 
-### Local Commands (npm scripts)
+### Local Commands (pnpm scripts)
 
 | Command                                  | Description                             |
 | ---------------------------------------- | --------------------------------------- |
-| `npm run branch-manager:list`            | List branches matching default criteria |
-| `npm run branch-manager:dry-run`         | Show what would be deleted (safe)       |
-| `npm run branch-manager:cleanup`         | Delete branches with confirmation       |
-| `npm run branch-manager:cleanup-force`   | Delete branches without confirmation    |
-| `npm run branch-manager:copilot`         | List all copilot/\* branches            |
-| `npm run branch-manager:copilot-cleanup` | Force cleanup copilot/\* branches       |
+| `pnpm branch-manager:list`            | List branches matching default criteria |
+| `pnpm branch-manager:dry-run`         | Show what would be deleted (safe)       |
+| `pnpm branch-manager:cleanup`         | Delete branches with confirmation       |
+| `pnpm branch-manager:cleanup-force`   | Delete branches without confirmation    |
+| `pnpm branch-manager:copilot`         | List all copilot/\* branches            |
+| `pnpm branch-manager:copilot-cleanup` | Force cleanup copilot/\* branches       |
 
 ### Direct Script Usage
 
@@ -149,7 +149,7 @@ All operations generate detailed audit logs including:
 #### 1. Clean up all copilot branches older than 7 days
 
 ```bash
-npm run branch-manager:copilot-cleanup
+pnpm branch-manager:copilot-cleanup
 ```
 
 #### 2. List feature branches across specific repositories

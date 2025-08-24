@@ -31,7 +31,10 @@
     "guthilda:orchestrate": "pnpm guthilda orchestrate",
     "guthilda:discover": "pnpm guthilda discover",
     "guthilda:cleanup": "pnpm guthilda cleanup",
-    "guthilda:report": "pnpm guthilda report"
+    "guthilda:report": "pnpm guthilda report",
+    "guthilda:claude-code": "pnpm guthilda claude-code",
+    "claude-code-check": "./scripts/claude-code-checker.sh",
+    "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report"
   },
   "keywords": [
     "mcp",

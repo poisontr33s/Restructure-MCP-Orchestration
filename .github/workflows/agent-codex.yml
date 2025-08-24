@@ -1,0 +1,52 @@
+name: Agent - ChatGPT Codex (stub)
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    types: [labeled]
+
+permissions:
+  issues: write
+  pull-requests: write
+  workflows: read
+
+jobs:
+  codex:
+    if: contains(github.event.label.name, 'agent:codex')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acknowledge and guide
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const msg = [
+              "ChatGPT Codex agent stub received.",
+              "Your ChatGPT Codex Connector GitHub App is installed.",
+              "If it supports webhooks or repository_dispatch, add:",
+              "- An Actions secret CODEX_WEBHOOK_URL (or API key if applicable).",
+              "Then I can add a step to call it with the issue/PR payload.",
+              "",
+              "For now, the label routes this item and keeps a clear audit trail."
+            ].join("\n");
+            if (context.eventName === 'issues') {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: msg });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.payload.pull_request.number, body: msg });
+            }
+      # Example webhook call (uncomment when you have CODEX_WEBHOOK_URL):
+      # - name: Notify Codex webhook
+      #   if: env.CODEX_WEBHOOK_URL != ''
+      #   run: |
+      #     curl -sS -X POST "$CODEX_WEBHOOK_URL" \
+      #       -H "Content-Type: application/json" \
+      #       -d @- <<'JSON'
+      #     {
+      #       "repo": "${{ github.repository }}",
+      #       "event": "${{ github.event_name }}",
+      #       "issue": ${{ toJson(github.event.issue) }},
+      #       "pull_request": ${{ toJson(github.event.pull_request) }},
+      #       "label": "${{ github.event.label.name }}"
+      #     }
+      #     JSON
+      #   env:
+      #     CODEX_WEBHOOK_URL: ${{ secrets.CODEX_WEBHOOK_URL }}

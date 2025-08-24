@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestration System - Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #0f1419;
+            color: #c9d1d9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #58a6ff;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f1419 100%);
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3em;
+            margin: 0;
+            border: none;
+        }
+        .hero p {
+            font-size: 1.2em;
+            color: #8b949e;
+            margin: 10px 0;
+        }
+        .pirate-flag {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .doc-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.3s ease;
+        }
+        .doc-card:hover {
+            border-color: #58a6ff;
+        }
+        .doc-card h3 {
+            margin-top: 0;
+            color: #58a6ff;
+        }
+        .doc-card a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        .doc-card a:hover {
+            text-decoration: underline;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #1f6feb;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .footer {
+            margin-top: 60px;
+            padding: 20px 0;
+            border-top: 1px solid #30363d;
+            text-align: center;
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="pirate-flag">🏴‍☠️⚓</div>
+            <h1>MCP Orchestration System</h1>
+            <p>Documentation Hub</p>
+            <p><strong>Captain Guthilda Commanding</strong></p>
+            <span class="status-badge">ORCHESTRATION PROTOCOLS ACTIVE</span>
+        </div>
+
+        <section>
+            <h2>📚 Available Documentation</h2>
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <h3>🏴‍☠️ Captain Guthilda's Unified Guide</h3>
+                    <p>Complete system overview, commands, and monorepo rituals.</p>
+                    <a href="CAPTAIN_GUTHILDA_UNIFIED_GUIDE.md">Read the Guide →</a>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>🌊 Universal Branch Management</h3>
+                    <p>Automated branch management across all repositories.</p>
+                    <a href="UNIVERSAL_BRANCH_MANAGEMENT.md">Branch Management →</a>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>🤖 Automation Summary</h3>
+                    <p>Overview of automation features and capabilities.</p>
+                    <a href="AUTOMATION_SUMMARY.md">Automation Guide →</a>
+                </div>
+                
+                <div class="doc-card">
+                    <h3>🔍 Claude Code Checker</h3>
+                    <p>Documentation for Claude Code installation checker.</p>
+                    <a href="CLAUDE_CODE_CHECKER.md">Code Checker →</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🚀 Quick Start</h2>
+            <p>Get started with the MCP Orchestration System:</p>
+            <pre style="background: #161b22; padding: 15px; border-radius: 6px; overflow-x: auto;"><code># System status and health check
+pnpm guthilda:status
+
+# Setup AI service authentication  
+pnpm guthilda:auth
+
+# Run orchestration workflows
+pnpm guthilda:orchestrate
+
+# Content discovery across services
+pnpm guthilda:discover</code></pre>
+        </section>
+
+        <section>
+            <h2>🔗 Links</h2>
+            <ul>
+                <li><a href="https://github.com/poisontr33s/Restructure-MCP-Orchestration">GitHub Repository</a></li>
+                <li><a href="https://github.com/poisontr33s/poisontr33s">Meta-index</a> - Cataloging and overview</li>
+                <li><a href="https://github.com/poisontr33s/PsychoNoir-Kontrapunkt">Concept-node</a> - Conceptual inspiration</li>
+            </ul>
+        </section>
+
+        <div class="footer">
+            <p>🏴‍☠️ <em>Orchestration is not control; it's conversation with chaos - under Captain Guthilda's guidance.</em></p>
+            <p>Documentation automatically deployed from the <code>docs/</code> directory via GitHub Pages.</p>
+        </div>
+    </div>
+</body>
+</html>

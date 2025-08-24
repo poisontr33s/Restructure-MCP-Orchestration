@@ -54,6 +54,11 @@ async function main() {
         await handleReport(guthilda, subcommand);
         break;
       
+      case 'claude-code':
+      case 'claude':
+        await handleClaudeCode(guthilda, subcommand);
+        break;
+      
       case 'help':
       case '--help':
       case '-h':
@@ -163,6 +168,52 @@ async function handleReport(guthilda: CaptainGuthilda, subcommand?: string) {
   }
 }
 
+async function handleClaudeCode(guthilda: CaptainGuthilda, subcommand?: string) {
+  console.log('🤖 Checking Claude Code installation...\n');
+  
+  try {
+    // Parse repositories if provided as subcommand
+    const repositories = subcommand ? subcommand.split(',').map(r => r.trim()) : undefined;
+    
+    const result = await guthilda.checkClaudeCode(repositories);
+    
+    // Display summary
+    console.log('📊 Claude Code Installation Summary:');
+    console.log(`   Total Repositories: ${result.summary.totalRepositories}`);
+    console.log(`   Fully Configured: ${getStatusIcon('success')} ${result.summary.fullyConfigured}`);
+    console.log(`   Partially Configured: ${getStatusIcon('partial')} ${result.summary.partiallyConfigured}`);
+    console.log(`   Not Configured: ${getStatusIcon('error')} ${result.summary.notConfigured}`);
+    console.log(`   Configuration Rate: ${result.summary.configurationRate}%`);
+    
+    // Display detailed results
+    console.log('\n📋 Repository Details:');
+    for (const repo of result.repositories) {
+      const statusIcon = getStatusIcon(
+        repo.status === 'fully-configured' ? 'success' : 
+        repo.status === 'partially-configured' ? 'partial' : 'error'
+      );
+      
+      console.log(`   ${statusIcon} ${repo.repository} (${repo.status})`);
+      console.log(`      Claude Workflow: ${repo.claudeWorkflow ? '✅' : '❌'}`);
+      console.log(`      Claude Review Workflow: ${repo.claudeReviewWorkflow ? '✅' : '❌'}`);
+      console.log(`      ANTHROPIC_API_KEY: ${repo.anthropicApiKey ? '✅' : '❌'}`);
+      console.log(`      Total Branches: ${repo.totalBranches}`);
+    }
+    
+    // Display recommendations
+    if (result.recommendations.length > 0) {
+      console.log('\n💡 Recommendations:');
+      for (const rec of result.recommendations) {
+        console.log(`   • ${rec}`);
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Failed to check Claude Code installation:', error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+}
+
 function getStatusIcon(status: string): string {
   switch (status) {
     case 'healthy':
@@ -213,6 +264,7 @@ function showHelp() {
   console.log('   discover            Discover content across AI services');
   console.log('   cleanup             Run cleanup operations');
   console.log('   report              Generate orchestration report');
+  console.log('   claude-code [repos] Check Claude Code installation across repos');
   console.log('   help                Show this help message');
   
   console.log('\nOrchestration Types:');
@@ -227,6 +279,8 @@ function showHelp() {
   console.log('   guthilda orchestrate integration   # Run integration workflows');
   console.log('   guthilda discover                  # Scan for content');
   console.log('   guthilda cleanup                   # Clean up system');
+  console.log('   guthilda claude-code               # Check Claude Code in all repos');
+  console.log('   guthilda claude-code repo1,repo2   # Check specific repositories');
   
   console.log('\n🏴‍☠️ Captain Guthilda - Meta-Automation Orchestrator');
   console.log('For more information, see: .github/guthilda-monorepo-rituals.md');

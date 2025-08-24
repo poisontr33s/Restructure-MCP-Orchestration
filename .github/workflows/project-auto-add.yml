@@ -1,0 +1,21 @@
+name: Add items to project
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add item to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: "<REPLACE_WITH_YOUR_PROJECT_URL>"
+          github-token: ${{ secrets.GITHUB_TOKEN }}

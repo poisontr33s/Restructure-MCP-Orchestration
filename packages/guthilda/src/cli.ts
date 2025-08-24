@@ -130,7 +130,8 @@ async function handleDiscover(guthilda: CaptainGuthilda, subcommand?: string) {
   
   console.log('Content Discovery Results:');
   for (const discovery of discoveries) {
-    console.log(`   ${discovery.service}: Found ${discovery.content?.items?.length || 0} items`);
+    const content = discovery.content as { items?: unknown[] };
+    console.log(`   ${discovery.service}: Found ${content?.items?.length || 0} items`);
   }
 }
 

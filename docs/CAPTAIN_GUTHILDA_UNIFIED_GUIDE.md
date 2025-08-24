@@ -206,6 +206,8 @@ pnpm guthilda:cleanup         # Evening cleanup
 # Setup AI services
 export GUTHILDA_MICROSOFT_COPILOT_API_KEY="your_key"
 export GUTHILDA_OPENAI_PLUS_API_KEY="your_key"
+export GUTHILDA_GEMINI_CODE_ASSIST_API_KEY="your_gemini_key"
+export GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID="your_google_cloud_project"
 
 # Authenticate and discover
 pnpm guthilda:auth
@@ -235,6 +237,14 @@ pnpm clean:all                # Clean build artifacts
 - **Premium Features**: Advanced suggestions and context awareness
 - **Authentication**: GitHub App or Personal Access Token
 - **Capabilities**: Code generation, documentation, testing
+
+### Google Gemini Code Assist Integration
+- **GitHub Integration**: Native repository analysis and code assistance
+- **Code Generation**: Advanced AI-powered code completion and generation
+- **Repository Context**: Multi-repository awareness and cross-project insights
+- **Authentication**: Google Cloud API key and project configuration
+- **Capabilities**: Code assistance, bug detection, security analysis, performance optimization
+- **GitHub Features**: Pull request assistance, issue triage, workflow optimization
 
 ### Google Workspace Integration
 - **Documents**: Content creation and management

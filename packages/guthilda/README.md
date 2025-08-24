@@ -69,7 +69,17 @@ const guthilda = new CaptainGuthilda({
   aiServices: {
     microsoftCopilot: { enabled: true },
     googleWorkspace: { enabled: true },
-    openaiPlus: { enabled: true }
+    openaiPlus: { enabled: true },
+    geminiCodeAssist: { 
+      enabled: true,
+      projectId: 'your-google-cloud-project',
+      location: 'us-central1',
+      gitHubRepositories: [
+        'poisontr33s/Restructure-MCP-Orchestration',
+        'poisontr33s/poisontr33s',
+        'poisontr33s/psychonoir-kontrapunkt'
+      ]
+    }
   },
   orchestration: {
     autoCleanup: true,
@@ -113,6 +123,12 @@ GUTHILDA_X_PREMIUM_API_KEY=your_api_key
 GUTHILDA_OPENAI_PLUS_ENABLED=true
 GUTHILDA_OPENAI_PLUS_API_KEY=your_api_key
 
+# Google Gemini Code Assist Configuration
+GUTHILDA_GEMINI_CODE_ASSIST_ENABLED=true
+GUTHILDA_GEMINI_CODE_ASSIST_API_KEY=your_gemini_api_key
+GUTHILDA_GEMINI_CODE_ASSIST_PROJECT_ID=your_google_cloud_project_id
+GUTHILDA_GEMINI_CODE_ASSIST_LOCATION=us-central1
+
 # Orchestration Settings
 GUTHILDA_AUTO_CLEANUP=true
 GUTHILDA_BRANCH_INTELLIGENCE=true
@@ -140,6 +156,18 @@ Create `guthilda.config.json` in your project root:
     "openaiPlus": {
       "enabled": true,
       "organization": "your_org_id"
+    },
+    "geminiCodeAssist": {
+      "enabled": true,
+      "projectId": "your-google-cloud-project",
+      "location": "us-central1",
+      "gitHubRepositories": [
+        "poisontr33s/Restructure-MCP-Orchestration",
+        "poisontr33s/poisontr33s",
+        "poisontr33s/psychonoir-kontrapunkt"
+      ],
+      "codeAssistanceEnabled": true,
+      "codeGenerationEnabled": true
     }
   },
   "orchestration": {

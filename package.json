@@ -34,7 +34,10 @@
     "guthilda:report": "pnpm guthilda report",
     "guthilda:claude-code": "pnpm guthilda claude-code",
     "claude-code-check": "./scripts/claude-code-checker.sh",
-    "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report"
+    "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report",
+    "gemini:scout": "node scripts/gemini-scout.js",
+    "gemini:liberate": "pnpm install && pnpm gemini:scout",
+    "ai:triad": "echo 'Claude (Strategy) + Copilot (Tactics) + Gemini (Intelligence) = AI Excellence'"
   },
   "keywords": [
     "mcp",
@@ -45,6 +48,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@ai-sdk/google": "^2.0.8",
+    "@google/genai": "^1.15.0",
     "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",

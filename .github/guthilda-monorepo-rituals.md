@@ -124,6 +124,7 @@ repo-root/
 ## 8. Captain Guthilda's Command Structure
 
 - **Meta-Orchestration Scripts:**
+
   ```bash
   pnpm guthilda:status        # Check all systems
   pnpm guthilda:deploy        # Deploy orchestration
@@ -176,17 +177,20 @@ repo-root/
 ## 12. Captain Guthilda's Meta-Commands
 
 ### Authentication & Discovery
+
 - `guthilda auth setup` - Configure all premium AI service credentials
 - `guthilda discover scan` - Scan for content across Microsoft Copilot, Google Workspace, X Premium+, OpenAI Plus
 - `guthilda integrate services` - Integrate authentication tokens and service endpoints
 
 ### Orchestration & Automation
+
 - `guthilda orchestrate start` - Begin meta-automation workflows
 - `guthilda branch intelligence` - Intelligent branch management across repositories
 - `guthilda agent deploy` - Deploy agent-based automation
 - `guthilda workflow sync` - Synchronize all automation workflows
 
 ### Monitoring & Maintenance
+
 - `guthilda status all` - Complete system status check
 - `guthilda cleanup deep` - Deep cleanup of artifacts, logs, and temporary files
 - `guthilda health check` - Run comprehensive health checks

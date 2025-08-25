@@ -32,6 +32,7 @@ This comment tracks the single, orchestrated path to unify the open work into on
   - [x] Issue #30 — Closed; ensure branch-delete admin pathway documented
 
 Notes:
+
 - Draft PRs to flip ready once their gates are green: #89, #92
 - If any PR is blocked, cherry-pick scoped commits into an RC branch (see §2), then close/supersede PRs via the RC PR
 
@@ -41,15 +42,15 @@ Notes:
 
 - Branch name: `release/captain-guthilda-rc1`
 - Steps:
-  1) Create RC from `main`
-  2) Merge (or cherry-pick) in order: #89 → #90 → docs (#91) → #87 → #86 → #92 → wire #84/#68 tasks
-  3) Ensure monorepo builds locally with pnpm:
+  1. Create RC from `main`
+  2. Merge (or cherry-pick) in order: #89 → #90 → docs (#91) → #87 → #86 → #92 → wire #84/#68 tasks
+  3. Ensure monorepo builds locally with pnpm:
      - pnpm install
      - pnpm -r build
      - pnpm -r lint && pnpm -r test
-  4) Run CI; fix any matrix/package drifts
-  5) Open a single PR: “Unified RC: Captain Guthilda (Foundation, Intelligence, Auth)”
-  6) On approval, squash-merge RC PR; backport doc updates if needed
+  4. Run CI; fix any matrix/package drifts
+  5. Open a single PR: “Unified RC: Captain Guthilda (Foundation, Intelligence, Auth)”
+  6. On approval, squash-merge RC PR; backport doc updates if needed
 
 ---
 
@@ -78,25 +79,31 @@ Notes:
 ## 5) Owners / Quick Commands
 
 - Local sanity (from repo root):
+
 ```bash
 pnpm install
 pnpm -r build && pnpm -r lint && pnpm -r test
 ```
+
 - Branch Intelligence:
+
 ```bash
 pnpm run branch-intelligence:analyze
 pnpm run branch-intelligence:report
 pnpm run branch-intelligence:chaos-check
 ```
+
 - Bridge example:
+
 ```bash
 pnpm run bridge:init -- --main-repo "poisontr33s/Restructure-MCP-Orchestration" --org "poisontr33s"
 pnpm run bridge:list
 ```
+
 - VS Code auth tasks: run the provided tasks or node entrypoints per PR #92 description
 
 ---
 
-If approved, I will proceed to open `release/captain-guthilda-rc1` and stage merges in the sequence above. 
+If approved, I will proceed to open `release/captain-guthilda-rc1` and stage merges in the sequence above.
 
 — Captain Guthilda

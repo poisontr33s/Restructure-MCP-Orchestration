@@ -36,8 +36,15 @@
     "claude-code-check": "./scripts/claude-code-checker.sh",
     "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report",
     "gemini:scout": "node scripts/gemini-scout.js",
+    "gemini:cli": "node scripts/gemini-cli.js",
+    "gemini:assistant": "node scripts/gemini-code-assistant.js",
+    "gemini:chat": "node scripts/gemini-cli.js chat",
+    "gemini:analyze": "node scripts/gemini-cli.js analyze",
+    "gemini:code": "node scripts/gemini-cli.js code",
     "gemini:liberate": "pnpm install && pnpm gemini:scout",
-    "ai:triad": "echo 'Claude (Strategy) + Copilot (Tactics) + Gemini (Intelligence) = AI Excellence'"
+    "ai:triad": "echo 'Claude (Strategy) + Copilot (Tactics) + Gemini (Intelligence) = AI Excellence'",
+    "ai:gemini": "pnpm gemini:cli help",
+    "ai:gemini:full": "echo 'Gemini CLI (Official-style) + Code Assistant (IDE-style) + Scout (Intelligence)'"
   },
   "keywords": [
     "mcp",

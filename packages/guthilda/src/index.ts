@@ -1,6 +1,6 @@
 /**
  * Captain Guthilda - Meta-Automation Orchestrator
- * 
+ *
  * The central intelligence and orchestration system for the MCP Orchestration Platform.
  * Captain Guthilda serves as the meta-automation boss, unifying all systems, workflows,
  * and AI service integrations under a single coherent orchestration framework.
@@ -88,7 +88,7 @@ export interface OrchestrationTask {
 
 /**
  * Captain Guthilda - The Meta-Automation Orchestrator
- * 
+ *
  * Central intelligence system that coordinates all MCP orchestration activities,
  * manages AI service integrations, and provides unified automation workflows.
  */
@@ -107,12 +107,12 @@ export class CaptainGuthilda {
    */
   async initialize(): Promise<void> {
     console.log('🏴‍☠️ Captain Guthilda initializing...');
-    
+
     try {
       await this.initializeAIServices();
       await this.initializeOrchestration();
       await this.initializeMonitoring();
-      
+
       this.status.systems.mcp = 'healthy';
       console.log('⚓ Captain Guthilda ready for command!');
     } catch (error) {
@@ -135,7 +135,7 @@ export class CaptainGuthilda {
    */
   async authenticateServices(): Promise<AuthenticationResult[]> {
     const results: AuthenticationResult[] = [];
-    
+
     for (const [serviceName, config] of Object.entries(this.config.aiServices)) {
       if (config.enabled) {
         try {
@@ -145,7 +145,7 @@ export class CaptainGuthilda {
           results.push({
             service: serviceName,
             status: 'failed',
-            message: error instanceof Error ? error.message : 'Unknown error'
+            message: error instanceof Error ? error.message : 'Unknown error',
           });
         }
       }
@@ -181,9 +181,9 @@ export class CaptainGuthilda {
    */
   async discoverContent(): Promise<any> {
     console.log('🔍 Starting content discovery across AI services...');
-    
+
     const discoveries = [];
-    
+
     for (const [serviceName, config] of Object.entries(this.config.aiServices)) {
       if (config.enabled) {
         try {
@@ -199,18 +199,97 @@ export class CaptainGuthilda {
   }
 
   /**
+   * Check Claude Code installation across repositories and branches
+   */
+  async checkClaudeCode(repositories?: string[]): Promise<any> {
+    console.log('🤖 Checking Claude Code installation across repositories...');
+
+    const { execSync } = await import('child_process');
+    const path = await import('path');
+
+    // Use current working directory to find script
+    const scriptPath = path.resolve(process.cwd(), 'scripts/claude-code-checker.sh');
+
+    try {
+      // Build command arguments
+      let command = `${scriptPath} --operation report --test-mode`;
+
+      if (repositories && repositories.length > 0) {
+        command += ` --repositories "${repositories.join(',')}"`;
+      }
+
+      // Execute the Claude Code checker script
+      const output = execSync(command, {
+        encoding: 'utf8',
+        cwd: process.cwd(),
+        timeout: 60000, // 60 second timeout
+      });
+
+      // Parse the CSV output
+      const lines = output.trim().split('\n');
+      const header = lines[0];
+      const results = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line && !line.startsWith('[') && line.includes(',')) {
+          const parts = line.split(',');
+          if (parts.length >= 5) {
+            results.push({
+              repository: parts[0],
+              claudeWorkflow: parts[1] === 'true',
+              claudeReviewWorkflow: parts[2] === 'true',
+              anthropicApiKey: parts[3] === 'true',
+              totalBranches: parseInt(parts[4]) || 0,
+              status: this.determineClaudeCodeStatus(
+                parts[1] === 'true',
+                parts[2] === 'true',
+                parts[3] === 'true'
+              ),
+            });
+          }
+        }
+      }
+
+      // Generate summary
+      const totalRepos = results.length;
+      const fullyConfigured = results.filter((r) => r.status === 'fully-configured').length;
+      const partiallyConfigured = results.filter((r) => r.status === 'partially-configured').length;
+      const notConfigured = results.filter((r) => r.status === 'not-configured').length;
+
+      return {
+        timestamp: new Date(),
+        summary: {
+          totalRepositories: totalRepos,
+          fullyConfigured,
+          partiallyConfigured,
+          notConfigured,
+          configurationRate: totalRepos > 0 ? Math.round((fullyConfigured / totalRepos) * 100) : 0,
+        },
+        repositories: results,
+        recommendations: this.generateClaudeCodeRecommendations(results),
+      };
+    } catch (error) {
+      console.error('❌ Failed to check Claude Code installation:', error);
+      throw new Error(
+        `Claude Code check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
+
+  /**
    * Generate comprehensive orchestration report
    */
   async generateReport(): Promise<any> {
     const status = await this.getStatus();
     const activeTasks = Array.from(this.activeTasks.values());
-    
+
     return {
       timestamp: new Date(),
       status,
       activeTasks,
       configuration: this.sanitizeConfig(),
-      recommendations: await this.generateRecommendations()
+      recommendations: await this.generateRecommendations(),
     };
   }
 
@@ -223,7 +302,7 @@ export class CaptainGuthilda {
         googleWorkspace: { enabled: false },
         xPremium: { enabled: false },
         openaiPlus: { enabled: false },
-        ...userConfig.aiServices
+        ...userConfig.aiServices,
       },
       orchestration: {
         autoCleanup: true,
@@ -231,7 +310,7 @@ export class CaptainGuthilda {
         agentDeployment: false,
         workflowSync: true,
         healthCheckInterval: 30000,
-        ...userConfig.orchestration
+        ...userConfig.orchestration,
       },
       monitoring: {
         enabled: true,
@@ -239,10 +318,10 @@ export class CaptainGuthilda {
         alertThresholds: {
           errorRate: 0.05,
           responseTime: 5000,
-          resourceUsage: 0.8
+          resourceUsage: 0.8,
         },
-        ...userConfig.monitoring
-      }
+        ...userConfig.monitoring,
+      },
     };
   }
 
@@ -252,15 +331,15 @@ export class CaptainGuthilda {
         mcp: 'down',
         aiServices: 'disconnected',
         automation: 'idle',
-        monitoring: 'offline'
+        monitoring: 'offline',
       },
       lastUpdate: new Date(),
       metrics: {
         uptime: 0,
         activeServices: 0,
         completedTasks: 0,
-        errorCount: 0
-      }
+        errorCount: 0,
+      },
     };
   }
 
@@ -284,22 +363,25 @@ export class CaptainGuthilda {
     // Refresh all system statuses
   }
 
-  private async authenticateService(serviceName: string, config: any): Promise<AuthenticationResult> {
+  private async authenticateService(
+    serviceName: string,
+    config: any
+  ): Promise<AuthenticationResult> {
     console.log(`🔐 Authenticating ${serviceName}...`);
-    
+
     // Service-specific authentication logic
     return {
       service: serviceName,
       status: 'success',
       message: `Successfully authenticated with ${serviceName}`,
-      capabilities: ['read', 'write', 'execute']
+      capabilities: ['read', 'write', 'execute'],
     };
   }
 
   private updateAIServicesStatus(results: AuthenticationResult[]): void {
-    const connected = results.filter(r => r.status === 'success').length;
+    const connected = results.filter((r) => r.status === 'success').length;
     const total = results.length;
-    
+
     if (connected === total) {
       this.status.systems.aiServices = 'connected';
     } else if (connected > 0) {
@@ -309,13 +391,16 @@ export class CaptainGuthilda {
     }
   }
 
-  private async startTask(type: OrchestrationTask['type'], executor: () => Promise<any>): Promise<OrchestrationTask> {
+  private async startTask(
+    type: OrchestrationTask['type'],
+    executor: () => Promise<any>
+  ): Promise<OrchestrationTask> {
     const task: OrchestrationTask = {
       id: `${type}-${Date.now()}`,
       type,
       status: 'pending',
       progress: 0,
-      startTime: new Date()
+      startTime: new Date(),
     };
 
     this.activeTasks.set(task.id, task);
@@ -364,21 +449,70 @@ export class CaptainGuthilda {
     // Return config without sensitive information
     return {
       orchestration: this.config.orchestration,
-      monitoring: this.config.monitoring
+      monitoring: this.config.monitoring,
     };
   }
 
   private async generateRecommendations(): Promise<string[]> {
     const recommendations = [];
-    
+
     if (this.status.systems.aiServices === 'disconnected') {
       recommendations.push('Configure AI service authentication');
     }
-    
+
     if (this.status.metrics.errorCount > 10) {
       recommendations.push('Investigate recurring errors');
     }
-    
+
+    return recommendations;
+  }
+
+  private determineClaudeCodeStatus(
+    claudeWorkflow: boolean,
+    claudeReviewWorkflow: boolean,
+    anthropicApiKey: boolean
+  ): string {
+    if (claudeWorkflow && anthropicApiKey) {
+      return 'fully-configured';
+    } else if (claudeWorkflow || claudeReviewWorkflow || anthropicApiKey) {
+      return 'partially-configured';
+    } else {
+      return 'not-configured';
+    }
+  }
+
+  private generateClaudeCodeRecommendations(results: any[]): string[] {
+    const recommendations = [];
+
+    const notConfigured = results.filter((r) => r.status === 'not-configured');
+    const partiallyConfigured = results.filter((r) => r.status === 'partially-configured');
+    const missingSecrets = results.filter((r) => !r.anthropicApiKey);
+    const missingWorkflows = results.filter((r) => !r.claudeWorkflow && !r.claudeReviewWorkflow);
+
+    if (notConfigured.length > 0) {
+      recommendations.push(
+        `Configure Claude Code in ${notConfigured.length} repositories: ${notConfigured.map((r) => r.repository).join(', ')}`
+      );
+    }
+
+    if (partiallyConfigured.length > 0) {
+      recommendations.push(
+        `Complete Claude Code setup in ${partiallyConfigured.length} partially configured repositories`
+      );
+    }
+
+    if (missingSecrets.length > 0) {
+      recommendations.push(`Add ANTHROPIC_API_KEY secret to ${missingSecrets.length} repositories`);
+    }
+
+    if (missingWorkflows.length > 0) {
+      recommendations.push(`Add Claude Code workflows to ${missingWorkflows.length} repositories`);
+    }
+
+    if (recommendations.length === 0) {
+      recommendations.push('All repositories have Claude Code properly configured! 🎉');
+    }
+
     return recommendations;
   }
 }

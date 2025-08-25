@@ -1,0 +1,21 @@
+name: Task
+description: Small, actionable work item
+labels: ["type:task","status:triage"]
+body:
+  - type: input
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Details
+  - type: dropdown
+    attributes:
+      label: Size
+      options:
+        - size:XS
+        - size:S
+        - size:M
+        - size:L
+        - size:XL

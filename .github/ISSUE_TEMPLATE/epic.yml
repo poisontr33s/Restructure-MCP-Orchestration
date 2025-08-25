@@ -1,0 +1,33 @@
+name: Epic
+description: Large effort that will be broken down into tasks
+labels: ["type:epic","status:triage"]
+body:
+  - type: input
+    attributes:
+      label: Goal
+      description: Outcome this epic should deliver
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Scope
+      description: What's in/out of scope
+  - type: textarea
+    attributes:
+      label: Tasks (checklist)
+      description: Add a checklist; the sub-issue workflow can convert items into linked issues later.
+      value: |
+        - [ ] Task 1
+        - [ ] Task 2
+  - type: dropdown
+    attributes:
+      label: Priority
+      options:
+        - priority:p0
+        - priority:p1
+        - priority:p2
+        - priority:p3
+  - type: labels
+    attributes:
+      label: Areas
+      multiple: true

@@ -69,7 +69,7 @@ pnpm guthilda:orchestrate
 ## Strukturell Tektonikk
 
 - **Captain Guthilda Command Center**: Meta-automation orchestrator and central intelligence
-- Monorepo-struktur med PNPM workspace og klart separerte ansvarsområder  
+- Monorepo-struktur med PNPM workspace og klart separerte ansvarsområder
 - Modulær arkitektur med pluginbasert tilnærming for enkel utvidelse
 - Full TypeScript-støtte med sterk typing og moderne utviklingsverktøy
 - Sentral overvåkning og administrasjon av alle MCP-tjenere under Guthilda's kommando
@@ -82,8 +82,10 @@ pnpm guthilda:orchestrate
 - **⚓ Cross-Platform Intelligence**: Branch intelligence, agent deployment, content discovery
 - **📊 Comprehensive Monitoring**: Real-time system health and performance tracking
 - **🧹 Automated Maintenance**: System cleanup, optimization, and resource management
+- **🔍 Claude Code Verification**: Automated checking of Claude Code installation across repositories
 
 ### Legacy Core Features
+
 - **Sentralisert administrasjon**: Start, stopp og overvåk alle MCP-tjenere fra ett grensesnitt
 - **Sanntidsovervåking**: Dashboard for tjenerestatus, systemressurser og logger
 - **Helsesjekk**: Automatiske helsesjekker og statusoppdateringer
@@ -118,6 +120,12 @@ pnpm guthilda:cleanup
 
 # Generate comprehensive report
 pnpm guthilda:report
+
+# Check Claude Code installation across all repositories
+pnpm guthilda:claude-code
+
+# Check Claude Code in specific repositories
+pnpm guthilda claude-code repo1,repo2
 ```
 
 ### Monorepo Rituals
@@ -132,12 +140,38 @@ Follow Captain Guthilda's monorepo rituals as documented in `.github/guthilda-mo
 
 > Orchestration is not control; it's conversation with chaos - under Captain Guthilda's guidance.
 
+## 📖 Documentation
+
+### GitHub Pages
+
+The project documentation is automatically published to GitHub Pages and available at:
+**https://poisontr33s.github.io/Restructure-MCP-Orchestration/**
+
+The documentation is automatically deployed from the `docs/` directory whenever changes are pushed to the main branch.
+
+### Updating Documentation
+
+To update the documentation:
+
+1. **Edit files in the `docs/` directory** - Add or modify `.md` files or update the `index.html`
+2. **Commit and push to main branch** - The GitHub Pages workflow will automatically deploy changes
+3. **Check deployment status** - Visit Actions tab to monitor deployment progress
+4. **Access updated docs** - Changes are live at the GitHub Pages URL within minutes
+
+The documentation includes:
+
+- **Captain Guthilda's Unified Guide** - Complete system overview and commands
+- **Universal Branch Management** - Automated branch management documentation
+- **Automation Summary** - Overview of automation features
+- **Claude Code Checker** - Documentation for AI code checking tools
+
 ## Vedlikehold: Rydding av grener
+
 - Åpne GitHub → Actions → "Cleanup branches"
 - Velg input:
-	- target_branch: eksakt navn for én gren (overstyrer pattern)
-	- pattern: regex for å velge flere grener (f.eks. `^agent/|^chore/`)
-	- merged_only: true for kun sammenslåtte grener (standard)
-	- dry_run: true for forhåndsvisning (standard). Sett til false for faktisk sletting
-	- exclude_patterns: ekstra regex unntak (default beskytter main/master/develop/release/gh-pages)
+  - target_branch: eksakt navn for én gren (overstyrer pattern)
+  - pattern: regex for å velge flere grener (f.eks. `^agent/|^chore/`)
+  - merged_only: true for kun sammenslåtte grener (standard)
+  - dry_run: true for forhåndsvisning (standard). Sett til false for faktisk sletting
+  - exclude_patterns: ekstra regex unntak (default beskytter main/master/develop/release/gh-pages)
 - Kjør workflow. Start med dry_run=true, verifiser listen, kjør deretter med dry_run=false når trygt.

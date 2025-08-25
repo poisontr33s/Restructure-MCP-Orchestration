@@ -1,0 +1,79 @@
+name: Create sub-issues from checklist
+on:
+  workflow_dispatch:
+    inputs:
+      parent:
+        description: "Parent issue number"
+        required: true
+      label:
+        description: "Label to apply to created issues (optional)"
+        required: false
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  split:
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/split-tasks'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine parent issue
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "num=${{ github.event.inputs.parent }}" >> $GITHUB_OUTPUT
+          else
+            echo "num=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Create child issues from unchecked checklist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const parentNumber = Number("${{ steps.meta.outputs.num }}");
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parentNumber
+            });
+            const lines = (issue.body || "").split(/\r?\n/);
+            const tasks = lines.filter(l => /^\s*-\s*\[\s\]\s+/.test(l)).map(l => l.replace(/^\s*-\s*\[\s\]\s+/, '').trim());
+            if (!tasks.length) {
+              core.info("No unchecked tasks found; nothing to do.");
+              return;
+            }
+            for (const title of tasks) {
+              const { data: child } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                labels: (context.payload?.inputs?.label ? [context.payload.inputs.label] : undefined)
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parentNumber,
+                body: `Created sub-issue #${child.number} for: ${title}`
+              });
+              const parentLabels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name).filter(Boolean);
+              if (parentLabels.length) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: child.number,
+                  labels: parentLabels
+                });
+              }
+              if (issue.assignees?.length) {
+                await github.rest.issues.addAssignees({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: child.number,
+                  assignees: issue.assignees.map(a => a.login)
+                });
+              }
+            }

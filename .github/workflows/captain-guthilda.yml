@@ -34,6 +34,12 @@ jobs:
     name: 🏴‍☠️ Captain Guthilda Commands
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
     
     steps:
       - name: ⚓ Checkout Repository
@@ -126,6 +132,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.inputs.orchestration_type == 'orchestrate'
     needs: guthilda-orchestration
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
     
     steps:
       - name: ⚓ Checkout Repository
@@ -175,6 +187,12 @@ jobs:
     name: 🔒 Security Scan
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
     
     steps:
       - name: ⚓ Checkout Repository
@@ -193,6 +211,12 @@ jobs:
     name: 📚 Documentation Validation
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
     
     steps:
       - name: ⚓ Checkout Repository

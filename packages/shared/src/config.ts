@@ -36,6 +36,11 @@ export const defaultConfig: AppConfig = {
     { name: 'Knowledge Graph MCP', type: 'knowledge-graph-memory', port: 3005, enabled: true },
     { name: 'Compass MCP', type: 'compass', port: 3007, enabled: true },
     { name: 'Playwright MCP', type: 'playwright', port: 3008, enabled: true },
+    { name: 'Microsoft 365 Teams', type: 'm365-teams', port: 3009, enabled: true },
+    { name: 'Microsoft 365 Outlook', type: 'm365-outlook', port: 3010, enabled: true },
+    { name: 'Microsoft 365 SharePoint', type: 'm365-sharepoint', port: 3011, enabled: true },
+    { name: 'Microsoft 365 OneDrive', type: 'm365-onedrive', port: 3012, enabled: true },
+    { name: 'Microsoft 365 Graph API', type: 'm365-graph', port: 3013, enabled: true },
   ],
   monitor: {
     port: 8080,

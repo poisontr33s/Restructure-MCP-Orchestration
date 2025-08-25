@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph, agents/m365-graph, agents/m365-teams, agents/m365-outlook, agents/m365-sharepoint, agents/m365-onedrive]
     
     steps:
       - name: Checkout repository
@@ -27,10 +27,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         
       - name: Build package
         run: pnpm run build
@@ -55,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking]
+        package: [core, cli, monitor, shared, servers/base, servers/duckduckgo, servers/sequential-thinking, servers/m365-graph, agents/m365-graph, agents/m365-teams, agents/m365-outlook, agents/m365-sharepoint, agents/m365-onedrive]
         
     steps:
       - name: Checkout repository

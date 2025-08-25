@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-11T00:00:00Z",
+  "description": "Remote-friendly AI Agents Registry for discovery and invocation",
+  "agents": {
+    "openai.gpt": {
+      "id": "openai.gpt",
+      "displayName": "OpenAI GPT",
+      "vendor": "OpenAI",
+      "models": ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"],
+      "capabilities": ["chat", "text-generation", "reasoning"],
+      "auth": {
+        "type": "api_key",
+        "envVars": ["OPENAI_API_KEY"]
+      },
+      "endpoints": {
+        "chat": "https://api.openai.com/v1/chat/completions",
+        "models": "https://api.openai.com/v1/models"
+      },
+      "discovery": {
+        "envList": ["OPENAI_API_KEY"],
+        "probe": {
+          "method": "GET",
+          "url": "https://api.openai.com/v1/models",
+          "headers": {
+            "Authorization": "Bearer ${OPENAI_API_KEY}"
+          }
+        }
+      },
+      "notes": "Requires API billing account. ChatGPT Plus web interface not accessible via API."
+    },
+    "anthropic.claude": {
+      "id": "anthropic.claude",
+      "displayName": "Anthropic Claude",
+      "vendor": "Anthropic",
+      "models": ["claude-3-5-sonnet-20241022", "claude-3-haiku-20240307", "claude-3-opus-20240229"],
+      "capabilities": ["chat", "text-generation", "reasoning", "analysis"],
+      "auth": {
+        "type": "api_key",
+        "envVars": ["ANTHROPIC_API_KEY"]
+      },
+      "endpoints": {
+        "messages": "https://api.anthropic.com/v1/messages"
+      },
+      "discovery": {
+        "envList": ["ANTHROPIC_API_KEY"],
+        "probe": {
+          "method": "POST",
+          "url": "https://api.anthropic.com/v1/messages",
+          "headers": {
+            "Content-Type": "application/json",
+            "x-api-key": "${ANTHROPIC_API_KEY}",
+            "anthropic-version": "2023-06-01"
+          },
+          "body": {
+            "model": "claude-3-haiku-20240307",
+            "max_tokens": 1,
+            "messages": [{ "role": "user", "content": "test" }]
+          }
+        }
+      },
+      "notes": "Production ready with stable API."
+    },
+    "google.gemini": {
+      "id": "google.gemini",
+      "displayName": "Google Gemini",
+      "vendor": "Google",
+      "models": ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-pro"],
+      "capabilities": ["chat", "text-generation", "reasoning", "multimodal"],
+      "auth": {
+        "type": "api_key",
+        "envVars": ["GEMINI_API_KEY"]
+      },
+      "endpoints": {
+        "generateContent": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+      },
+      "discovery": {
+        "envList": ["GEMINI_API_KEY"],
+        "probe": {
+          "method": "GET",
+          "url": "https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}"
+        }
+      },
+      "notes": "Public API available with API key."
+    },
+    "google.jules": {
+      "id": "google.jules",
+      "displayName": "Google Jules (Beta Placeholder)",
+      "vendor": "Google",
+      "models": ["jules-beta"],
+      "capabilities": ["async-reasoning", "code-analysis"],
+      "auth": {
+        "type": "api_key",
+        "envVars": ["JULES_API_KEY", "JULES_ENDPOINT"]
+      },
+      "endpoints": {
+        "custom": "${JULES_ENDPOINT}"
+      },
+      "discovery": {
+        "envList": ["JULES_API_KEY", "JULES_ENDPOINT"]
+      },
+      "notes": "PLACEHOLDER: Beta async agent. Requires custom endpoint configuration. API may be private or UI-only."
+    },
+    "google.gemini_code_assist": {
+      "id": "google.gemini_code_assist",
+      "displayName": "Google Gemini Code Assist (Enterprise Placeholder)",
+      "vendor": "Google",
+      "models": ["gemini-code-assist"],
+      "capabilities": ["code-generation", "code-review", "enterprise-integration"],
+      "auth": {
+        "type": "token",
+        "envVars": ["GEMINI_CODE_ASSIST_TOKEN"]
+      },
+      "endpoints": {},
+      "discovery": {
+        "envList": ["GEMINI_CODE_ASSIST_TOKEN"]
+      },
+      "notes": "PLACEHOLDER: Enterprise-only product. May require special authentication or UI-only access."
+    },
+    "github.copilot_coding_agent": {
+      "id": "github.copilot_coding_agent",
+      "displayName": "GitHub Copilot Coding Agent",
+      "vendor": "GitHub",
+      "models": ["copilot"],
+      "capabilities": ["code-generation", "code-completion", "chat"],
+      "auth": {
+        "type": "awareness_only",
+        "envVars": []
+      },
+      "endpoints": {},
+      "discovery": {
+        "envList": []
+      },
+      "notes": "AWARENESS ONLY: No direct HTTP API. Integrated via GitHub Actions, VS Code extension, or web interface."
+    }
+  }
+}

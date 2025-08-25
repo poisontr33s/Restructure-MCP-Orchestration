@@ -1,0 +1,208 @@
+name: "Agents: Discovery"
+
+on:
+  workflow_dispatch:
+    inputs:
+      update_issue:
+        description: 'Update sticky issue comment with results'
+        type: boolean
+        default: true
+  schedule:
+    # Weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    name: "Discover AI Agents"
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Run agents discovery
+        uses: actions/github-script@v7
+        env:
+          # OpenAI
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Anthropic
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Google Gemini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Google Jules (placeholder)
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          JULES_ENDPOINT: ${{ secrets.JULES_ENDPOINT }}
+          # Google Gemini Code Assist (placeholder)
+          GEMINI_CODE_ASSIST_TOKEN: ${{ secrets.GEMINI_CODE_ASSIST_TOKEN }}
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const fs = require('fs');
+            const path = require('path');
+            
+            console.log('🤖 Starting Agents Discovery...');
+            
+            try {
+              // Run the discovery script
+              const result = execSync('node scripts/agents-discovery.mjs', { 
+                encoding: 'utf8',
+                cwd: process.cwd(),
+                env: { ...process.env }
+              });
+              
+              console.log('Discovery output:');
+              console.log(result);
+              
+              // Read the generated status file
+              const statusPath = path.join(process.cwd(), 'agents-status.json');
+              if (fs.existsSync(statusPath)) {
+                const status = JSON.parse(fs.readFileSync(statusPath, 'utf8'));
+                
+                // Create a summary for the job summary
+                let summary = `# 🤖 Agents Discovery Summary\n\n`;
+                summary += `**Timestamp:** ${status.timestamp}\n`;
+                summary += `**Registry Version:** ${status.registry.version}\n`;
+                summary += `**Total Agents:** ${status.summary.total}\n\n`;
+                
+                summary += `## Status Breakdown\n\n`;
+                for (const [statusType, count] of Object.entries(status.summary.byStatus)) {
+                  const emoji = getStatusEmoji(statusType);
+                  summary += `- ${emoji} **${statusType.replace('_', ' ').toUpperCase()}**: ${count}\n`;
+                }
+                
+                summary += `\n## Available Agents\n\n`;
+                const available = status.results.filter(r => r.status === 'available');
+                if (available.length > 0) {
+                  for (const agent of available) {
+                    summary += `- ✅ **${agent.displayName}** (${agent.vendor})`;
+                    if (agent.models && agent.models.length > 0) {
+                      summary += ` - ${agent.models.length} models`;
+                    }
+                    summary += `\n`;
+                  }
+                } else {
+                  summary += `No agents are currently available. Check repository secrets.\n`;
+                }
+                
+                summary += `\n## Missing Secrets\n\n`;
+                const missingSecrets = new Set();
+                for (const result of status.results) {
+                  if (result.status === 'missing_secrets') {
+                    result.environment.missing.forEach(secret => missingSecrets.add(secret));
+                  }
+                }
+                
+                if (missingSecrets.size > 0) {
+                  summary += `To enable more agents, add these repository secrets:\n\n`;
+                  for (const secret of Array.from(missingSecrets).sort()) {
+                    summary += `- \`${secret}\`\n`;
+                  }
+                } else {
+                  summary += `All configured secrets are present.\n`;
+                }
+                
+                // Set job summary
+                core.summary.addRaw(summary);
+                await core.summary.write();
+                
+                console.log('✅ Discovery completed successfully');
+              } else {
+                throw new Error('Status file not generated');
+              }
+              
+            } catch (error) {
+              console.error('❌ Discovery failed:', error);
+              throw error;
+            }
+            
+            function getStatusEmoji(status) {
+              switch (status) {
+                case 'available': return '✅';
+                case 'environment_ready': return '🟡';
+                case 'missing_secrets': return '❌';
+                case 'api_error': return '🔴';
+                case 'probe_failed': return '⚠️';
+                case 'awareness_only': return 'ℹ️';
+                default: return '❓';
+              }
+            }
+
+      - name: Upload agents status artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agents-status-${{ github.sha }}
+          path: |
+            agents-status.json
+            agents-discovery-summary.md
+          retention-days: 30
+          
+      - name: Update sticky issue comment
+        if: inputs.update_issue != false
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              // Read the markdown summary
+              const summaryPath = path.join(process.cwd(), 'agents-discovery-summary.md');
+              if (!fs.existsSync(summaryPath)) {
+                console.log('⚠️ Summary file not found, skipping issue update');
+                return;
+              }
+              
+              const summary = fs.readFileSync(summaryPath, 'utf8');
+              
+              // Look for existing issue with "Agents Status" in title
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                creator: 'github-actions[bot]',
+                per_page: 100
+              });
+              
+              const existingIssue = issues.data.find(issue => 
+                issue.title.includes('Agents Status') && 
+                issue.user.login === 'github-actions[bot]'
+              );
+              
+              if (existingIssue) {
+                // Update existing issue
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existingIssue.number,
+                  body: summary
+                });
+                
+                console.log(`✅ Updated existing issue #${existingIssue.number}`);
+              } else {
+                // Create new issue
+                const newIssue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: '🤖 Agents Status',
+                  body: summary,
+                  labels: ['automation', 'agents']
+                });
+                
+                console.log(`✅ Created new issue #${newIssue.data.number}`);
+              }
+              
+            } catch (error) {
+              console.error('❌ Failed to update issue:', error);
+              // Don't fail the workflow for issue update failures
+            }

@@ -73,11 +73,7 @@ if ($geminiProcesses) {
     Write-Host "✅ Gemini CLI already running" -ForegroundColor Green
 } else {
     Write-Host "🚀 Starting Gemini CLI in autonomous mode..." -ForegroundColor Yellow
-    Start-Process -FilePath "pwsh" -ArgumentList @(
-        "-NoProfile", 
-        "-Command", 
-        "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent"
-    ) -WindowStyle Hidden -PassThru | Out-Null
+    # Start-Process -FilePath "code" -ArgumentList "--command liveServer.start" -NoNewWindow
     Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green
 }
 

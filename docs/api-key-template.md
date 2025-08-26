@@ -15,7 +15,7 @@ This template helps you set up your Gemini API key and model for use with the Ge
 ### For Windows (PowerShell):
 
 ```powershell
-$env:GEMINI_API_KEY = "YOUR_PROFESSIONAL_API_KEY_HERE"
+$env:GEMINI_API_KEY = "AIzaSyABE0RZvRLBJLweYd0BEqQE4FeF_SiywwU"
 $env:GEMINI_MODEL = "gemini-ultra"
 ```
 

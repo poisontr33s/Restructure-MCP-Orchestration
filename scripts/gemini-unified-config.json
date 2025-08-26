@@ -34,7 +34,7 @@
   },
   "configuration": {
     "gemini": {
-      "defaultModel": "gemini-2.5-pro",
+      "defaultModel": "gemini-ultra",
       "providers": {
         "sdk": {
           "endpoint": "generativelanguage.googleapis.com",
@@ -73,6 +73,12 @@
           "maxTokens": 1024,
           "temperature": 0.5,
           "thinkingBudget": 100
+        },
+        "gemini-ultra": {
+          "maxTokens": 2048,
+          "temperature": 0.7,
+          "thinkingBudget": -1,
+          "tools": ["googleSearch"]
         }
       }
     }

@@ -1,0 +1,2 @@
+echo "This is a test file" | Out-File -FilePath "C:\Users\erdno\GithubRepos\Restructure-MCP-Orchestration\.vscode\.session\test-file.txt" -Encoding utf8
+Get-Content -Path "C:\Users\erdno\GithubRepos\Restructure-MCP-Orchestration\.vscode\.session\test-file.txt"

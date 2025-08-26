@@ -1,0 +1,2062 @@
+{
+  "timestamp": "2025-08-26T07:11:32.781Z",
+  "parameters": {
+    "mean": 50,
+    "stddev": 10,
+    "sample_size": 100
+  },
+  "statistics": {
+    "count": 100,
+    "sum": 4991.013623692988,
+    "mean": 49.91013623692989,
+    "median": 49.5773546358359,
+    "variance": 78.6017976646101,
+    "stddev": 8.865765486668938,
+    "min": 28.86072605672566,
+    "max": 72.09548190493551,
+    "range": 43.23475584820985
+  },
+  "distribution": {
+    "bins": [
+      {
+        "id": 0,
+        "range": [
+          28.86072605672566,
+          33.18420164154664
+        ],
+        "center": 31.02246384913615,
+        "tasks": [
+          {
+            "id": 80,
+            "value": 33.02963905563397,
+            "priority": 1,
+            "execution_time": 1.6970360944366027,
+            "complexity": 4
+          },
+          {
+            "id": 40,
+            "value": 28.86072605672566,
+            "priority": 0,
+            "execution_time": 2.113927394327434,
+            "complexity": 5
+          },
+          {
+            "id": 72,
+            "value": 29.298754531191204,
+            "priority": 0,
+            "execution_time": 2.0701245468808795,
+            "complexity": 5
+          }
+        ],
+        "load_factor": 3,
+        "mathematical_weight": 0.16517753864024437
+      },
+      {
+        "id": 1,
+        "range": [
+          33.18420164154664,
+          37.507677226367626
+        ],
+        "center": 35.345939433957135,
+        "tasks": [
+          {
+            "id": 49,
+            "value": 37.2694632784618,
+            "priority": 2,
+            "execution_time": 1.2730536721538201,
+            "complexity": 3
+          },
+          {
+            "id": 67,
+            "value": 35.818674174811704,
+            "priority": 2,
+            "execution_time": 1.4181325825188296,
+            "complexity": 3
+          },
+          {
+            "id": 33,
+            "value": 35.04579297667983,
+            "priority": 1,
+            "execution_time": 1.4954207023320172,
+            "complexity": 3
+          },
+          {
+            "id": 9,
+            "value": 34.30949200447667,
+            "priority": 1,
+            "execution_time": 1.5690507995523333,
+            "complexity": 4
+          }
+        ],
+        "load_factor": 4,
+        "mathematical_weight": 0.34173918310422696
+      },
+      {
+        "id": 2,
+        "range": [
+          37.50767722636763,
+          41.831152811188616
+        ],
+        "center": 39.669415018778125,
+        "tasks": [
+          {
+            "id": 1,
+            "value": 40.97412316723364,
+            "priority": 3,
+            "execution_time": 0.9025876832766357,
+            "complexity": 2
+          },
+          {
+            "id": 18,
+            "value": 41.44094502800339,
+            "priority": 3,
+            "execution_time": 0.8559054971996609,
+            "complexity": 2
+          },
+          {
+            "id": 22,
+            "value": 40.194909909330335,
+            "priority": 3,
+            "execution_time": 0.9805090090669666,
+            "complexity": 2
+          },
+          {
+            "id": 34,
+            "value": 41.54221545490455,
+            "priority": 3,
+            "execution_time": 0.845778454509545,
+            "complexity": 2
+          },
+          {
+            "id": 59,
+            "value": 40.32634165255967,
+            "priority": 3,
+            "execution_time": 0.967365834744033,
+            "complexity": 2
+          },
+          {
+            "id": 60,
+            "value": 40.11354322308334,
+            "priority": 3,
+            "execution_time": 0.988645677691666,
+            "complexity": 2
+          },
+          {
+            "id": 63,
+            "value": 40.67362236342585,
+            "priority": 3,
+            "execution_time": 0.932637763657415,
+            "complexity": 2
+          },
+          {
+            "id": 64,
+            "value": 41.758582880580384,
+            "priority": 3,
+            "execution_time": 0.8241417119419616,
+            "complexity": 2
+          },
+          {
+            "id": 74,
+            "value": 41.53677102931206,
+            "priority": 3,
+            "execution_time": 0.8463228970687944,
+            "complexity": 2
+          },
+          {
+            "id": 30,
+            "value": 39.901010905773994,
+            "priority": 3,
+            "execution_time": 1.0098989094226005,
+            "complexity": 3
+          },
+          {
+            "id": 23,
+            "value": 38.24012990399909,
+            "priority": 2,
+            "execution_time": 1.175987009600091,
+            "complexity": 3
+          },
+          {
+            "id": 84,
+            "value": 38.84372769254058,
+            "priority": 2,
+            "execution_time": 1.1156272307459418,
+            "complexity": 3
+          },
+          {
+            "id": 96,
+            "value": 38.78404930254506,
+            "priority": 2,
+            "execution_time": 1.1215950697454944,
+            "complexity": 3
+          },
+          {
+            "id": 98,
+            "value": 38.47368552258658,
+            "priority": 2,
+            "execution_time": 1.1526314477413422,
+            "complexity": 3
+          }
+        ],
+        "load_factor": 14,
+        "mathematical_weight": 0.5864869098281715
+      },
+      {
+        "id": 3,
+        "range": [
+          41.831152811188616,
+          46.1546283960096
+        ],
+        "center": 43.99289060359911,
+        "tasks": [
+          {
+            "id": 7,
+            "value": 45.68505175610168,
+            "priority": 4,
+            "execution_time": 0.4314948243898321,
+            "complexity": 1
+          },
+          {
+            "id": 83,
+            "value": 45.49362844854745,
+            "priority": 4,
+            "execution_time": 0.45063715514525526,
+            "complexity": 1
+          },
+          {
+            "id": 86,
+            "value": 45.18240445779499,
+            "priority": 4,
+            "execution_time": 0.4817595542205012,
+            "complexity": 1
+          },
+          {
+            "id": 4,
+            "value": 44.9061207684411,
+            "priority": 4,
+            "execution_time": 0.5093879231558901,
+            "complexity": 2
+          },
+          {
+            "id": 62,
+            "value": 44.2493059878002,
+            "priority": 4,
+            "execution_time": 0.5750694012199802,
+            "complexity": 2
+          },
+          {
+            "id": 75,
+            "value": 44.58345294320912,
+            "priority": 4,
+            "execution_time": 0.5416547056790882,
+            "complexity": 2
+          },
+          {
+            "id": 91,
+            "value": 44.23947898304123,
+            "priority": 4,
+            "execution_time": 0.576052101695877,
+            "complexity": 2
+          },
+          {
+            "id": 37,
+            "value": 43.40991800124707,
+            "priority": 3,
+            "execution_time": 0.6590081998752929,
+            "complexity": 2
+          },
+          {
+            "id": 51,
+            "value": 42.310674978739435,
+            "priority": 3,
+            "execution_time": 0.7689325021260565,
+            "complexity": 2
+          },
+          {
+            "id": 69,
+            "value": 42.22757450843456,
+            "priority": 3,
+            "execution_time": 0.7772425491565442,
+            "complexity": 2
+          }
+        ],
+        "load_factor": 10,
+        "mathematical_weight": 0.8349137803724493
+      },
+      {
+        "id": 4,
+        "range": [
+          46.1546283960096,
+          50.47810398083058
+        ],
+        "center": 48.31636618842009,
+        "tasks": [
+          {
+            "id": 10,
+            "value": 49.18049719729575,
+            "priority": 5,
+            "execution_time": 0.08195028027042497,
+            "complexity": 1
+          },
+          {
+            "id": 15,
+            "value": 49.574299861902546,
+            "priority": 5,
+            "execution_time": 0.042570013809745434,
+            "complexity": 1
+          },
+          {
+            "id": 17,
+            "value": 49.97649127651973,
+            "priority": 5,
+            "execution_time": 0.002350872348026911,
+            "complexity": 1
+          },
+          {
+            "id": 19,
+            "value": 49.58040940976925,
+            "priority": 5,
+            "execution_time": 0.04195905902307473,
+            "complexity": 1
+          },
+          {
+            "id": 24,
+            "value": 49.47415119571249,
+            "priority": 5,
+            "execution_time": 0.05258488042875129,
+            "complexity": 1
+          },
+          {
+            "id": 27,
+            "value": 48.32339767345949,
+            "priority": 5,
+            "execution_time": 0.1676602326540511,
+            "complexity": 1
+          },
+          {
+            "id": 29,
+            "value": 49.79684063604176,
+            "priority": 5,
+            "execution_time": 0.02031593639582425,
+            "complexity": 1
+          },
+          {
+            "id": 32,
+            "value": 50.14503528436255,
+            "priority": 5,
+            "execution_time": 0.014503528436254954,
+            "complexity": 1
+          },
+          {
+            "id": 65,
+            "value": 49.67311671428859,
+            "priority": 5,
+            "execution_time": 0.032688328571141054,
+            "complexity": 1
+          },
+          {
+            "id": 77,
+            "value": 48.642518087231565,
+            "priority": 5,
+            "execution_time": 0.1357481912768435,
+            "complexity": 1
+          },
+          {
+            "id": 85,
+            "value": 49.45875488139263,
+            "priority": 5,
+            "execution_time": 0.0541245118607371,
+            "complexity": 1
+          },
+          {
+            "id": 97,
+            "value": 49.865888819965576,
+            "priority": 5,
+            "execution_time": 0.013411118003442368,
+            "complexity": 1
+          },
+          {
+            "id": 6,
+            "value": 47.0434861792987,
+            "priority": 4,
+            "execution_time": 0.29565138207013036,
+            "complexity": 1
+          },
+          {
+            "id": 16,
+            "value": 47.72580443641752,
+            "priority": 4,
+            "execution_time": 0.2274195563582481,
+            "complexity": 1
+          },
+          {
+            "id": 20,
+            "value": 46.250926537724986,
+            "priority": 4,
+            "execution_time": 0.3749073462275014,
+            "complexity": 1
+          },
+          {
+            "id": 31,
+            "value": 46.56356722645338,
+            "priority": 4,
+            "execution_time": 0.34364327735466205,
+            "complexity": 1
+          },
+          {
+            "id": 44,
+            "value": 47.695580235861954,
+            "priority": 4,
+            "execution_time": 0.23044197641380465,
+            "complexity": 1
+          },
+          {
+            "id": 46,
+            "value": 46.44444677665491,
+            "priority": 4,
+            "execution_time": 0.3555553223345093,
+            "complexity": 1
+          },
+          {
+            "id": 47,
+            "value": 48.19727428098362,
+            "priority": 4,
+            "execution_time": 0.18027257190163795,
+            "complexity": 1
+          },
+          {
+            "id": 50,
+            "value": 48.228005153034005,
+            "priority": 4,
+            "execution_time": 0.17719948469659955,
+            "complexity": 1
+          },
+          {
+            "id": 53,
+            "value": 46.31945631891578,
+            "priority": 4,
+            "execution_time": 0.3680543681084217,
+            "complexity": 1
+          },
+          {
+            "id": 57,
+            "value": 47.75689601950008,
+            "priority": 4,
+            "execution_time": 0.22431039804999173,
+            "complexity": 1
+          },
+          {
+            "id": 79,
+            "value": 47.17038669672909,
+            "priority": 4,
+            "execution_time": 0.2829613303270911,
+            "complexity": 1
+          },
+          {
+            "id": 89,
+            "value": 47.454640342296486,
+            "priority": 4,
+            "execution_time": 0.2545359657703514,
+            "complexity": 1
+          },
+          {
+            "id": 90,
+            "value": 47.79374659639148,
+            "priority": 4,
+            "execution_time": 0.2206253403608521,
+            "complexity": 1
+          }
+        ],
+        "load_factor": 25,
+        "mathematical_weight": 0.985926851690976
+      },
+      {
+        "id": 5,
+        "range": [
+          50.47810398083058,
+          54.801579565651565
+        ],
+        "center": 52.63984177324107,
+        "tasks": [
+          {
+            "id": 25,
+            "value": 52.87890079173349,
+            "priority": 6,
+            "execution_time": 0.2878900791733493,
+            "complexity": 1
+          },
+          {
+            "id": 28,
+            "value": 52.86801214251907,
+            "priority": 6,
+            "execution_time": 0.2868012142519071,
+            "complexity": 1
+          },
+          {
+            "id": 42,
+            "value": 52.845676803050935,
+            "priority": 6,
+            "execution_time": 0.2845676803050935,
+            "complexity": 1
+          },
+          {
+            "id": 58,
+            "value": 52.95911853650086,
+            "priority": 6,
+            "execution_time": 0.295911853650086,
+            "complexity": 1
+          },
+          {
+            "id": 66,
+            "value": 52.920124786355444,
+            "priority": 6,
+            "execution_time": 0.2920124786355444,
+            "complexity": 1
+          },
+          {
+            "id": 70,
+            "value": 53.13421208032545,
+            "priority": 6,
+            "execution_time": 0.31342120803254475,
+            "complexity": 1
+          },
+          {
+            "id": 71,
+            "value": 52.64657996153767,
+            "priority": 6,
+            "execution_time": 0.26465799615376684,
+            "complexity": 1
+          },
+          {
+            "id": 81,
+            "value": 53.22251989078027,
+            "priority": 6,
+            "execution_time": 0.32225198907802693,
+            "complexity": 1
+          },
+          {
+            "id": 88,
+            "value": 53.623437597254984,
+            "priority": 6,
+            "execution_time": 0.3623437597254984,
+            "complexity": 1
+          },
+          {
+            "id": 93,
+            "value": 53.350614549192365,
+            "priority": 6,
+            "execution_time": 0.33506145491923645,
+            "complexity": 1
+          },
+          {
+            "id": 94,
+            "value": 53.58371427588996,
+            "priority": 6,
+            "execution_time": 0.35837142758899604,
+            "complexity": 1
+          },
+          {
+            "id": 45,
+            "value": 51.476814525170305,
+            "priority": 5,
+            "execution_time": 0.14768145251703046,
+            "complexity": 1
+          },
+          {
+            "id": 52,
+            "value": 52.00002658457085,
+            "priority": 5,
+            "execution_time": 0.2000026584570847,
+            "complexity": 1
+          },
+          {
+            "id": 54,
+            "value": 50.833793907158075,
+            "priority": 5,
+            "execution_time": 0.0833793907158075,
+            "complexity": 1
+          },
+          {
+            "id": 55,
+            "value": 52.24895994884985,
+            "priority": 5,
+            "execution_time": 0.22489599488498513,
+            "complexity": 1
+          },
+          {
+            "id": 61,
+            "value": 51.3232201211116,
+            "priority": 5,
+            "execution_time": 0.13232201211116035,
+            "complexity": 1
+          },
+          {
+            "id": 73,
+            "value": 52.3676964885955,
+            "priority": 5,
+            "execution_time": 0.23676964885954987,
+            "complexity": 1
+          },
+          {
+            "id": 78,
+            "value": 51.46016301509517,
+            "priority": 5,
+            "execution_time": 0.14601630150951692,
+            "complexity": 1
+          }
+        ],
+        "load_factor": 18,
+        "mathematical_weight": 0.965756233450598
+      },
+      {
+        "id": 6,
+        "range": [
+          54.801579565651565,
+          59.12505515047255
+        ],
+        "center": 56.963317358062056,
+        "tasks": [
+          {
+            "id": 3,
+            "value": 57.926162687331185,
+            "priority": 7,
+            "execution_time": 0.7926162687331185,
+            "complexity": 2
+          },
+          {
+            "id": 8,
+            "value": 58.62892371942472,
+            "priority": 7,
+            "execution_time": 0.8628923719424719,
+            "complexity": 2
+          },
+          {
+            "id": 21,
+            "value": 57.31313546589117,
+            "priority": 7,
+            "execution_time": 0.7313135465891172,
+            "complexity": 2
+          },
+          {
+            "id": 36,
+            "value": 57.51472764201944,
+            "priority": 7,
+            "execution_time": 0.7514727642019438,
+            "complexity": 2
+          },
+          {
+            "id": 39,
+            "value": 58.02588992523535,
+            "priority": 7,
+            "execution_time": 0.8025889925235348,
+            "complexity": 2
+          },
+          {
+            "id": 48,
+            "value": 59.10628047636352,
+            "priority": 7,
+            "execution_time": 0.9106280476363523,
+            "complexity": 2
+          },
+          {
+            "id": 82,
+            "value": 58.9890411147699,
+            "priority": 7,
+            "execution_time": 0.8989041114769897,
+            "complexity": 2
+          },
+          {
+            "id": 87,
+            "value": 57.99757940116114,
+            "priority": 7,
+            "execution_time": 0.799757940116114,
+            "complexity": 2
+          },
+          {
+            "id": 38,
+            "value": 54.89402135751932,
+            "priority": 6,
+            "execution_time": 0.48940213575193214,
+            "complexity": 1
+          },
+          {
+            "id": 26,
+            "value": 55.840360038158856,
+            "priority": 6,
+            "execution_time": 0.5840360038158856,
+            "complexity": 2
+          },
+          {
+            "id": 95,
+            "value": 56.31235116872515,
+            "priority": 6,
+            "execution_time": 0.6312351168725151,
+            "complexity": 2
+          }
+        ],
+        "load_factor": 11,
+        "mathematical_weight": 0.7847116581416549
+      },
+      {
+        "id": 7,
+        "range": [
+          59.125055150472555,
+          63.44853073529354
+        ],
+        "center": 61.28679294288305,
+        "tasks": [
+          {
+            "id": 0,
+            "value": 61.82365168535671,
+            "priority": 8,
+            "execution_time": 1.1823651685356709,
+            "complexity": 3
+          },
+          {
+            "id": 35,
+            "value": 61.807735152057205,
+            "priority": 8,
+            "execution_time": 1.1807735152057206,
+            "complexity": 3
+          },
+          {
+            "id": 68,
+            "value": 61.964938447735285,
+            "priority": 8,
+            "execution_time": 1.1964938447735285,
+            "complexity": 3
+          },
+          {
+            "id": 92,
+            "value": 59.46776553383789,
+            "priority": 7,
+            "execution_time": 0.9467765533837891,
+            "complexity": 2
+          },
+          {
+            "id": 11,
+            "value": 60.88422645530174,
+            "priority": 7,
+            "execution_time": 1.0884226455301742,
+            "complexity": 3
+          },
+          {
+            "id": 41,
+            "value": 60.95302809358825,
+            "priority": 7,
+            "execution_time": 1.095302809358825,
+            "complexity": 3
+          }
+        ],
+        "load_factor": 6,
+        "mathematical_weight": 0.5288986387361898
+      },
+      {
+        "id": 8,
+        "range": [
+          63.44853073529354,
+          67.77200632011453
+        ],
+        "center": 65.61026852770404,
+        "tasks": [
+          {
+            "id": 13,
+            "value": 63.95965671234198,
+            "priority": 8,
+            "execution_time": 1.3959656712341981,
+            "complexity": 3
+          },
+          {
+            "id": 43,
+            "value": 64.59325550110773,
+            "priority": 8,
+            "execution_time": 1.4593255501107734,
+            "complexity": 3
+          },
+          {
+            "id": 56,
+            "value": 64.69779296172999,
+            "priority": 8,
+            "execution_time": 1.4697792961729987,
+            "complexity": 3
+          },
+          {
+            "id": 76,
+            "value": 63.743597611692714,
+            "priority": 8,
+            "execution_time": 1.3743597611692713,
+            "complexity": 3
+          },
+          {
+            "id": 2,
+            "value": 65.4804145135876,
+            "priority": 8,
+            "execution_time": 1.5480414513587604,
+            "complexity": 4
+          },
+          {
+            "id": 14,
+            "value": 65.50042252708863,
+            "priority": 8,
+            "execution_time": 1.550042252708863,
+            "complexity": 4
+          }
+        ],
+        "load_factor": 6,
+        "mathematical_weight": 0.2957021984160123
+      },
+      {
+        "id": 9,
+        "range": [
+          67.77200632011451,
+          72.0954819049355
+        ],
+        "center": 69.933744112525,
+        "tasks": [
+          {
+            "id": 5,
+            "value": 70.0692179445476,
+            "priority": 10,
+            "execution_time": 2.0069217944547604,
+            "complexity": 5
+          },
+          {
+            "id": 12,
+            "value": 72.09548190493551,
+            "priority": 10,
+            "execution_time": 2.209548190493551,
+            "complexity": 5
+          },
+          {
+            "id": 99,
+            "value": 68.62095086036798,
+            "priority": 9,
+            "execution_time": 1.8620950860367984,
+            "complexity": 4
+          }
+        ],
+        "load_factor": 3,
+        "mathematical_weight": 0.137137559671337
+      }
+    ],
+    "bin_width": 4.323475584820985,
+    "total_bins": 10
+  },
+  "optimization": {
+    "execution_plan": [
+      {
+        "execution_order": 0,
+        "bin_id": 4,
+        "task_id": 10,
+        "scheduled_time": 0,
+        "estimated_duration": 0.08195028027042497,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.18049719729575,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.08195028027042497
+      },
+      {
+        "execution_order": 1,
+        "bin_id": 4,
+        "task_id": 15,
+        "scheduled_time": 0.08195028027042497,
+        "estimated_duration": 0.042570013809745434,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.574299861902546,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.042570013809745434
+      },
+      {
+        "execution_order": 2,
+        "bin_id": 4,
+        "task_id": 17,
+        "scheduled_time": 0.1245202940801704,
+        "estimated_duration": 0.002350872348026911,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.97649127651973,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.002350872348026911
+      },
+      {
+        "execution_order": 3,
+        "bin_id": 4,
+        "task_id": 19,
+        "scheduled_time": 0.12687116642819732,
+        "estimated_duration": 0.04195905902307473,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.58040940976925,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.04195905902307473
+      },
+      {
+        "execution_order": 4,
+        "bin_id": 4,
+        "task_id": 24,
+        "scheduled_time": 0.16883022545127205,
+        "estimated_duration": 0.05258488042875129,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.47415119571249,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.05258488042875129
+      },
+      {
+        "execution_order": 5,
+        "bin_id": 4,
+        "task_id": 27,
+        "scheduled_time": 0.22141510588002333,
+        "estimated_duration": 0.1676602326540511,
+        "priority": 5,
+        "complexity": 1,
+        "value": 48.32339767345949,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.1676602326540511
+      },
+      {
+        "execution_order": 6,
+        "bin_id": 4,
+        "task_id": 29,
+        "scheduled_time": 0.38907533853407444,
+        "estimated_duration": 0.02031593639582425,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.79684063604176,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.02031593639582425
+      },
+      {
+        "execution_order": 7,
+        "bin_id": 4,
+        "task_id": 32,
+        "scheduled_time": 0.4093912749298987,
+        "estimated_duration": 0.014503528436254954,
+        "priority": 5,
+        "complexity": 1,
+        "value": 50.14503528436255,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.014503528436254954
+      },
+      {
+        "execution_order": 8,
+        "bin_id": 4,
+        "task_id": 65,
+        "scheduled_time": 0.42389480336615365,
+        "estimated_duration": 0.032688328571141054,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.67311671428859,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.032688328571141054
+      },
+      {
+        "execution_order": 9,
+        "bin_id": 4,
+        "task_id": 77,
+        "scheduled_time": 0.4565831319372947,
+        "estimated_duration": 0.1357481912768435,
+        "priority": 5,
+        "complexity": 1,
+        "value": 48.642518087231565,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.1357481912768435
+      },
+      {
+        "execution_order": 10,
+        "bin_id": 4,
+        "task_id": 85,
+        "scheduled_time": 0.5923313232141383,
+        "estimated_duration": 0.0541245118607371,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.45875488139263,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.0541245118607371
+      },
+      {
+        "execution_order": 11,
+        "bin_id": 4,
+        "task_id": 97,
+        "scheduled_time": 0.6464558350748754,
+        "estimated_duration": 0.013411118003442368,
+        "priority": 5,
+        "complexity": 1,
+        "value": 49.865888819965576,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.013411118003442368
+      },
+      {
+        "execution_order": 12,
+        "bin_id": 4,
+        "task_id": 6,
+        "scheduled_time": 0.6598669530783178,
+        "estimated_duration": 0.29565138207013036,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.0434861792987,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.29565138207013036
+      },
+      {
+        "execution_order": 13,
+        "bin_id": 4,
+        "task_id": 16,
+        "scheduled_time": 0.9555183351484482,
+        "estimated_duration": 0.2274195563582481,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.72580443641752,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.2274195563582481
+      },
+      {
+        "execution_order": 14,
+        "bin_id": 4,
+        "task_id": 20,
+        "scheduled_time": 1.1829378915066964,
+        "estimated_duration": 0.3749073462275014,
+        "priority": 4,
+        "complexity": 1,
+        "value": 46.250926537724986,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.3749073462275014
+      },
+      {
+        "execution_order": 15,
+        "bin_id": 4,
+        "task_id": 31,
+        "scheduled_time": 1.5578452377341978,
+        "estimated_duration": 0.34364327735466205,
+        "priority": 4,
+        "complexity": 1,
+        "value": 46.56356722645338,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.34364327735466205
+      },
+      {
+        "execution_order": 16,
+        "bin_id": 4,
+        "task_id": 44,
+        "scheduled_time": 1.9014885150888599,
+        "estimated_duration": 0.23044197641380465,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.695580235861954,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.23044197641380465
+      },
+      {
+        "execution_order": 17,
+        "bin_id": 4,
+        "task_id": 46,
+        "scheduled_time": 2.1319304915026644,
+        "estimated_duration": 0.3555553223345093,
+        "priority": 4,
+        "complexity": 1,
+        "value": 46.44444677665491,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.3555553223345093
+      },
+      {
+        "execution_order": 18,
+        "bin_id": 4,
+        "task_id": 47,
+        "scheduled_time": 2.4874858138371736,
+        "estimated_duration": 0.18027257190163795,
+        "priority": 4,
+        "complexity": 1,
+        "value": 48.19727428098362,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.18027257190163795
+      },
+      {
+        "execution_order": 19,
+        "bin_id": 4,
+        "task_id": 50,
+        "scheduled_time": 2.6677583857388116,
+        "estimated_duration": 0.17719948469659955,
+        "priority": 4,
+        "complexity": 1,
+        "value": 48.228005153034005,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.17719948469659955
+      },
+      {
+        "execution_order": 20,
+        "bin_id": 4,
+        "task_id": 53,
+        "scheduled_time": 2.8449578704354113,
+        "estimated_duration": 0.3680543681084217,
+        "priority": 4,
+        "complexity": 1,
+        "value": 46.31945631891578,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.3680543681084217
+      },
+      {
+        "execution_order": 21,
+        "bin_id": 4,
+        "task_id": 57,
+        "scheduled_time": 3.213012238543833,
+        "estimated_duration": 0.22431039804999173,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.75689601950008,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.22431039804999173
+      },
+      {
+        "execution_order": 22,
+        "bin_id": 4,
+        "task_id": 79,
+        "scheduled_time": 3.4373226365938248,
+        "estimated_duration": 0.2829613303270911,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.17038669672909,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.2829613303270911
+      },
+      {
+        "execution_order": 23,
+        "bin_id": 4,
+        "task_id": 89,
+        "scheduled_time": 3.720283966920916,
+        "estimated_duration": 0.2545359657703514,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.454640342296486,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.2545359657703514
+      },
+      {
+        "execution_order": 24,
+        "bin_id": 4,
+        "task_id": 90,
+        "scheduled_time": 3.9748199326912674,
+        "estimated_duration": 0.2206253403608521,
+        "priority": 4,
+        "complexity": 1,
+        "value": 47.79374659639148,
+        "mathematical_weight": 0.985926851690976,
+        "gaussian_position": 0.2206253403608521
+      },
+      {
+        "execution_order": 25,
+        "bin_id": 5,
+        "task_id": 25,
+        "scheduled_time": 4.19544527305212,
+        "estimated_duration": 0.2878900791733493,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.87890079173349,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.2878900791733493
+      },
+      {
+        "execution_order": 26,
+        "bin_id": 5,
+        "task_id": 28,
+        "scheduled_time": 4.4833353522254695,
+        "estimated_duration": 0.2868012142519071,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.86801214251907,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.2868012142519071
+      },
+      {
+        "execution_order": 27,
+        "bin_id": 5,
+        "task_id": 42,
+        "scheduled_time": 4.770136566477377,
+        "estimated_duration": 0.2845676803050935,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.845676803050935,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.2845676803050935
+      },
+      {
+        "execution_order": 28,
+        "bin_id": 5,
+        "task_id": 58,
+        "scheduled_time": 5.05470424678247,
+        "estimated_duration": 0.295911853650086,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.95911853650086,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.295911853650086
+      },
+      {
+        "execution_order": 29,
+        "bin_id": 5,
+        "task_id": 66,
+        "scheduled_time": 5.350616100432556,
+        "estimated_duration": 0.2920124786355444,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.920124786355444,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.2920124786355444
+      },
+      {
+        "execution_order": 30,
+        "bin_id": 5,
+        "task_id": 70,
+        "scheduled_time": 5.6426285790681,
+        "estimated_duration": 0.31342120803254475,
+        "priority": 6,
+        "complexity": 1,
+        "value": 53.13421208032545,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.31342120803254475
+      },
+      {
+        "execution_order": 31,
+        "bin_id": 5,
+        "task_id": 71,
+        "scheduled_time": 5.956049787100645,
+        "estimated_duration": 0.26465799615376684,
+        "priority": 6,
+        "complexity": 1,
+        "value": 52.64657996153767,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.26465799615376684
+      },
+      {
+        "execution_order": 32,
+        "bin_id": 5,
+        "task_id": 81,
+        "scheduled_time": 6.220707783254412,
+        "estimated_duration": 0.32225198907802693,
+        "priority": 6,
+        "complexity": 1,
+        "value": 53.22251989078027,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.32225198907802693
+      },
+      {
+        "execution_order": 33,
+        "bin_id": 5,
+        "task_id": 88,
+        "scheduled_time": 6.5429597723324395,
+        "estimated_duration": 0.3623437597254984,
+        "priority": 6,
+        "complexity": 1,
+        "value": 53.623437597254984,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.3623437597254984
+      },
+      {
+        "execution_order": 34,
+        "bin_id": 5,
+        "task_id": 93,
+        "scheduled_time": 6.905303532057938,
+        "estimated_duration": 0.33506145491923645,
+        "priority": 6,
+        "complexity": 1,
+        "value": 53.350614549192365,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.33506145491923645
+      },
+      {
+        "execution_order": 35,
+        "bin_id": 5,
+        "task_id": 94,
+        "scheduled_time": 7.240364986977174,
+        "estimated_duration": 0.35837142758899604,
+        "priority": 6,
+        "complexity": 1,
+        "value": 53.58371427588996,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.35837142758899604
+      },
+      {
+        "execution_order": 36,
+        "bin_id": 5,
+        "task_id": 45,
+        "scheduled_time": 7.59873641456617,
+        "estimated_duration": 0.14768145251703046,
+        "priority": 5,
+        "complexity": 1,
+        "value": 51.476814525170305,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.14768145251703046
+      },
+      {
+        "execution_order": 37,
+        "bin_id": 5,
+        "task_id": 52,
+        "scheduled_time": 7.746417867083201,
+        "estimated_duration": 0.2000026584570847,
+        "priority": 5,
+        "complexity": 1,
+        "value": 52.00002658457085,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.2000026584570847
+      },
+      {
+        "execution_order": 38,
+        "bin_id": 5,
+        "task_id": 54,
+        "scheduled_time": 7.946420525540286,
+        "estimated_duration": 0.0833793907158075,
+        "priority": 5,
+        "complexity": 1,
+        "value": 50.833793907158075,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.0833793907158075
+      },
+      {
+        "execution_order": 39,
+        "bin_id": 5,
+        "task_id": 55,
+        "scheduled_time": 8.029799916256094,
+        "estimated_duration": 0.22489599488498513,
+        "priority": 5,
+        "complexity": 1,
+        "value": 52.24895994884985,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.22489599488498513
+      },
+      {
+        "execution_order": 40,
+        "bin_id": 5,
+        "task_id": 61,
+        "scheduled_time": 8.254695911141079,
+        "estimated_duration": 0.13232201211116035,
+        "priority": 5,
+        "complexity": 1,
+        "value": 51.3232201211116,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.13232201211116035
+      },
+      {
+        "execution_order": 41,
+        "bin_id": 5,
+        "task_id": 73,
+        "scheduled_time": 8.38701792325224,
+        "estimated_duration": 0.23676964885954987,
+        "priority": 5,
+        "complexity": 1,
+        "value": 52.3676964885955,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.23676964885954987
+      },
+      {
+        "execution_order": 42,
+        "bin_id": 5,
+        "task_id": 78,
+        "scheduled_time": 8.62378757211179,
+        "estimated_duration": 0.14601630150951692,
+        "priority": 5,
+        "complexity": 1,
+        "value": 51.46016301509517,
+        "mathematical_weight": 0.965756233450598,
+        "gaussian_position": 0.14601630150951692
+      },
+      {
+        "execution_order": 43,
+        "bin_id": 3,
+        "task_id": 7,
+        "scheduled_time": 8.769803873621306,
+        "estimated_duration": 0.4314948243898321,
+        "priority": 4,
+        "complexity": 1,
+        "value": 45.68505175610168,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.4314948243898321
+      },
+      {
+        "execution_order": 44,
+        "bin_id": 3,
+        "task_id": 83,
+        "scheduled_time": 9.201298698011138,
+        "estimated_duration": 0.45063715514525526,
+        "priority": 4,
+        "complexity": 1,
+        "value": 45.49362844854745,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.45063715514525526
+      },
+      {
+        "execution_order": 45,
+        "bin_id": 3,
+        "task_id": 86,
+        "scheduled_time": 9.651935853156393,
+        "estimated_duration": 0.4817595542205012,
+        "priority": 4,
+        "complexity": 1,
+        "value": 45.18240445779499,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.4817595542205012
+      },
+      {
+        "execution_order": 46,
+        "bin_id": 3,
+        "task_id": 4,
+        "scheduled_time": 10.133695407376894,
+        "estimated_duration": 0.5093879231558901,
+        "priority": 4,
+        "complexity": 2,
+        "value": 44.9061207684411,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.5093879231558901
+      },
+      {
+        "execution_order": 47,
+        "bin_id": 3,
+        "task_id": 62,
+        "scheduled_time": 10.643083330532784,
+        "estimated_duration": 0.5750694012199802,
+        "priority": 4,
+        "complexity": 2,
+        "value": 44.2493059878002,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.5750694012199802
+      },
+      {
+        "execution_order": 48,
+        "bin_id": 3,
+        "task_id": 75,
+        "scheduled_time": 11.218152731752765,
+        "estimated_duration": 0.5416547056790882,
+        "priority": 4,
+        "complexity": 2,
+        "value": 44.58345294320912,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.5416547056790882
+      },
+      {
+        "execution_order": 49,
+        "bin_id": 3,
+        "task_id": 91,
+        "scheduled_time": 11.759807437431853,
+        "estimated_duration": 0.576052101695877,
+        "priority": 4,
+        "complexity": 2,
+        "value": 44.23947898304123,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.576052101695877
+      },
+      {
+        "execution_order": 50,
+        "bin_id": 3,
+        "task_id": 37,
+        "scheduled_time": 12.33585953912773,
+        "estimated_duration": 0.6590081998752929,
+        "priority": 3,
+        "complexity": 2,
+        "value": 43.40991800124707,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.6590081998752929
+      },
+      {
+        "execution_order": 51,
+        "bin_id": 3,
+        "task_id": 51,
+        "scheduled_time": 12.994867739003023,
+        "estimated_duration": 0.7689325021260565,
+        "priority": 3,
+        "complexity": 2,
+        "value": 42.310674978739435,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.7689325021260565
+      },
+      {
+        "execution_order": 52,
+        "bin_id": 3,
+        "task_id": 69,
+        "scheduled_time": 13.76380024112908,
+        "estimated_duration": 0.7772425491565442,
+        "priority": 3,
+        "complexity": 2,
+        "value": 42.22757450843456,
+        "mathematical_weight": 0.8349137803724493,
+        "gaussian_position": 0.7772425491565442
+      },
+      {
+        "execution_order": 53,
+        "bin_id": 6,
+        "task_id": 3,
+        "scheduled_time": 14.541042790285623,
+        "estimated_duration": 0.7926162687331185,
+        "priority": 7,
+        "complexity": 2,
+        "value": 57.926162687331185,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.7926162687331185
+      },
+      {
+        "execution_order": 54,
+        "bin_id": 6,
+        "task_id": 8,
+        "scheduled_time": 15.333659059018741,
+        "estimated_duration": 0.8628923719424719,
+        "priority": 7,
+        "complexity": 2,
+        "value": 58.62892371942472,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.8628923719424719
+      },
+      {
+        "execution_order": 55,
+        "bin_id": 6,
+        "task_id": 21,
+        "scheduled_time": 16.196551430961215,
+        "estimated_duration": 0.7313135465891172,
+        "priority": 7,
+        "complexity": 2,
+        "value": 57.31313546589117,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.7313135465891172
+      },
+      {
+        "execution_order": 56,
+        "bin_id": 6,
+        "task_id": 36,
+        "scheduled_time": 16.927864977550332,
+        "estimated_duration": 0.7514727642019438,
+        "priority": 7,
+        "complexity": 2,
+        "value": 57.51472764201944,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.7514727642019438
+      },
+      {
+        "execution_order": 57,
+        "bin_id": 6,
+        "task_id": 39,
+        "scheduled_time": 17.679337741752274,
+        "estimated_duration": 0.8025889925235348,
+        "priority": 7,
+        "complexity": 2,
+        "value": 58.02588992523535,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.8025889925235348
+      },
+      {
+        "execution_order": 58,
+        "bin_id": 6,
+        "task_id": 48,
+        "scheduled_time": 18.48192673427581,
+        "estimated_duration": 0.9106280476363523,
+        "priority": 7,
+        "complexity": 2,
+        "value": 59.10628047636352,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.9106280476363523
+      },
+      {
+        "execution_order": 59,
+        "bin_id": 6,
+        "task_id": 82,
+        "scheduled_time": 19.39255478191216,
+        "estimated_duration": 0.8989041114769897,
+        "priority": 7,
+        "complexity": 2,
+        "value": 58.9890411147699,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.8989041114769897
+      },
+      {
+        "execution_order": 60,
+        "bin_id": 6,
+        "task_id": 87,
+        "scheduled_time": 20.29145889338915,
+        "estimated_duration": 0.799757940116114,
+        "priority": 7,
+        "complexity": 2,
+        "value": 57.99757940116114,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.799757940116114
+      },
+      {
+        "execution_order": 61,
+        "bin_id": 6,
+        "task_id": 38,
+        "scheduled_time": 21.091216833505264,
+        "estimated_duration": 0.48940213575193214,
+        "priority": 6,
+        "complexity": 1,
+        "value": 54.89402135751932,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.48940213575193214
+      },
+      {
+        "execution_order": 62,
+        "bin_id": 6,
+        "task_id": 26,
+        "scheduled_time": 21.580618969257195,
+        "estimated_duration": 0.5840360038158856,
+        "priority": 6,
+        "complexity": 2,
+        "value": 55.840360038158856,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.5840360038158856
+      },
+      {
+        "execution_order": 63,
+        "bin_id": 6,
+        "task_id": 95,
+        "scheduled_time": 22.16465497307308,
+        "estimated_duration": 0.6312351168725151,
+        "priority": 6,
+        "complexity": 2,
+        "value": 56.31235116872515,
+        "mathematical_weight": 0.7847116581416549,
+        "gaussian_position": 0.6312351168725151
+      },
+      {
+        "execution_order": 64,
+        "bin_id": 2,
+        "task_id": 1,
+        "scheduled_time": 22.795890089945594,
+        "estimated_duration": 0.9025876832766357,
+        "priority": 3,
+        "complexity": 2,
+        "value": 40.97412316723364,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.9025876832766357
+      },
+      {
+        "execution_order": 65,
+        "bin_id": 2,
+        "task_id": 18,
+        "scheduled_time": 23.69847777322223,
+        "estimated_duration": 0.8559054971996609,
+        "priority": 3,
+        "complexity": 2,
+        "value": 41.44094502800339,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.8559054971996609
+      },
+      {
+        "execution_order": 66,
+        "bin_id": 2,
+        "task_id": 22,
+        "scheduled_time": 24.55438327042189,
+        "estimated_duration": 0.9805090090669666,
+        "priority": 3,
+        "complexity": 2,
+        "value": 40.194909909330335,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.9805090090669666
+      },
+      {
+        "execution_order": 67,
+        "bin_id": 2,
+        "task_id": 34,
+        "scheduled_time": 25.534892279488858,
+        "estimated_duration": 0.845778454509545,
+        "priority": 3,
+        "complexity": 2,
+        "value": 41.54221545490455,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.845778454509545
+      },
+      {
+        "execution_order": 68,
+        "bin_id": 2,
+        "task_id": 59,
+        "scheduled_time": 26.380670733998404,
+        "estimated_duration": 0.967365834744033,
+        "priority": 3,
+        "complexity": 2,
+        "value": 40.32634165255967,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.967365834744033
+      },
+      {
+        "execution_order": 69,
+        "bin_id": 2,
+        "task_id": 60,
+        "scheduled_time": 27.348036568742437,
+        "estimated_duration": 0.988645677691666,
+        "priority": 3,
+        "complexity": 2,
+        "value": 40.11354322308334,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.988645677691666
+      },
+      {
+        "execution_order": 70,
+        "bin_id": 2,
+        "task_id": 63,
+        "scheduled_time": 28.3366822464341,
+        "estimated_duration": 0.932637763657415,
+        "priority": 3,
+        "complexity": 2,
+        "value": 40.67362236342585,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.932637763657415
+      },
+      {
+        "execution_order": 71,
+        "bin_id": 2,
+        "task_id": 64,
+        "scheduled_time": 29.269320010091516,
+        "estimated_duration": 0.8241417119419616,
+        "priority": 3,
+        "complexity": 2,
+        "value": 41.758582880580384,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.8241417119419616
+      },
+      {
+        "execution_order": 72,
+        "bin_id": 2,
+        "task_id": 74,
+        "scheduled_time": 30.093461722033478,
+        "estimated_duration": 0.8463228970687944,
+        "priority": 3,
+        "complexity": 2,
+        "value": 41.53677102931206,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 0.8463228970687944
+      },
+      {
+        "execution_order": 73,
+        "bin_id": 2,
+        "task_id": 30,
+        "scheduled_time": 30.939784619102273,
+        "estimated_duration": 1.0098989094226005,
+        "priority": 3,
+        "complexity": 3,
+        "value": 39.901010905773994,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 1.0098989094226005
+      },
+      {
+        "execution_order": 74,
+        "bin_id": 2,
+        "task_id": 23,
+        "scheduled_time": 31.949683528524872,
+        "estimated_duration": 1.175987009600091,
+        "priority": 2,
+        "complexity": 3,
+        "value": 38.24012990399909,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 1.175987009600091
+      },
+      {
+        "execution_order": 75,
+        "bin_id": 2,
+        "task_id": 84,
+        "scheduled_time": 33.125670538124965,
+        "estimated_duration": 1.1156272307459418,
+        "priority": 2,
+        "complexity": 3,
+        "value": 38.84372769254058,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 1.1156272307459418
+      },
+      {
+        "execution_order": 76,
+        "bin_id": 2,
+        "task_id": 96,
+        "scheduled_time": 34.24129776887091,
+        "estimated_duration": 1.1215950697454944,
+        "priority": 2,
+        "complexity": 3,
+        "value": 38.78404930254506,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 1.1215950697454944
+      },
+      {
+        "execution_order": 77,
+        "bin_id": 2,
+        "task_id": 98,
+        "scheduled_time": 35.3628928386164,
+        "estimated_duration": 1.1526314477413422,
+        "priority": 2,
+        "complexity": 3,
+        "value": 38.47368552258658,
+        "mathematical_weight": 0.5864869098281715,
+        "gaussian_position": 1.1526314477413422
+      },
+      {
+        "execution_order": 78,
+        "bin_id": 7,
+        "task_id": 0,
+        "scheduled_time": 36.515524286357746,
+        "estimated_duration": 1.1823651685356709,
+        "priority": 8,
+        "complexity": 3,
+        "value": 61.82365168535671,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 1.1823651685356709
+      },
+      {
+        "execution_order": 79,
+        "bin_id": 7,
+        "task_id": 35,
+        "scheduled_time": 37.697889454893414,
+        "estimated_duration": 1.1807735152057206,
+        "priority": 8,
+        "complexity": 3,
+        "value": 61.807735152057205,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 1.1807735152057206
+      },
+      {
+        "execution_order": 80,
+        "bin_id": 7,
+        "task_id": 68,
+        "scheduled_time": 38.878662970099136,
+        "estimated_duration": 1.1964938447735285,
+        "priority": 8,
+        "complexity": 3,
+        "value": 61.964938447735285,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 1.1964938447735285
+      },
+      {
+        "execution_order": 81,
+        "bin_id": 7,
+        "task_id": 92,
+        "scheduled_time": 40.07515681487266,
+        "estimated_duration": 0.9467765533837891,
+        "priority": 7,
+        "complexity": 2,
+        "value": 59.46776553383789,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 0.9467765533837891
+      },
+      {
+        "execution_order": 82,
+        "bin_id": 7,
+        "task_id": 11,
+        "scheduled_time": 41.021933368256455,
+        "estimated_duration": 1.0884226455301742,
+        "priority": 7,
+        "complexity": 3,
+        "value": 60.88422645530174,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 1.0884226455301742
+      },
+      {
+        "execution_order": 83,
+        "bin_id": 7,
+        "task_id": 41,
+        "scheduled_time": 42.11035601378663,
+        "estimated_duration": 1.095302809358825,
+        "priority": 7,
+        "complexity": 3,
+        "value": 60.95302809358825,
+        "mathematical_weight": 0.5288986387361898,
+        "gaussian_position": 1.095302809358825
+      },
+      {
+        "execution_order": 84,
+        "bin_id": 1,
+        "task_id": 49,
+        "scheduled_time": 43.205658823145455,
+        "estimated_duration": 1.2730536721538201,
+        "priority": 2,
+        "complexity": 3,
+        "value": 37.2694632784618,
+        "mathematical_weight": 0.34173918310422696,
+        "gaussian_position": 1.2730536721538201
+      },
+      {
+        "execution_order": 85,
+        "bin_id": 1,
+        "task_id": 67,
+        "scheduled_time": 44.47871249529928,
+        "estimated_duration": 1.4181325825188296,
+        "priority": 2,
+        "complexity": 3,
+        "value": 35.818674174811704,
+        "mathematical_weight": 0.34173918310422696,
+        "gaussian_position": 1.4181325825188296
+      },
+      {
+        "execution_order": 86,
+        "bin_id": 1,
+        "task_id": 33,
+        "scheduled_time": 45.89684507781811,
+        "estimated_duration": 1.4954207023320172,
+        "priority": 1,
+        "complexity": 3,
+        "value": 35.04579297667983,
+        "mathematical_weight": 0.34173918310422696,
+        "gaussian_position": 1.4954207023320172
+      },
+      {
+        "execution_order": 87,
+        "bin_id": 1,
+        "task_id": 9,
+        "scheduled_time": 47.392265780150126,
+        "estimated_duration": 1.5690507995523333,
+        "priority": 1,
+        "complexity": 4,
+        "value": 34.30949200447667,
+        "mathematical_weight": 0.34173918310422696,
+        "gaussian_position": 1.5690507995523333
+      },
+      {
+        "execution_order": 88,
+        "bin_id": 8,
+        "task_id": 13,
+        "scheduled_time": 48.96131657970246,
+        "estimated_duration": 1.3959656712341981,
+        "priority": 8,
+        "complexity": 3,
+        "value": 63.95965671234198,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.3959656712341981
+      },
+      {
+        "execution_order": 89,
+        "bin_id": 8,
+        "task_id": 43,
+        "scheduled_time": 50.35728225093666,
+        "estimated_duration": 1.4593255501107734,
+        "priority": 8,
+        "complexity": 3,
+        "value": 64.59325550110773,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.4593255501107734
+      },
+      {
+        "execution_order": 90,
+        "bin_id": 8,
+        "task_id": 56,
+        "scheduled_time": 51.81660780104744,
+        "estimated_duration": 1.4697792961729987,
+        "priority": 8,
+        "complexity": 3,
+        "value": 64.69779296172999,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.4697792961729987
+      },
+      {
+        "execution_order": 91,
+        "bin_id": 8,
+        "task_id": 76,
+        "scheduled_time": 53.28638709722044,
+        "estimated_duration": 1.3743597611692713,
+        "priority": 8,
+        "complexity": 3,
+        "value": 63.743597611692714,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.3743597611692713
+      },
+      {
+        "execution_order": 92,
+        "bin_id": 8,
+        "task_id": 2,
+        "scheduled_time": 54.660746858389714,
+        "estimated_duration": 1.5480414513587604,
+        "priority": 8,
+        "complexity": 4,
+        "value": 65.4804145135876,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.5480414513587604
+      },
+      {
+        "execution_order": 93,
+        "bin_id": 8,
+        "task_id": 14,
+        "scheduled_time": 56.20878830974848,
+        "estimated_duration": 1.550042252708863,
+        "priority": 8,
+        "complexity": 4,
+        "value": 65.50042252708863,
+        "mathematical_weight": 0.2957021984160123,
+        "gaussian_position": 1.550042252708863
+      },
+      {
+        "execution_order": 94,
+        "bin_id": 0,
+        "task_id": 80,
+        "scheduled_time": 57.75883056245734,
+        "estimated_duration": 1.6970360944366027,
+        "priority": 1,
+        "complexity": 4,
+        "value": 33.02963905563397,
+        "mathematical_weight": 0.16517753864024437,
+        "gaussian_position": 1.6970360944366027
+      },
+      {
+        "execution_order": 95,
+        "bin_id": 0,
+        "task_id": 40,
+        "scheduled_time": 59.455866656893946,
+        "estimated_duration": 2.113927394327434,
+        "priority": 0,
+        "complexity": 5,
+        "value": 28.86072605672566,
+        "mathematical_weight": 0.16517753864024437,
+        "gaussian_position": 2.113927394327434
+      },
+      {
+        "execution_order": 96,
+        "bin_id": 0,
+        "task_id": 72,
+        "scheduled_time": 61.56979405122138,
+        "estimated_duration": 2.0701245468808795,
+        "priority": 0,
+        "complexity": 5,
+        "value": 29.298754531191204,
+        "mathematical_weight": 0.16517753864024437,
+        "gaussian_position": 2.0701245468808795
+      },
+      {
+        "execution_order": 97,
+        "bin_id": 9,
+        "task_id": 5,
+        "scheduled_time": 63.639918598102255,
+        "estimated_duration": 2.0069217944547604,
+        "priority": 10,
+        "complexity": 5,
+        "value": 70.0692179445476,
+        "mathematical_weight": 0.137137559671337,
+        "gaussian_position": 2.0069217944547604
+      },
+      {
+        "execution_order": 98,
+        "bin_id": 9,
+        "task_id": 12,
+        "scheduled_time": 65.64684039255701,
+        "estimated_duration": 2.209548190493551,
+        "priority": 10,
+        "complexity": 5,
+        "value": 72.09548190493551,
+        "mathematical_weight": 0.137137559671337,
+        "gaussian_position": 2.209548190493551
+      },
+      {
+        "execution_order": 99,
+        "bin_id": 9,
+        "task_id": 99,
+        "scheduled_time": 67.85638858305056,
+        "estimated_duration": 1.8620950860367984,
+        "priority": 9,
+        "complexity": 4,
+        "value": 68.62095086036798,
+        "mathematical_weight": 0.137137559671337,
+        "gaussian_position": 1.8620950860367984
+      }
+    ],
+    "total_time": 69.71848366908736,
+    "optimization_score": {
+      "total": 4925.27950028063,
+      "gaussian_component": 64.77950028062915,
+      "priority_component": 4860.500000000001,
+      "complexity_component": 0,
+      "efficiency_rating": 49.252795002806295
+    }
+  },
+  "mathematical_analysis": {
+    "normal_distribution_verified": true,
+    "stddev_accuracy": 0.11342345133310623,
+    "distribution_quality": 0.9910136236929887
+  }
+}

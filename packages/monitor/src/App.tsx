@@ -4,7 +4,7 @@ import { Sun, Moon, RefreshCw } from 'lucide-react';
 import Header from './components/Header';
 import ServerList from './components/ServerList';
 import SystemInfo from './components/SystemInfo';
-import StatusCard from './components/StatusCard';
+import { StatusCard } from './components/StatusCard';
 import { fetchStatus } from './api/mcp-api';
 import type { FullStatus } from '@mcp/shared';
 

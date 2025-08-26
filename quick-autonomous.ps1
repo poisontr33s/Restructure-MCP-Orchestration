@@ -72,14 +72,19 @@ pwsh -NoProfile -Command "gemini --yolo --include-directories packages,scripts,d
 
 Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green
 
-# Start Live Server to maintain web connection
-Write-Host "🌐 Starting Live Server..." -ForegroundColor Yellow
+# Start Live Server to maintain web connection (check if already running)
+Write-Host "🌐 Checking Live Server status..." -ForegroundColor Yellow
 
 try {
-    Start-Process -FilePath "code" -ArgumentList "--command liveServer.start" -NoNewWindow
-    Write-Host "✅ Live Server started" -ForegroundColor Green
+    $response = Invoke-WebRequest -Uri "http://127.0.0.1:5500" -TimeoutSec 3 -ErrorAction Stop
+    Write-Host "✅ Live Server already running on http://127.0.0.1:5500" -ForegroundColor Green
 } catch {
-    Write-Host "⚠️ Live Server start failed, continuing..." -ForegroundColor Yellow
+    try {
+        $response = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -TimeoutSec 3 -ErrorAction Stop
+        Write-Host "✅ Live Server already running on http://127.0.0.1:5173" -ForegroundColor Green
+    } catch {
+        Write-Host "ℹ️ Live Server not detected, will rely on existing server" -ForegroundColor Yellow
+    }
 }
 
 # Start auto-save loop

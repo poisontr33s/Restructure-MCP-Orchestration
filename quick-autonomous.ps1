@@ -65,12 +65,21 @@ if (Test-Path $SettingsPath) {
 
 Write-Host "💾 VS Code configured for auto-save and no prompts" -ForegroundColor Green
 
-# Start Gemini CLI in background with auto-accept
-Write-Host "🤖 Starting Gemini CLI in autonomous mode..." -ForegroundColor Yellow
+# Start Gemini CLI in background with auto-accept (only if not already running)
+Write-Host "🤖 Checking Gemini CLI status..." -ForegroundColor Yellow
 
-pwsh -NoProfile -Command "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent --all-files"
-
-Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green
+$geminiProcesses = Get-Process | Where-Object { $_.ProcessName -like '*gemini*' -or $_.CommandLine -like '*gemini*' }
+if ($geminiProcesses) {
+    Write-Host "✅ Gemini CLI already running" -ForegroundColor Green
+} else {
+    Write-Host "🚀 Starting Gemini CLI in autonomous mode..." -ForegroundColor Yellow
+    Start-Process -FilePath "pwsh" -ArgumentList @(
+        "-NoProfile", 
+        "-Command", 
+        "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent"
+    ) -WindowStyle Hidden -PassThru | Out-Null
+    Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green
+}
 
 # Start Live Server to maintain web connection (check if already running)
 Write-Host "🌐 Checking Live Server status..." -ForegroundColor Yellow
@@ -93,31 +102,41 @@ Write-Host "💾 Starting continuous auto-save..." -ForegroundColor Yellow
 $AutoSaveScript = {
     while ($true) {
         try {
-            # Force save all files
-            code --command workbench.action.files.saveAll 2>$null
-            
-            # Save session snapshot
-            pwsh -NoProfile -File ".vscode\scripts\save-mcp-snapshot.ps1" 2>$null
-            
-            # Auto-commit if changes exist
-            $gitStatus = git status --porcelain 2>$null
-            if ($gitStatus) {
-                git add . 2>$null
-                git commit -m "🤖 Auto-save: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" 2>$null
-            }
-            
-            # Update activity timestamp
+            # Update activity timestamp (silent operation)
             $activityDir = ".vscode\.session"
             if (-not (Test-Path $activityDir)) {
                 New-Item -ItemType Directory -Path $activityDir -Force | Out-Null
             }
-            [System.DateTime]::Now.ToString('o') | Set-Content "$activityDir\last-activity.txt"
+            [System.DateTime]::Now.ToString('o') | Set-Content "$activityDir\last-activity.txt" -Force
+            
+            # Save session snapshot (silent operation)
+            try {
+                pwsh -NoProfile -File ".vscode\scripts\save-mcp-snapshot.ps1" 2>$null | Out-Null
+            } catch { }
+            
+            # Auto-commit if changes exist (silent operation)
+            try {
+                $gitStatus = git status --porcelain 2>$null
+                if ($gitStatus) {
+                    git add . 2>$null | Out-Null
+                    git commit -m "🤖 Auto-save: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" 2>$null | Out-Null
+                }
+            } catch { }
+            
+            # Send keep-alive to server without opening new windows
+            try {
+                Invoke-WebRequest -Uri "http://127.0.0.1:5500/keep-alive" -TimeoutSec 2 -ErrorAction SilentlyContinue | Out-Null
+            } catch {
+                try {
+                    Invoke-WebRequest -Uri "http://127.0.0.1:5173/keep-alive" -TimeoutSec 2 -ErrorAction SilentlyContinue | Out-Null
+                } catch { }
+            }
             
         } catch {
             # Continue silently on errors
         }
         
-        Start-Sleep -Seconds 30  # Auto-save every 30 seconds
+        Start-Sleep -Seconds 60  # Auto-save every 60 seconds (less aggressive)
     }
 }
 

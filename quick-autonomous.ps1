@@ -68,11 +68,7 @@ Write-Host "💾 VS Code configured for auto-save and no prompts" -ForegroundCol
 # Start Gemini CLI in background with auto-accept
 Write-Host "🤖 Starting Gemini CLI in autonomous mode..." -ForegroundColor Yellow
 
-Start-Process -FilePath "pwsh" -ArgumentList @(
-    "-NoProfile", 
-    "-Command", 
-    "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent --all-files"
-) -NoNewWindow -PassThru
+pwsh -NoProfile -Command "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent --all-files"
 
 Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green
 

@@ -1,0 +1,49 @@
+{
+  "sacredElements": {
+    "coreFiles": [
+      "package.json",
+      "pnpm-workspace.yaml",
+      "turbo.json",
+      "tsconfig.json",
+      ".vscode/settings.json",
+      ".vscode/tasks.json"
+    ],
+    "configurationFiles": [
+      ".eslintrc.json",
+      ".prettierrc",
+      ".github/dependabot.yml",
+      ".vscode/mcp.json"
+    ],
+    "buildScripts": [
+      "scripts/**/*.ts",
+      "scripts/**/*.js",
+      "packages/*/package.json",
+      "packages/*/tsconfig.json"
+    ],
+    "documentationPaths": [
+      "README.md",
+      "docs/**/*.md",
+      ".github/copilot-instructions.md"
+    ],
+    "preservationProtocols": [
+      "Maintain pnpm workspace structure",
+      "Preserve autonomous operation settings",
+      "Keep Elder Pocket Plane heritage intact",
+      "Ensure live server integration works",
+      "Enable Gemini CLI when available"
+    ]
+  },
+  "autonomousSettings": {
+    "noPrompts": true,
+    "autoSave": true,
+    "autoFix": true,
+    "geminiCliEnabled": false,
+    "continuousEvolution": true
+  },
+  "evolutionMetrics": {
+    "lastEvolutionCycle": 1756181079907,
+    "totalEnhancements": 1,
+    "structuralIntegrityScore": 100,
+    "autonomousOperationsCount": 0
+  }
+}

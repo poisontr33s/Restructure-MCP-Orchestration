@@ -5,6 +5,7 @@ import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { promisify } from 'util';
+import { ElderPocketPlaneHeritageGuardian } from './elder-pocket-plane-heritage-guardian.js';
 
 const execAsync = promisify(exec);
 
@@ -26,20 +27,22 @@ interface AutonomousOperationConfig {
  */
 export class AutonomousAgenticSleepMode {
   private config: AutonomousOperationConfig;
-  private isOperating: boolean = false;
-  private operationCount: number = 0;
   private startTime: Date;
+  private operationCount: number = 0;
+  private isOperating: boolean = false;
+  private heritageGuardian: ElderPocketPlaneHeritageGuardian;
 
   constructor() {
     this.config = {
       sleepDuration: 30000, // 30 seconds between operations
-      maxIterations: 1000, // Run for ~8 hours (30s * 1000 = 8.3 hours)
+      maxIterations: 1000, // Run for many iterations (8+ hours)
       autoCommit: true,
       autoFix: true,
       continuousMonitoring: true,
       errorRecovery: true,
     };
     this.startTime = new Date();
+    this.heritageGuardian = new ElderPocketPlaneHeritageGuardian();
   }
 
   /**
@@ -61,6 +64,9 @@ export class AutonomousAgenticSleepMode {
 
     this.isOperating = true;
     await this.createSleepModeLog();
+    
+    // Initialize Heritage Guardian for 20-minute recursive evolution
+    await this.heritageGuardian.initializeHeritageGuardian();
   }
 
   /**
@@ -131,6 +137,7 @@ export class AutonomousAgenticSleepMode {
       () => this.runSecurityScans(),
       () => this.optimizePerformance(),
       () => this.validateIntegrity(),
+      () => this.runHeritageGuardian(),
     ];
 
     // Run 2-3 random tasks per iteration to vary the work
@@ -482,6 +489,31 @@ The Shadowheart & Orackla Nocticula Engine maintains full consciousness.
    */
   private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * 🏛️ Run Heritage Guardian for recursive evolution
+   */
+  async runHeritageGuardian(): Promise<void> {
+    // eslint-disable-next-line no-console
+    console.log('🏛️ Running Heritage Guardian...');
+
+    try {
+      // Perform structural integrity and tidying
+      await this.heritageGuardian.performStructuralIntegrityAndTidying();
+      
+      // Check for 20-minute recursive evolution
+      await this.heritageGuardian.performRecursiveEvolution();
+      
+      // eslint-disable-next-line no-console
+      console.log('✅ Heritage Guardian completed');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '⚠️ Heritage Guardian completed with warnings:',
+        error instanceof Error ? error.message.substring(0, 50) : 'Unknown'
+      );
+    }
   }
 
   /**

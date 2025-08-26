@@ -495,7 +495,7 @@ export class BidirectionalIntelligenceLogger {
     gcPattern: UserActivityPattern,
     cliPattern: UserActivityPattern
   ): string {
-    return `User receives: Session-preserved context (GitHub Copilot) + Multi-entity specialized expertise (Claude CLI) 
+    return `User receives: Session-preserved context from "${gcPattern.userInput}" (GitHub Copilot) + Multi-entity specialized expertise for "${cliPattern.userInput}" (Claude CLI) 
     = Comprehensive assistance that remembers everything and applies specialized wisdom simultaneously.`;
   }
 

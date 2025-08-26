@@ -35,11 +35,26 @@
         "command": "geminiIde.kill",
         "title": "Gemini: Kill Gemini Process(es)"
       },
-      { "command": "geminiIde.status", "title": "Gemini: Status" },
-      { "command": "geminiCli.openView", "title": "Gemini: Open Sidebar" },
-      { "command": "geminiCli.askSelection", "title": "Gemini: Ask About Selection/File" },
-      { "command": "geminiCli.askFile", "title": "Gemini: Ask About Active File" },
-      { "command": "geminiCli.applyLastCodeblock", "title": "Gemini: Apply Last Code Block" }
+      {
+        "command": "geminiIde.status",
+        "title": "Gemini: Status"
+      },
+      {
+        "command": "geminiCli.openView",
+        "title": "Gemini: Open Sidebar"
+      },
+      {
+        "command": "geminiCli.askSelection",
+        "title": "Gemini: Ask About Selection/File"
+      },
+      {
+        "command": "geminiCli.askFile",
+        "title": "Gemini: Ask About Active File"
+      },
+      {
+        "command": "geminiCli.applyLastCodeblock",
+        "title": "Gemini: Apply Last Code Block"
+      }
     ],
     "menus": {
       "view/title": [
@@ -50,11 +65,20 @@
         }
       ],
       "editor/context": [
-        { "command": "geminiCli.askSelection", "group": "navigation@9" },
-        { "command": "geminiCli.applyLastCodeblock", "group": "navigation@10" }
+        {
+          "command": "geminiCli.askSelection",
+          "group": "navigation@9"
+        },
+        {
+          "command": "geminiCli.applyLastCodeblock",
+          "group": "navigation@10"
+        }
       ],
       "editor/title": [
-        { "command": "geminiCli.askFile", "group": "navigation@9" }
+        {
+          "command": "geminiCli.askFile",
+          "group": "navigation@9"
+        }
       ]
     },
     "configuration": {
@@ -62,8 +86,15 @@
       "properties": {
         "geminiIde.includeDirectories": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["packages", "scripts", "docs", ".vscode"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "packages",
+            "scripts",
+            "docs",
+            ".vscode"
+          ],
           "description": "Directories to pass to gemini --ide-mode-feature --include-directories"
         },
         "geminiIde.autoStartOnOpen": {

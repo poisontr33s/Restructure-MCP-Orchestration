@@ -8,11 +8,11 @@ const path = require('path');
 
 async function integrateRecoveryContext() {
   console.log('🔄 Integrating auto-compact recovery context...');
-  
+
   // Load recovery context
   const recoveryPath = path.join(__dirname, 'AUTO-COMPACT-RECOVERY.md');
   const recoveryContext = fs.readFileSync(recoveryPath, 'utf8');
-  
+
   // Create unified session with recovery context
   const unifiedSession = `# UNIFIED SESSION: Post Auto-Compact Recovery
 
@@ -22,10 +22,10 @@ ${recoveryContext}
 
 All revolutionary session intelligence preserved and ready for seamless continuation.
 `;
-  
+
   // Write to preload directory for auto-loading
   fs.writeFileSync('../preload-sessions/AUTO-COMPACT-RECOVERY.md.session', unifiedSession);
-  
+
   console.log('✅ Recovery context integrated into session systems');
   console.log('🎯 Ready for Claude Code auto-preload');
 }

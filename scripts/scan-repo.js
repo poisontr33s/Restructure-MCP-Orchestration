@@ -20,7 +20,11 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, 'docs', 'repo-index');
 
 function readJSON(p) {
-  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function sha1File(p) {
@@ -35,12 +39,29 @@ function sha1File(p) {
 
 function isBinaryByExt(p) {
   const ext = path.extname(p).toLowerCase();
-  const binExt = new Set(['.png','.jpg','.jpeg','.gif','.webp','.svg','.ico','.pdf','.zip','.7z','.gz','.mp4','.mp3','.wav','.exe','.dll']);
+  const binExt = new Set([
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.gif',
+    '.webp',
+    '.svg',
+    '.ico',
+    '.pdf',
+    '.zip',
+    '.7z',
+    '.gz',
+    '.mp4',
+    '.mp3',
+    '.wav',
+    '.exe',
+    '.dll',
+  ]);
   return binExt.has(ext);
 }
 
 function topN(arr, n, key) {
-  return [...arr].sort((a,b)=>b[key]-a[key]).slice(0,n);
+  return [...arr].sort((a, b) => b[key] - a[key]).slice(0, n);
 }
 
 function aggregateFolderSizes(paths, entries) {
@@ -58,32 +79,49 @@ function aggregateFolderSizes(paths, entries) {
       addSize(`packages/${parts[1]}`, e.size);
     }
   }
-  return [...folderMap.entries()].map(([key, size]) => ({ folder: key, size })).sort((a,b)=>b.size-a.size);
+  return [...folderMap.entries()]
+    .map(([key, size]) => ({ folder: key, size }))
+    .sort((a, b) => b.size - a.size);
 }
 
 function computeOutliers(items) {
   if (!items.length) return { median: 0, mad: 0, outliers: [] };
-  const sizes = items.map(x=>x.size).slice().sort((a,b)=>a-b);
-  const median = sizes[Math.floor(sizes.length/2)];
-  const deviations = sizes.map(v => Math.abs(v - median));
-  const mad = deviations.sort((a,b)=>a-b)[Math.floor(deviations.length/2)] || 1;
-  const outliers = items.filter(x => (Math.abs(x.size - median) / mad) >= 6); // 6*MAD ~ ~4.5 sigma
+  const sizes = items
+    .map((x) => x.size)
+    .slice()
+    .sort((a, b) => a - b);
+  const median = sizes[Math.floor(sizes.length / 2)];
+  const deviations = sizes.map((v) => Math.abs(v - median));
+  const mad = deviations.sort((a, b) => a - b)[Math.floor(deviations.length / 2)] || 1;
+  const outliers = items.filter((x) => Math.abs(x.size - median) / mad >= 6); // 6*MAD ~ ~4.5 sigma
   return { median, mad, outliers };
 }
 
 async function main() {
   const ignore = [
-    '**/.git/**','**/.turbo/**','**/.cache/**','**/.DS_Store','**/.vscode/**',
-    '**/node_modules/**','**/dist/**','**/build/**','**/coverage/**',
-    'docs/repo-index/snapshot.json'
+    '**/.git/**',
+    '**/.turbo/**',
+    '**/.cache/**',
+    '**/.DS_Store',
+    '**/.vscode/**',
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/coverage/**',
+    'docs/repo-index/snapshot.json',
   ];
   const files = await glob('**/*', { nodir: true, ignore });
 
   // Gather file stats
-  const entries = files.map(p => {
+  const entries = files.map((p) => {
     const full = path.join(ROOT, p);
     const s = fs.statSync(full);
-    return { path: p.replace(/\\/g,'/'), size: s.size, mtime: s.mtimeMs, isBinary: isBinaryByExt(p) };
+    return {
+      path: p.replace(/\\/g, '/'),
+      size: s.size,
+      mtime: s.mtimeMs,
+      isBinary: isBinaryByExt(p),
+    };
   });
 
   // Duplicates by SHA1 (exclude very small < 64 bytes and >25MB)
@@ -96,39 +134,59 @@ async function main() {
     if (!hashMap.has(h)) hashMap.set(h, []);
     hashMap.get(h).push(e.path);
   }
-  const duplicates = [...hashMap.entries()].filter(([,list]) => list.length > 1)
+  const duplicates = [...hashMap.entries()]
+    .filter(([, list]) => list.length > 1)
     .map(([hash, list]) => ({ hash, files: list }));
 
   // Rogue lockfiles and nested node_modules
-  const rogueLockfiles = files.filter(p => /(^|\/)package-lock\.json$/.test(p) || /(^|\/)yarn\.lock$/.test(p));
-  const nestedNodeModules = await glob('**/node_modules/**', { nodir: true, ignore: ['node_modules/**','.git/**'] });
-  const nestedByPkg = [...new Set(nestedNodeModules.map(p => p.split('/node_modules/')[0])).values()]
-    .filter(p => p && p !== 'node_modules' && p !== '.');
+  const rogueLockfiles = files.filter(
+    (p) => /(^|\/)package-lock\.json$/.test(p) || /(^|\/)yarn\.lock$/.test(p)
+  );
+  const nestedNodeModules = await glob('**/node_modules/**', {
+    nodir: true,
+    ignore: ['node_modules/**', '.git/**'],
+  });
+  const nestedByPkg = [
+    ...new Set(nestedNodeModules.map((p) => p.split('/node_modules/')[0])).values(),
+  ].filter((p) => p && p !== 'node_modules' && p !== '.');
 
   // Large files and dist artifacts
   const LARGE = 10 * 1024 * 1024; // 10MB
   const HUGE = 1024 * 1024 * 1024; // 1GB
-  const largeFiles = entries.filter(e => e.size >= LARGE).sort((a,b)=>b.size-a.size);
-  const distDirs = [...new Set(files.filter(f => /(^|\/)dist\//.test(f)).map(f => f.split('/dist/')[0]))];
+  const largeFiles = entries.filter((e) => e.size >= LARGE).sort((a, b) => b.size - a.size);
+  const distDirs = [
+    ...new Set(files.filter((f) => /(^|\/)dist\//.test(f)).map((f) => f.split('/dist/')[0])),
+  ];
 
   // Size census (include dist/build, exclude node_modules/.git)
-  const sizeFiles = await glob('**/*', { nodir: true, ignore: ['**/.git/**','**/.turbo/**','**/.cache/**','**/.DS_Store','**/.vscode/**','**/node_modules/**'] });
-  const sizeEntries = sizeFiles.map(p => {
+  const sizeFiles = await glob('**/*', {
+    nodir: true,
+    ignore: [
+      '**/.git/**',
+      '**/.turbo/**',
+      '**/.cache/**',
+      '**/.DS_Store',
+      '**/.vscode/**',
+      '**/node_modules/**',
+    ],
+  });
+  const sizeEntries = sizeFiles.map((p) => {
     const full = path.join(ROOT, p);
     const s = fs.statSync(full);
-    return { path: p.replace(/\\/g,'/'), size: s.size };
+    return { path: p.replace(/\\/g, '/'), size: s.size };
   });
   const folderSizes = aggregateFolderSizes(sizeFiles, sizeEntries);
   const { median, mad, outliers } = computeOutliers(folderSizes);
-  const hugeFiles = sizeEntries.filter(e => e.size >= HUGE).sort((a,b)=>b.size-a.size);
+  const hugeFiles = sizeEntries.filter((e) => e.size >= HUGE).sort((a, b) => b.size - a.size);
 
   // Packages analysis
-  const rootPkg = readJSON(path.join(ROOT,'package.json')) || {};
+  const rootPkg = readJSON(path.join(ROOT, 'package.json')) || {};
   const pkgs = await glob('packages/*/package.json');
   const packageReports = [];
 
   // Build map of imports per package
-  const importRe = /(?:import\s+[^'"`]+\s+from\s+['"]([^.'"`][^'"`]+)['"]|require\(\s*['"]([^.'"`][^'"`]+)['"]\s*\))/g;
+  const importRe =
+    /(?:import\s+[^'"`]+\s+from\s+['"]([^.'"`][^'"`]+)['"]|require\(\s*['"]([^.'"`][^'"`]+)['"]\s*\))/g;
 
   for (const pkgJsonPath of pkgs) {
     const pkgDir = path.dirname(pkgJsonPath);
@@ -142,7 +200,11 @@ async function main() {
       }
     }
     // Imports used
-    const pkgFiles = await glob(['**/*.{ts,tsx,js,jsx}'], { cwd: path.join(ROOT, pkgDir), nodir: true, ignore: ['**/dist/**','**/build/**','**/node_modules/**'] });
+    const pkgFiles = await glob(['**/*.{ts,tsx,js,jsx}'], {
+      cwd: path.join(ROOT, pkgDir),
+      nodir: true,
+      ignore: ['**/dist/**', '**/build/**', '**/node_modules/**'],
+    });
     const used = new Set();
     for (const rel of pkgFiles) {
       const full = path.join(ROOT, pkgDir, rel);
@@ -151,17 +213,30 @@ async function main() {
         let m;
         while ((m = importRe.exec(text))) {
           const name = m[1] || m[2];
-          if (name) used.add(name.split('/')[0] === '@' ? name.split('/').slice(0,2).join('/') : name.split('/')[0]);
+          if (name)
+            used.add(
+              name.split('/')[0] === '@'
+                ? name.split('/').slice(0, 2).join('/')
+                : name.split('/')[0]
+            );
         }
-  } catch { /* ignore unreadable file */ }
+      } catch {
+        /* ignore unreadable file */
+      }
     }
-    const declared = new Set([ ...Object.keys(pkg.dependencies||{}), ...Object.keys(pkg.devDependencies||{}) ]);
-    const unused = [...declared].filter(d => !used.has(d) && !d.startsWith('@types/'));
-    const missing = [...used].filter(u => !declared.has(u) && !(rootPkg.dependencies||{})[u] && !(rootPkg.devDependencies||{})[u]);
+    const declared = new Set([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.devDependencies || {}),
+    ]);
+    const unused = [...declared].filter((d) => !used.has(d) && !d.startsWith('@types/'));
+    const missing = [...used].filter(
+      (u) =>
+        !declared.has(u) && !(rootPkg.dependencies || {})[u] && !(rootPkg.devDependencies || {})[u]
+    );
 
     packageReports.push({
       package: pkg.name || path.basename(pkgDir),
-      dir: pkgDir.replace(/\\/g,'/'),
+      dir: pkgDir.replace(/\\/g, '/'),
       devDepDuplicatesWithRoot: devDupes,
       unusedDeclared: unused,
       missingDeclared: missing,
@@ -177,12 +252,17 @@ async function main() {
     if (!mdHashMap.has(h)) mdHashMap.set(h, []);
     mdHashMap.get(h).push(p);
   }
-  const mdDuplicates = [...mdHashMap.entries()].filter(([,list]) => list.length > 1)
+  const mdDuplicates = [...mdHashMap.entries()]
+    .filter(([, list]) => list.length > 1)
     .map(([hash, files]) => ({ hash, files }));
 
   const report = {
     meta: { when: new Date().toISOString() },
-    counts: { files: entries.length, duplicates: duplicates.length, mdDuplicates: mdDuplicates.length },
+    counts: {
+      files: entries.length,
+      duplicates: duplicates.length,
+      mdDuplicates: mdDuplicates.length,
+    },
     duplicates,
     mdDuplicates,
     rogueLockfiles,
@@ -194,9 +274,9 @@ async function main() {
       folderSizes,
       stats: { median, mad },
       outliers,
-      thresholds: { LARGE, HUGE }
+      thresholds: { LARGE, HUGE },
     },
-    hugeFiles
+    hugeFiles,
   };
 
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -213,7 +293,7 @@ async function main() {
   if (report.duplicates.length) {
     for (const d of report.duplicates.slice(0, 20)) {
       md.push(`  - ${d.files.length} files share SHA1 ${d.hash}:`);
-      d.files.slice(0,5).forEach(f => md.push(`    - ${f}`));
+      d.files.slice(0, 5).forEach((f) => md.push(`    - ${f}`));
       if (d.files.length > 5) md.push('    - ...');
     }
   }
@@ -222,48 +302,61 @@ async function main() {
   md.push(`- Duplicates: ${report.mdDuplicates.length}`);
   md.push('');
   md.push('## Rogue Lockfiles');
-  md.push(report.rogueLockfiles.length ? report.rogueLockfiles.map(p=>`- ${p}`).join('\n') : '- None');
+  md.push(
+    report.rogueLockfiles.length ? report.rogueLockfiles.map((p) => `- ${p}`).join('\n') : '- None'
+  );
   md.push('');
   md.push('## Nested node_modules (should not exist in pnpm monorepo)');
-  md.push(report.nestedNodeModulesRoots.length ? report.nestedNodeModulesRoots.map(p=>`- ${p}`).join('\n') : '- None');
+  md.push(
+    report.nestedNodeModulesRoots.length
+      ? report.nestedNodeModulesRoots.map((p) => `- ${p}`).join('\n')
+      : '- None'
+  );
   md.push('');
   md.push('## Large Files (>10MB)');
   if (report.largeFiles.length) {
     for (const lf of report.largeFiles.slice(0, 50)) {
-      md.push(`- ${lf.path} (${(lf.size/1024/1024).toFixed(2)} MB)`);
+      md.push(`- ${lf.path} (${(lf.size / 1024 / 1024).toFixed(2)} MB)`);
     }
   } else md.push('- None');
   md.push('');
   md.push('## Huge Files (>=1GB)');
   if (report.hugeFiles.length) {
     for (const hf of report.hugeFiles) {
-      md.push(`- ${hf.path} (${(hf.size/1024/1024/1024).toFixed(2)} GB)`);
+      md.push(`- ${hf.path} (${(hf.size / 1024 / 1024 / 1024).toFixed(2)} GB)`);
     }
   } else md.push('- None');
   md.push('');
   md.push('## Folder Size Census (includes dist/build, excludes node_modules/.git)');
   md.push('- Top 15 largest folders:');
-  report.sizeCensus.folderSizes.slice(0,15).forEach(f => md.push(`  - ${f.folder} ${(f.size/1024/1024).toFixed(2)} MB`));
-  md.push(`- Median: ${(report.sizeCensus.stats.median/1024/1024).toFixed(2)} MB, MAD: ${(report.sizeCensus.stats.mad/1024/1024).toFixed(2)} MB`);
+  report.sizeCensus.folderSizes
+    .slice(0, 15)
+    .forEach((f) => md.push(`  - ${f.folder} ${(f.size / 1024 / 1024).toFixed(2)} MB`));
+  md.push(
+    `- Median: ${(report.sizeCensus.stats.median / 1024 / 1024).toFixed(2)} MB, MAD: ${(report.sizeCensus.stats.mad / 1024 / 1024).toFixed(2)} MB`
+  );
   md.push('- Outliers (size far from median):');
   if (report.sizeCensus.outliers.length) {
-    report.sizeCensus.outliers.forEach(o => md.push(`  - ${o.folder} ${(o.size/1024/1024).toFixed(2)} MB`));
+    report.sizeCensus.outliers.forEach((o) =>
+      md.push(`  - ${o.folder} ${(o.size / 1024 / 1024).toFixed(2)} MB`)
+    );
   } else {
     md.push('  - None');
   }
   md.push('');
   md.push('## Dist/Build Directories in Repo');
-  md.push(report.distDirs.length ? report.distDirs.map(d=>`- ${d}/dist`).join('\n') : '- None');
+  md.push(report.distDirs.length ? report.distDirs.map((d) => `- ${d}/dist`).join('\n') : '- None');
   md.push('');
   md.push('## Packages Audit');
   for (const p of report.packages) {
     md.push(`### ${p.package} (${p.dir})`);
     md.push(`- Dev dep duplicates with root: ${p.devDepDuplicatesWithRoot.length}`);
-    if (p.devDepDuplicatesWithRoot.length) p.devDepDuplicatesWithRoot.slice(0,10).forEach(d=>md.push(`  - ${d.name}@${d.version}`));
+    if (p.devDepDuplicatesWithRoot.length)
+      p.devDepDuplicatesWithRoot.slice(0, 10).forEach((d) => md.push(`  - ${d.name}@${d.version}`));
     md.push(`- Unused declared deps: ${p.unusedDeclared.length}`);
-    if (p.unusedDeclared.length) md.push('  - ' + p.unusedDeclared.slice(0,10).join(', '));
+    if (p.unusedDeclared.length) md.push('  - ' + p.unusedDeclared.slice(0, 10).join(', '));
     md.push(`- Missing declared deps (used but not listed): ${p.missingDeclared.length}`);
-    if (p.missingDeclared.length) md.push('  - ' + p.missingDeclared.slice(0,10).join(', '));
+    if (p.missingDeclared.length) md.push('  - ' + p.missingDeclared.slice(0, 10).join(', '));
     md.push('');
   }
 
@@ -273,4 +366,7 @@ async function main() {
   process.stdout.write(' - docs/repo-index/scan-report.md\n');
 }
 
-main().catch(e => { process.stderr.write((e && e.stack) ? e.stack + '\n' : String(e) + '\n'); process.exit(1); });
+main().catch((e) => {
+  process.stderr.write(e && e.stack ? e.stack + '\n' : String(e) + '\n');
+  process.exit(1);
+});

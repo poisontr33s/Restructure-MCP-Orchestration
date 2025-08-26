@@ -1,8 +1,10 @@
 # Repository Scan Report
+
 - Generated: 2025-08-14T12:44:49.114Z
 - Files scanned: 180
 
 ## Duplicates
+
 - File duplicates: 2
   - 3 files share SHA1 7ad96e1b2bf0b7c317cc1f5f6f887ca9df0c8dd9:
     - packages/shared/tsconfig.json
@@ -14,12 +16,15 @@
     - packages/servers/base/tsconfig.json
 
 ## Markdown Duplicates
+
 - Duplicates: 0
 
 ## Rogue Lockfiles
+
 - None
 
 ## Nested node_modules (should not exist in pnpm monorepo)
+
 - packages\core\node_modules\zod
 - packages\core\node_modules\winston
 - packages\core\node_modules\node-fetch
@@ -61,12 +66,15 @@
 - packages\servers\kraken\node_modules\@mcp\shared
 
 ## Large Files (>10MB)
+
 - None
 
 ## Huge Files (>=1GB)
+
 - None
 
 ## Folder Size Census (includes dist/build, excludes node_modules/.git)
+
 - Top 15 largest folders:
   - docs 59.40 MB
   - scripts 0.44 MB
@@ -93,21 +101,26 @@
   - packages/core 0.05 MB
 
 ## Dist/Build Directories in Repo
+
 - None
 
 ## Packages Audit
+
 ### @mcp/unified-engine (packages/unified-engine)
+
 - Dev dep duplicates with root: 0
 - Unused declared deps: 0
 - Missing declared deps (used but not listed): 1
   - child_process
 
 ### @mcp/shared (packages/shared)
+
 - Dev dep duplicates with root: 0
 - Unused declared deps: 0
 - Missing declared deps (used but not listed): 0
 
 ### @mcp/monitor (packages/monitor)
+
 - Dev dep duplicates with root: 0
 - Unused declared deps: 6
   - @mcp/shared, @tanstack/react-query, zustand, @tailwindcss/postcss, @vitejs/plugin-react-swc, postcss
@@ -115,6 +128,7 @@
   - @vitejs, @tailwindcss, @tanstack, @mcp
 
 ### @mcp/core (packages/core)
+
 - Dev dep duplicates with root: 0
 - Unused declared deps: 3
   - @mcp/shared, node-fetch, zod
@@ -122,6 +136,7 @@
   - @mcp, child_process, path, http, fs, os
 
 ### @mcp/cli (packages/cli)
+
 - Dev dep duplicates with root: 0
 - Unused declared deps: 2
   - @mcp/core, @mcp/shared

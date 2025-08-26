@@ -15,26 +15,13 @@
       "types": "./unified-gemini-example.tsx"
     }
   },
-  "files": [
-    "compiled/",
-    "unified-gemini.ts",
-    "unified-gemini.js",
-    "unified-gemini-example.tsx"
-  ],
+  "files": ["compiled/", "unified-gemini.ts", "unified-gemini.js", "unified-gemini-example.tsx"],
   "scripts": {
     "build": "tsc unified-gemini.ts --target es2022 --module commonjs --outDir compiled --moduleResolution node --declaration --esModuleInterop --allowSyntheticDefaultImports",
     "test": "node compiled/unified-gemini.js",
     "test-providers": "node -e \"const { UnifiedGeminiClient } = require('./compiled/unified-gemini.js'); (async () => { const client = new UnifiedGeminiClient(); const providers = await client.listProviders(); console.log('Provider Status:', providers); })();\""
   },
-  "keywords": [
-    "gemini",
-    "ai",
-    "typescript",
-    "google",
-    "sdk",
-    "cli",
-    "cross-platform"
-  ],
+  "keywords": ["gemini", "ai", "typescript", "google", "sdk", "cli", "cross-platform"],
   "engines": {
     "node": ">=18.0.0"
   },

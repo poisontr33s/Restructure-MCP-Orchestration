@@ -2,10 +2,10 @@
 
 /**
  * Gemini Scout Scanner
- * 
+ *
  * An intelligence-gathering engine for the mcp-orchestration-system repository.
  * It provides a high-level, strategic overview of the entire vessel, its crew, and its cargo.
- * 
+ *
  * Features:
  * - Component Analysis: Identifies all the key components of the vessel.
  * - Dependency Mapping: Charts the currents of our dependencies.
@@ -17,4 +17,3 @@
 import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
-

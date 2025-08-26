@@ -6,19 +6,22 @@
 ## Agent Integration Status
 
 ### 🎯 **Claude Code** (Primary/Active)
-- **Status**: ✅ ACTIVE in IDE session  
+
+- **Status**: ✅ ACTIVE in IDE session
 - **Version**: 1.0.72 (Sonnet 4)
 - **Integration**: Native extension, sidebar/terminal interface
 - **Role**: Architect - systematic analysis, cross-file operations
 - **Current**: This conversation session
 
-### 🧭 **GPT-5/GitHub Copilot** (Navigator)  
+### 🧭 **GPT-5/GitHub Copilot** (Navigator)
+
 - **Status**: ✅ ASSUMED ACTIVE (user confirmed IDE integration)
 - **Integration**: Native VS Code extension, inline suggestions + chat
-- **Role**: Navigator - foundational rituals, real-time suggestions  
+- **Role**: Navigator - foundational rituals, real-time suggestions
 - **Coordination**: Via ARBITRAGE-BRIDGE.md protocols
 
 ### 🔍 **Gemini CLI** (Scout)
+
 - **Status**: ⚠️ READY but NEEDS CONFIGURATION
 - **Version**: 0.1.18 installed
 - **Integration**: VS Code tasks configured, IDE-mode capability available
@@ -28,6 +31,7 @@
 ## Current Configuration State
 
 **IDE Mode Tasks Configured**:
+
 ```json
 {
   "Gemini: IDE Mode": "gemini --ide-mode-feature --include-directories packages,scripts",
@@ -36,18 +40,21 @@
 ```
 
 **Missing Prerequisites**:
+
 - `GEMINI_API_KEY` environment variable not configured
 - Without API key, Gemini CLI cannot start IDE mode service
 
 ## Multi-Agent Arbitrage System Status
 
 **✅ FRAMEWORK OPERATIONAL**:
+
 - ARBITRAGE-BRIDGE.md coordination protocols established
 - Cross-agent communication via session.jsonl
-- Prerequisite thinking checkpoints configured  
+- Prerequisite thinking checkpoints configured
 - Captain Guthilda's Laws enforcement active
 
 **⚠️ PARTIAL ACTIVATION**:
+
 - 2 of 3 agents operationally ready (Claude Code + GPT-5)
 - 1 agent ready but needs API key (Gemini CLI)
 - Full trinity coordination pending GEMINI_API_KEY configuration
@@ -57,6 +64,7 @@
 **To Complete Multi-Agent Integration**:
 
 1. **Set Gemini API Key**:
+
    ```powershell
    $env:GEMINI_API_KEY = "your-api-key-here"
    ```
@@ -72,6 +80,7 @@
 ## Expected Multi-Agent IDE Layout
 
 **When Fully Activated**:
+
 ```
 ┌─────────────────────────┬─────────────────┐
 │ Main Editor             │ Claude Sidebar  │

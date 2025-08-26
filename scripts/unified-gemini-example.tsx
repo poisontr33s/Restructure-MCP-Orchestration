@@ -47,16 +47,16 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h1>🤖 Unified Gemini Chat</h1>
-      
+
       {/* Provider Status */}
       <div style={{ marginBottom: '20px' }}>
         <h3>📊 Provider Status</h3>
-        {providers.map(provider => (
+        {providers.map((provider) => (
           <div key={provider.name} style={{ margin: '5px 0' }}>
             <span style={{ color: provider.available ? 'green' : 'red' }}>
               {provider.available ? '✅' : '❌'}
-            </span>
-            {' '}{provider.name}
+            </span>{' '}
+            {provider.name}
           </div>
         ))}
       </div>
@@ -68,18 +68,18 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Enter your prompt here..."
-            style={{ 
-              width: '100%', 
-              height: '100px', 
+            style={{
+              width: '100%',
+              height: '100px',
               padding: '10px',
               border: '1px solid #ccc',
-              borderRadius: '4px'
+              borderRadius: '4px',
             }}
             disabled={loading}
           />
         </div>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading || !prompt.trim()}
           style={{
             padding: '10px 20px',
@@ -87,7 +87,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: loading ? 'not-allowed' : 'pointer',
           }}
         >
           {loading ? 'Generating...' : 'Send'}
@@ -98,15 +98,17 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
       {response && (
         <div style={{ marginTop: '20px' }}>
           <h3>🤖 Response</h3>
-          <div style={{
-            backgroundColor: '#f5f5f5',
-            padding: '15px',
-            borderRadius: '4px',
-            whiteSpace: 'pre-wrap'
-          }}>
+          <div
+            style={{
+              backgroundColor: '#f5f5f5',
+              padding: '15px',
+              borderRadius: '4px',
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {response.text}
           </div>
-          
+
           {/* Response Metadata */}
           <div style={{ marginTop: '10px', fontSize: '0.9em', color: '#666' }}>
             <div>Provider: {response.method}</div>
@@ -115,7 +117,8 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
             {response.chunks && <div>Chunks: {response.chunks}</div>}
             {response.tokens && (
               <div>
-                Tokens: {response.tokens.input} input + {response.tokens.output} output = {response.tokens.total} total
+                Tokens: {response.tokens.input} input + {response.tokens.output} output ={' '}
+                {response.tokens.total} total
               </div>
             )}
             {response.tools.length > 0 && <div>Tools: {response.tools.join(', ')}</div>}
@@ -127,12 +130,16 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ config = {} }) => {
       <div style={{ marginTop: '30px', fontSize: '0.9em' }}>
         <h4>⚙️ Configuration</h4>
         <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '4px' }}>
-          {JSON.stringify({
-            model: config.model || 'gemini-2.5-pro',
-            streaming: config.streaming ?? true,
-            tools: config.tools || ['googleSearch'],
-            thinkingBudget: config.thinkingBudget ?? -1,
-          }, null, 2)}
+          {JSON.stringify(
+            {
+              model: config.model || 'gemini-2.5-pro',
+              streaming: config.streaming ?? true,
+              tools: config.tools || ['googleSearch'],
+              thinkingBudget: config.thinkingBudget ?? -1,
+            },
+            null,
+            2
+          )}
         </pre>
       </div>
     </div>

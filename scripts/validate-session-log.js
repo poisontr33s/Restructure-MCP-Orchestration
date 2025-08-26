@@ -11,15 +11,24 @@ function isIsoDate(s) {
 
 function validateEntry(obj) {
   const errs = [];
-  if (!obj || typeof obj !== 'object') { errs.push('not an object'); return errs; }
-  if (!obj.timestamp || typeof obj.timestamp !== 'string' || !isIsoDate(obj.timestamp)) errs.push('timestamp missing/invalid');
-  if (!obj.topic || typeof obj.topic !== 'string' || obj.topic.trim() === '') errs.push('topic missing');
-  if (!obj.summary || typeof obj.summary !== 'string' || obj.summary.trim() === '') errs.push('summary missing');
-  if (!obj.actor || typeof obj.actor !== 'string' || obj.actor.trim() === '') errs.push('actor missing');
+  if (!obj || typeof obj !== 'object') {
+    errs.push('not an object');
+    return errs;
+  }
+  if (!obj.timestamp || typeof obj.timestamp !== 'string' || !isIsoDate(obj.timestamp))
+    errs.push('timestamp missing/invalid');
+  if (!obj.topic || typeof obj.topic !== 'string' || obj.topic.trim() === '')
+    errs.push('topic missing');
+  if (!obj.summary || typeof obj.summary !== 'string' || obj.summary.trim() === '')
+    errs.push('summary missing');
+  if (!obj.actor || typeof obj.actor !== 'string' || obj.actor.trim() === '')
+    errs.push('actor missing');
   // details: any
   if (obj.tags && !Array.isArray(obj.tags)) errs.push('tags must be array of strings');
-  if (Array.isArray(obj.tags) && obj.tags.some(t => typeof t !== 'string')) errs.push('tags elements must be strings');
-  if (obj.level && !['info','warn','error'].includes(obj.level)) errs.push('level must be info|warn|error');
+  if (Array.isArray(obj.tags) && obj.tags.some((t) => typeof t !== 'string'))
+    errs.push('tags elements must be strings');
+  if (obj.level && !['info', 'warn', 'error'].includes(obj.level))
+    errs.push('level must be info|warn|error');
   return errs;
 }
 
@@ -34,9 +43,13 @@ for (let i = 0; i < content.length; i++) {
   try {
     const obj = JSON.parse(line);
     const errs = validateEntry(obj);
-    if (errs.length) { ok = false; problems.push({ line: i+1, errors: errs }); }
+    if (errs.length) {
+      ok = false;
+      problems.push({ line: i + 1, errors: errs });
+    }
   } catch (e) {
-    ok = false; problems.push({ line: i+1, errors: ['invalid JSON: ' + e.message] });
+    ok = false;
+    problems.push({ line: i + 1, errors: ['invalid JSON: ' + e.message] });
   }
 }
 

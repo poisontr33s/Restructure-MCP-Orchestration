@@ -4,7 +4,11 @@ const fsp = fs.promises;
 const path = require('path');
 
 async function readJsonSafe(file) {
-  try { return JSON.parse(await fsp.readFile(file, 'utf8')); } catch { return null; }
+  try {
+    return JSON.parse(await fsp.readFile(file, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 async function listDirRecursive(root, filter) {
@@ -31,14 +35,19 @@ async function main() {
   await fsp.mkdir(outDir, { recursive: true });
 
   let cache = null;
-  try { cache = JSON.parse(await fsp.readFile(cachePath, 'utf8')); } catch {}
+  try {
+    cache = JSON.parse(await fsp.readFile(cachePath, 'utf8'));
+  } catch {}
   const prevFiles = (cache && cache.files) || {};
   const prevPackages = (cache && cache.packages) || [];
 
   // discover package.json files
-  const pkgEntries = await listDirRecursive(repoRoot, (p) => /package\.json$/.test(p) && !/node_modules/.test(p));
+  const pkgEntries = await listDirRecursive(
+    repoRoot,
+    (p) => /package\.json$/.test(p) && !/node_modules/.test(p)
+  );
   const packages = [];
-  const prevByDir = new Map(prevPackages.map(x => [x.dir, x]));
+  const prevByDir = new Map(prevPackages.map((x) => [x.dir, x]));
 
   for (const { p, stat } of pkgEntries) {
     const rel = path.relative(repoRoot, p);
@@ -51,17 +60,28 @@ async function main() {
     }
     const json = await readJsonSafe(p);
     if (!json) continue;
-    packages.push({ name: json.name, version: json.version, private: json.private, scripts: json.scripts, dir });
+    packages.push({
+      name: json.name,
+      version: json.version,
+      private: json.private,
+      scripts: json.scripts,
+      dir,
+    });
     prevFiles[rel] = { sig };
   }
-  packages.sort((a,b)=>a.dir.localeCompare(b.dir));
+  packages.sort((a, b) => a.dir.localeCompare(b.dir));
 
   // workflows
   const wfDir = path.join(repoRoot, '.github', 'workflows');
   let workflows = [];
   try {
     const files = await fsp.readdir(wfDir);
-    workflows = files.filter((f)=>/\.(ya?ml)$/.test(f)).map((f)=>({ name: f.replace(/\.(ya?ml)$/,'').replace(/[-_]/g,' '), file: path.join('.github','workflows',f) }));
+    workflows = files
+      .filter((f) => /\.(ya?ml)$/.test(f))
+      .map((f) => ({
+        name: f.replace(/\.(ya?ml)$/, '').replace(/[-_]/g, ' '),
+        file: path.join('.github', 'workflows', f),
+      }));
   } catch {}
 
   // session log stats
@@ -71,11 +91,22 @@ async function main() {
     const content = await fsp.readFile(logFile, 'utf8');
     const lines = content.split(/\r?\n/).filter(Boolean);
     let lastTs = null;
-    for (const line of lines) { try { const obj = JSON.parse(line); if (obj.ts) lastTs = obj.ts; } catch {} }
+    for (const line of lines) {
+      try {
+        const obj = JSON.parse(line);
+        if (obj.ts) lastTs = obj.ts;
+      } catch {}
+    }
     sessionLog = { entries: lines.length, lastTs };
   } catch {}
 
-  const index = { generatedAt: new Date().toISOString(), packages, workflows, sessionLog, codebase: { map: 'docs/codebase/codebase.json', overview: 'docs/codebase/overview.md' } };
+  const index = {
+    generatedAt: new Date().toISOString(),
+    packages,
+    workflows,
+    sessionLog,
+    codebase: { map: 'docs/codebase/codebase.json', overview: 'docs/codebase/overview.md' },
+  };
   await fsp.writeFile(path.join(outDir, 'index.json'), JSON.stringify(index, null, 2));
 
   // update cache
@@ -87,7 +118,10 @@ async function main() {
   const newCache = { files: filesForCache, packages };
   await fsp.writeFile(cachePath, JSON.stringify(newCache, null, 2));
 
-  console.log(`Wrote ${path.join('docs','repo-index','index.json')} (fast)`);
+  console.log(`Wrote ${path.join('docs', 'repo-index', 'index.json')} (fast)`);
 }
 
-main().catch((e)=>{ console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

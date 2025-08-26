@@ -17,9 +17,11 @@ export class GeminiCliEngine implements Engine {
   id = 'gemini-cli';
   kind: 'remote' | 'local' = 'remote';
   constructor(private includeDirs: string[] = ['packages', 'scripts', 'docs', '.vscode']) {}
-  supports(_req: EngineRequest): boolean { return true; }
+  supports(_req: EngineRequest): boolean {
+    return true;
+  }
   async run(req: EngineRequest): Promise<EngineResponse> {
-    const merged = [ ...this.includeDirs ];
+    const merged = [...this.includeDirs];
     const out = await execGemini(req.prompt, merged);
     return { output: out.trim(), meta: { engine: this.id } };
   }

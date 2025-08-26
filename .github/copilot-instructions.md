@@ -127,7 +127,7 @@ If you add new packages, update your workspace map and dependabot config. The ri
 
 ---
 
->> Now, code. And let the repo groove on forever.
+> > Now, code. And let the repo groove on forever.
 
 ---
 

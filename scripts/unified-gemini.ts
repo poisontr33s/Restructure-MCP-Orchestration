@@ -55,7 +55,7 @@ class GoogleGenAIProvider implements GeminiProvider {
     try {
       const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0';
       if (!apiKey) return false;
-      
+
       const ai = new GoogleGenAI({ apiKey });
       // Simple test to verify SDK is working
       return true;
@@ -65,7 +65,8 @@ class GoogleGenAIProvider implements GeminiProvider {
   }
 
   async generate(prompt: string, config: GeminiConfig): Promise<GeminiResponse> {
-    const apiKey = config.apiKey || process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0';
+    const apiKey =
+      config.apiKey || process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0';
     if (!apiKey) throw new Error('GEMINI_API_KEY required for SDK provider');
 
     const ai = new GoogleGenAI({ apiKey });
@@ -86,10 +87,12 @@ class GoogleGenAIProvider implements GeminiProvider {
       tools: tools.length > 0 ? tools : undefined,
     };
 
-    const contents = [{
-      role: 'user' as const,
-      parts: [{ text: prompt }],
-    }];
+    const contents = [
+      {
+        role: 'user' as const,
+        parts: [{ text: prompt }],
+      },
+    ];
 
     if (config.streaming) {
       // Streaming response
@@ -101,7 +104,7 @@ class GoogleGenAIProvider implements GeminiProvider {
 
       let totalText = '';
       let chunkCount = 0;
-      
+
       for await (const chunk of response) {
         if (chunk.text) {
           totalText += chunk.text;
@@ -153,7 +156,7 @@ class GeminiCliProvider implements GeminiProvider {
   async generate(prompt: string, config: GeminiConfig): Promise<GeminiResponse> {
     return new Promise((resolve, reject) => {
       const args = ['-p', `"${prompt}"`];
-      
+
       if (config.model && config.model !== 'gemini-2.5-pro') {
         args.unshift('--model', config.model);
       }
@@ -216,55 +219,62 @@ class DirectApiProvider implements GeminiProvider {
 
   async generate(prompt: string, config: GeminiConfig): Promise<GeminiResponse> {
     const https = require('https');
-    const apiKey = config.apiKey || process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0';
+    const apiKey =
+      config.apiKey || process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0';
     if (!apiKey) throw new Error('GEMINI_API_KEY required for direct API');
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${config.model}:generateContent?key=${apiKey}`;
-    
+
     const requestData = JSON.stringify({
-      contents: [{
-        parts: [{ text: prompt }]
-      }],
+      contents: [
+        {
+          parts: [{ text: prompt }],
+        },
+      ],
       generationConfig: {
         temperature: config.temperature ?? 0.7,
-        maxOutputTokens: config.maxOutputTokens ?? 2048
-      }
+        maxOutputTokens: config.maxOutputTokens ?? 2048,
+      },
     });
 
     return new Promise((resolve, reject) => {
-      const req = https.request(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(requestData)
-        }
-      }, (res: any) => {
-        let responseData = '';
-        res.on('data', (chunk: any) => responseData += chunk);
-        res.on('end', () => {
-          try {
-            const response = JSON.parse(responseData);
-            if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
-              resolve({
-                text: response.candidates[0].content.parts[0].text,
-                tokens: {
-                  input: response.usageMetadata?.promptTokenCount || 0,
-                  output: response.usageMetadata?.candidatesTokenCount || 0,
-                  total: response.usageMetadata?.totalTokenCount || 0,
-                },
-                method: 'direct-api',
-                model: config.model,
-                streaming: false,
-                tools: [],
-              });
-            } else {
-              reject(new Error(`No content in response: ${JSON.stringify(response)}`));
+      const req = https.request(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(requestData),
+          },
+        },
+        (res: any) => {
+          let responseData = '';
+          res.on('data', (chunk: any) => (responseData += chunk));
+          res.on('end', () => {
+            try {
+              const response = JSON.parse(responseData);
+              if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
+                resolve({
+                  text: response.candidates[0].content.parts[0].text,
+                  tokens: {
+                    input: response.usageMetadata?.promptTokenCount || 0,
+                    output: response.usageMetadata?.candidatesTokenCount || 0,
+                    total: response.usageMetadata?.totalTokenCount || 0,
+                  },
+                  method: 'direct-api',
+                  model: config.model,
+                  streaming: false,
+                  tools: [],
+                });
+              } else {
+                reject(new Error(`No content in response: ${JSON.stringify(response)}`));
+              }
+            } catch (err) {
+              reject(err);
             }
-          } catch (err) {
-            reject(err);
-          }
-        });
-      });
+          });
+        }
+      );
 
       req.on('error', reject);
       req.write(requestData);
@@ -303,7 +313,7 @@ class UnifiedGeminiClient {
       try {
         const isAvailable = await provider.test();
         console.log(`📡 ${provider.name}: ${isAvailable ? '✅ Available' : '❌ Unavailable'}`);
-        
+
         if (isAvailable) {
           console.log(`🚀 Using ${provider.name}...`);
           const response = await provider.generate(prompt, fullConfig);
@@ -334,7 +344,8 @@ class UnifiedGeminiClient {
  */
 async function main() {
   const args = process.argv.slice(2);
-  const prompt = args[0] || 'Hello! Please identify yourself and confirm which provider is being used.';
+  const prompt =
+    args[0] || 'Hello! Please identify yourself and confirm which provider is being used.';
 
   console.log('🤖 Unified Gemini TypeScript Client');
   console.log('=====================================');
@@ -355,7 +366,9 @@ async function main() {
   console.log(`   Model: ${config.model}`);
   console.log(`   Streaming: ${config.streaming}`);
   console.log(`   Tools: ${config.tools?.join(', ')}`);
-  console.log(`   Thinking Budget: ${config.thinkingBudget === -1 ? 'Unlimited' : config.thinkingBudget}`);
+  console.log(
+    `   Thinking Budget: ${config.thinkingBudget === -1 ? 'Unlimited' : config.thinkingBudget}`
+  );
   console.log('');
 
   console.log('💬 Prompt:', prompt);
@@ -365,7 +378,7 @@ async function main() {
     // Show available providers
     const providers = await client.listProviders();
     console.log('📊 Provider Status:');
-    providers.forEach(p => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'}`));
+    providers.forEach((p) => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'}`));
     console.log('');
 
     // Generate response
@@ -383,9 +396,10 @@ async function main() {
     console.log(`   Tools: ${response.tools.join(', ') || 'None'}`);
     if (response.chunks) console.log(`   Chunks: ${response.chunks}`);
     if (response.tokens) {
-      console.log(`   Tokens: ${response.tokens.input} input + ${response.tokens.output} output = ${response.tokens.total} total`);
+      console.log(
+        `   Tokens: ${response.tokens.input} input + ${response.tokens.output} output = ${response.tokens.total} total`
+      );
     }
-
   } catch (error) {
     console.error('❌ Generation failed:', error instanceof Error ? error.message : error);
     process.exit(1);

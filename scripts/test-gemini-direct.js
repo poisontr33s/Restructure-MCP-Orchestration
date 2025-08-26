@@ -11,7 +11,9 @@ const API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dv
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-pro'; // Use latest 2.5 Pro model by default
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
-const testPrompt = process.argv[2] || "Hello! Please respond with 'API key working correctly!' to confirm the connection.";
+const testPrompt =
+  process.argv[2] ||
+  "Hello! Please respond with 'API key working correctly!' to confirm the connection.";
 
 console.log('🔑 Testing Gemini API directly...');
 console.log(`📡 Model: ${MODEL}`);
@@ -20,44 +22,48 @@ console.log(`💬 Prompt: ${testPrompt}`);
 console.log('');
 
 const requestData = JSON.stringify({
-  contents: [{
-    parts: [{
-      text: testPrompt
-    }]
-  }],
+  contents: [
+    {
+      parts: [
+        {
+          text: testPrompt,
+        },
+      ],
+    },
+  ],
   generationConfig: {
     temperature: 0.7,
-    maxOutputTokens: 2048
-  }
+    maxOutputTokens: 2048,
+  },
 });
 
 const options = {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(requestData)
-  }
+    'Content-Length': Buffer.byteLength(requestData),
+  },
 };
 
 console.log('🚀 Making API request...');
 
 const req = https.request(API_URL, options, (res) => {
   console.log(`📊 Status: ${res.statusCode} ${res.statusMessage}`);
-  
+
   let responseData = '';
-  
+
   res.on('data', (chunk) => {
     responseData += chunk;
   });
-  
+
   res.on('end', () => {
     try {
       const response = JSON.parse(responseData);
-      
+
       if (res.statusCode === 200) {
         console.log('✅ SUCCESS! API key is working correctly.');
         console.log('');
-        
+
         if (response.candidates && response.candidates[0]) {
           const candidate = response.candidates[0];
           if (candidate.content && candidate.content.parts && candidate.content.parts[0]) {
@@ -73,7 +79,7 @@ const req = https.request(API_URL, options, (res) => {
             }
           }
         }
-        
+
         console.log('');
         console.log('📈 Usage Info:');
         if (response.usageMetadata) {
@@ -81,17 +87,16 @@ const req = https.request(API_URL, options, (res) => {
           console.log(`   Output tokens: ${response.usageMetadata.candidatesTokenCount}`);
           console.log(`   Total tokens: ${response.usageMetadata.totalTokenCount}`);
         }
-        
       } else {
         console.log('❌ API Error:');
         console.log(JSON.stringify(response, null, 2));
-        
+
         if (response.error) {
           console.log('');
           console.log('🔍 Error Details:');
           console.log(`   Code: ${response.error.code}`);
           console.log(`   Message: ${response.error.message}`);
-          
+
           if (response.error.code === 400) {
             console.log('');
             console.log('💡 Possible Issues:');
@@ -112,7 +117,6 @@ const req = https.request(API_URL, options, (res) => {
           }
         }
       }
-      
     } catch (parseError) {
       console.log('❌ Failed to parse response:');
       console.log(responseData);

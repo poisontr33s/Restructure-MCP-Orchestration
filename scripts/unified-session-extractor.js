@@ -11,23 +11,27 @@ const path = require('path');
 
 class UnifiedSessionExtractor {
   constructor(options = {}) {
-    this.claudeProjectsPath = path.join(process.env.USERPROFILE || process.env.HOME, '.claude', 'projects');
+    this.claudeProjectsPath = path.join(
+      process.env.USERPROFILE || process.env.HOME,
+      '.claude',
+      'projects'
+    );
     this.projectName = 'C--Users-erdno-GithubRepos-Restructure-MCP-Orchestration';
     this.outputPath = options.outputPath || 'UNIFIED-SESSION-STATE.md';
     this.sessionsPath = path.join(this.claudeProjectsPath, this.projectName);
-    
+
     // Session file mappings based on your analysis
     this.sessionMappings = {
       '15af9095-f041-4c86-ac76-9d71aaf4be31.jsonl': {
         name: 'Comprehensive Multi-Agent Arbitrage System',
         messages: 349,
-        focus: 'Systematic multi-agent development'
+        focus: 'Systematic multi-agent development',
       },
       'd0e5bb8a-f4e1-41cb-ae8c-672a0383a164.jsonl': {
         name: 'Current Session',
         messages: 'current',
-        focus: 'Session preservation and unification'
-      }
+        focus: 'Session preservation and unification',
+      },
       // Add more as discovered
     };
 
@@ -37,48 +41,47 @@ class UnifiedSessionExtractor {
         source_sessions: [],
         total_messages: 0,
         core_achievements: [],
-        current_state: {}
+        current_state: {},
       },
       context: {
         project_vision: '',
         architecture_decisions: [],
         implemented_systems: [],
         active_agents: {},
-        workflow_automation: []
+        workflow_automation: [],
       },
       knowledge: {
         key_learnings: [],
         problem_solutions: [],
         code_patterns: [],
-        best_practices: []
+        best_practices: [],
       },
       current_focus: {
         active_tasks: [],
         immediate_priorities: [],
-        next_milestones: []
-      }
+        next_milestones: [],
+      },
     };
   }
 
   async extractAllSessions() {
     console.log('🔍 Extracting and unifying Claude Code sessions...');
-    
+
     try {
       // Get all session files
       const sessionFiles = await fs.readdir(this.sessionsPath);
-      const jsonlFiles = sessionFiles.filter(f => f.endsWith('.jsonl'));
-      
+      const jsonlFiles = sessionFiles.filter((f) => f.endsWith('.jsonl'));
+
       console.log(`📁 Found ${jsonlFiles.length} session files`);
-      
+
       for (const file of jsonlFiles) {
         await this.extractSessionContext(file);
       }
-      
+
       await this.generateUnifiedDocument();
-      
+
       console.log('✅ Unified session state created successfully!');
       return this.consolidatedState;
-      
     } catch (error) {
       console.error('❌ Session extraction failed:', error.message);
       throw error;
@@ -87,13 +90,16 @@ class UnifiedSessionExtractor {
 
   async extractSessionContext(sessionFile) {
     const filePath = path.join(this.sessionsPath, sessionFile);
-    
+
     try {
       console.log(`📖 Processing: ${sessionFile}`);
-      
+
       const content = await fs.readFile(filePath, 'utf8');
-      const lines = content.trim().split('\n').filter(line => line.trim());
-      
+      const lines = content
+        .trim()
+        .split('\n')
+        .filter((line) => line.trim());
+
       const session = {
         id: sessionFile.replace('.jsonl', ''),
         file: sessionFile,
@@ -101,7 +107,7 @@ class UnifiedSessionExtractor {
         achievements: [],
         keyInsights: [],
         codeChanges: [],
-        decisions: []
+        decisions: [],
       };
 
       // Parse key messages for context
@@ -128,9 +134,8 @@ class UnifiedSessionExtractor {
 
       this.consolidatedState.metadata.source_sessions.push(session);
       this.consolidatedState.metadata.total_messages += session.messageCount;
-      
+
       console.log(`   ✅ ${session.messageCount} messages processed`);
-      
     } catch (error) {
       console.error(`   ❌ Failed to process ${sessionFile}:`, error.message);
     }
@@ -139,50 +144,65 @@ class UnifiedSessionExtractor {
   async analyzeEntry(entry, session, isRecent = false) {
     if (entry.type === 'user' && entry.message?.content) {
       const content = entry.message.content;
-      
+
       // Extract key patterns from user messages
       if (typeof content === 'string') {
         // Look for achievement indicators
-        if (content.includes('✅') || content.includes('completed') || content.includes('implemented')) {
+        if (
+          content.includes('✅') ||
+          content.includes('completed') ||
+          content.includes('implemented')
+        ) {
           session.achievements.push({
             timestamp: entry.timestamp,
             content: content.substring(0, 200) + '...',
-            recent: isRecent
+            recent: isRecent,
           });
         }
-        
+
         // Look for architectural decisions
-        if (content.includes('architecture') || content.includes('system') || content.includes('design')) {
+        if (
+          content.includes('architecture') ||
+          content.includes('system') ||
+          content.includes('design')
+        ) {
           session.decisions.push({
             timestamp: entry.timestamp,
             content: content.substring(0, 200) + '...',
-            recent: isRecent
+            recent: isRecent,
           });
         }
       }
     }
-    
+
     if (entry.type === 'assistant' && entry.message?.content) {
       const content = entry.message.content;
-      
+
       if (Array.isArray(content)) {
         // Look for tool usage patterns
-        const toolUses = content.filter(c => c.type === 'tool_use');
+        const toolUses = content.filter((c) => c.type === 'tool_use');
         if (toolUses.length > 0) {
           session.codeChanges.push({
             timestamp: entry.timestamp,
-            tools: toolUses.map(t => t.name),
-            recent: isRecent
+            tools: toolUses.map((t) => t.name),
+            recent: isRecent,
           });
         }
-        
+
         // Extract text insights
-        const textContent = content.filter(c => c.type === 'text').map(c => c.text).join(' ');
-        if (textContent.includes('key insight') || textContent.includes('important') || textContent.includes('critical')) {
+        const textContent = content
+          .filter((c) => c.type === 'text')
+          .map((c) => c.text)
+          .join(' ');
+        if (
+          textContent.includes('key insight') ||
+          textContent.includes('important') ||
+          textContent.includes('critical')
+        ) {
           session.keyInsights.push({
             timestamp: entry.timestamp,
             content: textContent.substring(0, 300) + '...',
-            recent: isRecent
+            recent: isRecent,
           });
         }
       }
@@ -194,25 +214,25 @@ class UnifiedSessionExtractor {
         timestamp: new Date().toISOString(),
         content: entry.summary,
         type: 'summary',
-        recent: isRecent
+        recent: isRecent,
       });
     }
   }
 
   async generateUnifiedDocument() {
     console.log('📝 Generating unified session document...');
-    
+
     // Consolidate achievements across sessions
     const allAchievements = this.consolidatedState.metadata.source_sessions
-      .flatMap(s => s.achievements)
+      .flatMap((s) => s.achievements)
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
+
     const allDecisions = this.consolidatedState.metadata.source_sessions
-      .flatMap(s => s.decisions)
+      .flatMap((s) => s.decisions)
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
+
     const allInsights = this.consolidatedState.metadata.source_sessions
-      .flatMap(s => s.keyInsights)
+      .flatMap((s) => s.keyInsights)
       .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     // Build unified context document
@@ -229,32 +249,41 @@ Revolutionary multi-agent AI system with Claude Code, GPT-5/Copilot, and Gemini 
 
 ## 📊 SESSION OVERVIEW
 
-${this.consolidatedState.metadata.source_sessions.map(s => 
-  `### ${this.sessionMappings[s.file]?.name || s.id}
+${this.consolidatedState.metadata.source_sessions
+  .map(
+    (s) =>
+      `### ${this.sessionMappings[s.file]?.name || s.id}
 - **Messages**: ${s.messageCount}
 - **Key Achievements**: ${s.achievements.length}
 - **Architectural Decisions**: ${s.decisions.length}
 - **Insights Generated**: ${s.keyInsights.length}
 - **Focus**: ${this.sessionMappings[s.file]?.focus || 'General development'}`
-).join('\n\n')}
+  )
+  .join('\n\n')}
 
 ## 🏆 CONSOLIDATED ACHIEVEMENTS
 
-${allAchievements.slice(0, 20).map((a, i) => 
-  `${i + 1}. **${a.recent ? '🔥 Recent' : '📅 Historical'}**: ${a.content}`
-).join('\n')}
+${allAchievements
+  .slice(0, 20)
+  .map((a, i) => `${i + 1}. **${a.recent ? '🔥 Recent' : '📅 Historical'}**: ${a.content}`)
+  .join('\n')}
 
 ## 🏗️ ARCHITECTURAL DECISIONS
 
-${allDecisions.slice(0, 15).map((d, i) => 
-  `${i + 1}. **${d.recent ? '🔥 Recent' : '📅 Historical'}**: ${d.content}`
-).join('\n')}
+${allDecisions
+  .slice(0, 15)
+  .map((d, i) => `${i + 1}. **${d.recent ? '🔥 Recent' : '📅 Historical'}**: ${d.content}`)
+  .join('\n')}
 
 ## 💡 KEY INSIGHTS & LEARNINGS
 
-${allInsights.slice(0, 15).map((insight, i) => 
-  `${i + 1}. **${insight.recent ? '🔥 Recent' : '📅 Historical'}**: ${insight.content}`
-).join('\n')}
+${allInsights
+  .slice(0, 15)
+  .map(
+    (insight, i) =>
+      `${i + 1}. **${insight.recent ? '🔥 Recent' : '📅 Historical'}**: ${insight.content}`
+  )
+  .join('\n')}
 
 ## 🤖 ACTIVE AGENT ECOSYSTEM
 
@@ -307,7 +336,7 @@ ${allInsights.slice(0, 15).map((insight, i) =>
 
     await fs.writeFile(this.outputPath, unifiedDoc);
     console.log(`📄 Unified document written to: ${this.outputPath}`);
-    
+
     // Also update CLAUDE.md to reference this unified state
     await this.updateClaludeMd();
   }
@@ -316,7 +345,7 @@ ${allInsights.slice(0, 15).map((insight, i) =>
     try {
       const claudeMdPath = 'CLAUDE.md';
       let content = await fs.readFile(claudeMdPath, 'utf8');
-      
+
       // Add unified session reference if not already present
       if (!content.includes('UNIFIED-SESSION-STATE.md')) {
         const unifiedSection = `
@@ -326,13 +355,13 @@ This repository maintains a unified session state in \`UNIFIED-SESSION-STATE.md\
 
 **Auto-Resume**: Always reference the unified session state for complete project context and continuity across fragmented sessions.
 `;
-        
+
         // Insert after the Multi-Agent Arbitrage System section
         content = content.replace(
-          '## Development Commands', 
+          '## Development Commands',
           unifiedSection + '\n## Development Commands'
         );
-        
+
         await fs.writeFile(claudeMdPath, content);
         console.log('✅ CLAUDE.md updated with unified session reference');
       }
@@ -346,7 +375,8 @@ This repository maintains a unified session state in \`UNIFIED-SESSION-STATE.md\
 if (require.main === module) {
   const args = process.argv.slice(2);
   const options = {
-    outputPath: args.find(arg => arg.startsWith('--output='))?.split('=')[1] || 'UNIFIED-SESSION-STATE.md'
+    outputPath:
+      args.find((arg) => arg.startsWith('--output='))?.split('=')[1] || 'UNIFIED-SESSION-STATE.md',
   };
 
   const extractor = new UnifiedSessionExtractor(options);
@@ -357,7 +387,6 @@ if (require.main === module) {
       console.log('\n🎉 SESSION UNIFICATION COMPLETE!');
       console.log('📄 Unified context available in:', options.outputPath);
       console.log('🚀 Use: claude --continue --print "Resume from unified session state"');
-      
     } catch (error) {
       console.error('❌ Unification failed:', error.message);
       process.exit(1);

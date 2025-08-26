@@ -27,6 +27,7 @@ Optimized Sessions: 5
 ## Usage
 
 These .md.session files are optimized for:
+
 - **Auto-preloading** into Claude Code on startup
 - **Maximum performance** with minimal redundancy
 - **Cross-model compatibility** (Claude, Gemini, GPT)

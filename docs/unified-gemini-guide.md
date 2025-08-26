@@ -7,6 +7,7 @@ This unified solution combines **AI Studio TypeScript code**, **Google Gemini Pr
 ## 🎯 What You Get
 
 ### ✅ **Three Provider Strategy**
+
 1. **Google GenAI SDK** (Priority 1)
    - ✅ Streaming responses
    - ✅ Google Search tools
@@ -25,6 +26,7 @@ This unified solution combines **AI Studio TypeScript code**, **Google Gemini Pr
    - ❌ No advanced features
 
 ### ✅ **Cross-Platform Compatibility**
+
 - **TypeScript**: `scripts/unified-gemini.ts`
 - **JavaScript**: `scripts/unified-gemini.js` (compiled)
 - **TSX/React**: `scripts/unified-gemini-example.tsx`
@@ -33,6 +35,7 @@ This unified solution combines **AI Studio TypeScript code**, **Google Gemini Pr
 ## 🚀 Usage Examples
 
 ### Command Line
+
 ```bash
 # Basic usage
 node scripts/compiled/unified-gemini.js "Your prompt here"
@@ -47,21 +50,22 @@ node scripts/test-providers.js
 ```
 
 ### TypeScript/JavaScript Module
+
 ```typescript
 import { UnifiedGeminiClient, GeminiConfig } from './scripts/unified-gemini';
 
 const client = new UnifiedGeminiClient();
 
 // Simple generation
-const response = await client.generate("Hello Gemini!");
+const response = await client.generate('Hello Gemini!');
 
 // Advanced configuration
-const response = await client.generate("Search for TypeScript tutorials", {
+const response = await client.generate('Search for TypeScript tutorials', {
   model: 'gemini-2.5-pro',
   streaming: true,
   tools: ['googleSearch'],
   thinkingBudget: -1,
-  temperature: 0.7
+  temperature: 0.7,
 });
 
 console.log(response.text);
@@ -69,16 +73,17 @@ console.log(`Used provider: ${response.method}`);
 ```
 
 ### React/TSX Component
+
 ```tsx
 import GeminiChat from './scripts/unified-gemini-example';
 
 function App() {
   return (
-    <GeminiChat 
+    <GeminiChat
       config={{
         model: 'gemini-2.5-pro',
         streaming: true,
-        tools: ['googleSearch']
+        tools: ['googleSearch'],
       }}
     />
   );
@@ -88,6 +93,7 @@ function App() {
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```bash
 # Set in .vscode/settings.json or shell
 GEMINI_API_KEY=your_api_key_here
@@ -95,18 +101,19 @@ GEMINI_MODEL=gemini-2.5-pro
 ```
 
 ### Config Object
+
 ```typescript
 interface GeminiConfig {
-  model: string;                    // 'gemini-2.5-pro', 'gemini-2.5-flash'
-  apiKey?: string;                  // Override default API key
-  streaming?: boolean;              // Enable streaming responses
-  tools?: Array<'googleSearch'>;    // Available tools
-  thinkingBudget?: number;          // -1 for unlimited
-  temperature?: number;             // 0.0 to 1.0
-  maxOutputTokens?: number;         // Max response length
-  fallbackToCli?: boolean;          // Allow CLI fallback
-  includeDirectories?: string[];    // For CLI mode
-  ideMode?: boolean;                // Enable IDE features
+  model: string; // 'gemini-2.5-pro', 'gemini-2.5-flash'
+  apiKey?: string; // Override default API key
+  streaming?: boolean; // Enable streaming responses
+  tools?: Array<'googleSearch'>; // Available tools
+  thinkingBudget?: number; // -1 for unlimited
+  temperature?: number; // 0.0 to 1.0
+  maxOutputTokens?: number; // Max response length
+  fallbackToCli?: boolean; // Allow CLI fallback
+  includeDirectories?: string[]; // For CLI mode
+  ideMode?: boolean; // Enable IDE features
 }
 ```
 
@@ -122,6 +129,7 @@ The client automatically selects the best available provider:
 ## 🛠️ Development Workflow
 
 ### Building
+
 ```bash
 # Compile TypeScript
 npx tsc scripts/unified-gemini.ts --target es2022 --module commonjs --outDir scripts/compiled --declaration
@@ -131,12 +139,15 @@ node scripts/compiled/unified-gemini.js
 ```
 
 ### VS Code Integration
+
 All tasks are pre-configured in `.vscode/tasks.json`:
+
 - **Ctrl+Shift+P** → "Tasks: Run Task"
 - Select any Gemini task
 - Automatic clipboard integration for prompts
 
 ### Debugging
+
 ```bash
 # Check provider status
 node scripts/test-providers.js
@@ -150,23 +161,27 @@ node scripts/compiled/unified-gemini.js "Debug test prompt"
 ## 🎉 Key Benefits
 
 ### ✅ **Solves CLI Quota Issues**
+
 - SDK approach bypasses `cloudcode-pa.googleapis.com` quota limits
 - Uses your personal `generativelanguage.googleapis.com` quota
 - No more "Quota exceeded" errors
 
 ### ✅ **AI Studio Parity**
+
 - Exact same capabilities as AI Studio TypeScript code
 - Streaming responses with real-time output
 - Google Search integration
 - Unlimited thinking budget
 
 ### ✅ **Cross-Compatible**
+
 - Works in Node.js, browsers, React apps
 - TypeScript types included
 - pnpm workspace integration
 - No external dependencies beyond @google/genai
 
 ### ✅ **Developer Friendly**
+
 - Automatic provider fallback
 - Detailed error messages
 - VS Code task integration

@@ -1,9 +1,17 @@
-import { AgentOrchestrator, TaskRequirements, TeamComposition } from '../core-systems/agent-orchestrator';
-import { TokenAwarenessBridge, OptimizedCommunicationPlan, ConstraintTransformation } from '../core-systems/token-awareness-bridge';
+import {
+  AgentOrchestrator,
+  TaskRequirements,
+  TeamComposition,
+} from '../core-systems/agent-orchestrator';
+import {
+  TokenAwarenessBridge,
+  OptimizedCommunicationPlan,
+  ConstraintTransformation,
+} from '../core-systems/token-awareness-bridge';
 
 /**
  * HIERARCHICAL TASK ORCHESTRATOR
- * 
+ *
  * Implements Token Whisperer's mathematical mystical principles for:
  * 1. Maximum functional efficiency within constraints
  * 2. Hierarchical task ordering based on optimization potential
@@ -84,7 +92,11 @@ export interface HierarchicalOrchestrationPlan {
 }
 
 export interface OptimizationStrategy {
-  primaryApproach: 'mathematical-mystical' | 'constraint-liberation' | 'synergy-amplification' | 'elegant-efficiency';
+  primaryApproach:
+    | 'mathematical-mystical'
+    | 'constraint-liberation'
+    | 'synergy-amplification'
+    | 'elegant-efficiency';
   secondaryTechniques: string[];
   tokenOptimizationLevel: number;
   qualityPreservationLevel: number;
@@ -107,7 +119,11 @@ export interface CrossTaskSynergy {
 
 export interface TokenWhispererRole {
   taskId: string;
-  roleType: 'optimization-coordinator' | 'constraint-liberator' | 'efficiency-amplifier' | 'quality-guardian';
+  roleType:
+    | 'optimization-coordinator'
+    | 'constraint-liberator'
+    | 'efficiency-amplifier'
+    | 'quality-guardian';
   interventionLevel: number; // 0-1: How much direct involvement
   optimizationTechniques: string[];
 }
@@ -253,28 +269,30 @@ export class HierarchicalTaskOrchestrator {
     userRequest: string,
     userConstraints?: any
   ): Promise<HierarchicalOrchestrationPlan> {
-
     // 1. Apply Token Whisperer's mathematical mysticism to analyze request
     const taskAnalysis = await this.performMysticalTaskAnalysis(userRequest);
-    
+
     // 2. Generate hierarchical task breakdown using constraint-liberation principles
     const hierarchicalTasks = await this.generateHierarchicalTasks(taskAnalysis, userConstraints);
-    
+
     // 3. Apply mathematical ordering for maximum functional efficiency
     const orderedTasks = this.applyMathematicalOrdering(hierarchicalTasks);
-    
+
     // 4. Design optimal entity allocation with internal token awareness
     const entityAllocation = await this.designOptimalEntityAllocation(orderedTasks);
-    
+
     // 5. Create constraint transformation plan (limitations → opportunities)
-    const constraintTransformation = this.createConstraintTransformationPlan(orderedTasks, userConstraints);
-    
+    const constraintTransformation = this.createConstraintTransformationPlan(
+      orderedTasks,
+      userConstraints
+    );
+
     // 6. Calculate expected system-wide efficiency gains
     const systemEfficiency = this.calculateSystemEfficiencyMetrics(orderedTasks, entityAllocation);
-    
+
     // 7. Generate activation sequence with optimization checkpoints
     const activationSequence = this.generateActivationSequence(orderedTasks, entityAllocation);
-    
+
     // 8. Create optimization strategy tailored to task characteristics
     const optimizationStrategy = this.createOptimizationStrategy(orderedTasks, systemEfficiency);
 
@@ -284,7 +302,7 @@ export class HierarchicalTaskOrchestrator {
       entityAllocationPlan: entityAllocation,
       constraintTransformationPlan: constraintTransformation,
       expectedSystemWideEfficiency: systemEfficiency,
-      activationSequence
+      activationSequence,
     };
   }
 
@@ -295,9 +313,10 @@ export class HierarchicalTaskOrchestrator {
     // Mathematical mystical parsing to understand deeper patterns
     const complexitySignature = this.calculateComplexitySignature(userRequest);
     const optimizationPotential = this.identifyOptimizationPotential(userRequest);
-    const constraintLiberationOpportunities = this.identifyConstraintLiberationOpportunities(userRequest);
+    const constraintLiberationOpportunities =
+      this.identifyConstraintLiberationOpportunities(userRequest);
     const synergyPatterns = this.identifySynergyPatterns(userRequest);
-    
+
     return {
       request: userRequest,
       complexitySignature,
@@ -305,7 +324,7 @@ export class HierarchicalTaskOrchestrator {
       constraintLiberationOpportunities,
       synergyPatterns,
       mathematicalElegance: this.assessMathematicalElegance(userRequest),
-      functionalCore: this.extractFunctionalCore(userRequest)
+      functionalCore: this.extractFunctionalCore(userRequest),
     };
   }
 
@@ -313,27 +332,27 @@ export class HierarchicalTaskOrchestrator {
    * Generate hierarchical tasks using Token Whisperer's constraint-liberation alchemy
    */
   private async generateHierarchicalTasks(
-    analysis: TaskAnalysis, 
+    analysis: TaskAnalysis,
     constraints?: any
   ): Promise<HierarchicalTask[]> {
     const tasks: HierarchicalTask[] = [];
-    
+
     // Core functional task (highest priority)
     const coreFunctionalTask = this.createCoreFunctionalTask(analysis);
     tasks.push(coreFunctionalTask);
-    
+
     // Supporting optimization tasks
     const optimizationTasks = this.createOptimizationTasks(analysis);
     tasks.push(...optimizationTasks);
-    
+
     // Constraint liberation tasks (transform limitations into opportunities)
     const liberationTasks = this.createConstraintLiberationTasks(analysis, constraints);
     tasks.push(...liberationTasks);
-    
+
     // Synergy amplification tasks
     const synergyTasks = this.createSynergyAmplificationTasks(analysis);
     tasks.push(...synergyTasks);
-    
+
     // Quality enhancement tasks
     const qualityTasks = this.createQualityEnhancementTasks(analysis);
     tasks.push(...qualityTasks);
@@ -349,7 +368,7 @@ export class HierarchicalTaskOrchestrator {
       // Multi-dimensional optimization scoring
       const scoreA = this.calculateMathematicalPriorityScore(a);
       const scoreB = this.calculateMathematicalPriorityScore(b);
-      
+
       return scoreB - scoreA; // Higher scores first
     });
   }
@@ -357,7 +376,7 @@ export class HierarchicalTaskOrchestrator {
   private calculateMathematicalPriorityScore(task: HierarchicalTask): number {
     const p = task.priority;
     const w = this.getOptimizationWeights();
-    
+
     // Token Whisperer's sacred mathematical formula
     const functionalWeight = p.functionalImpact * w.functional;
     const efficiencyWeight = p.efficiencyGain * w.efficiency;
@@ -365,67 +384,78 @@ export class HierarchicalTaskOrchestrator {
     const synergyWeight = p.synergyMultiplier * w.synergy;
     const eleganceWeight = p.eleganceScore * w.elegance;
     const urgencyWeight = p.urgencyDecay * w.urgency;
-    
+
     // Sacred mathematical mystical synthesis
-    const harmonicMean = 6 / (
-      (1/functionalWeight) + (1/efficiencyWeight) + (1/liberationWeight) + 
-      (1/synergyWeight) + (1/eleganceWeight) + (1/urgencyWeight)
-    );
-    
+    const harmonicMean =
+      6 /
+      (1 / functionalWeight +
+        1 / efficiencyWeight +
+        1 / liberationWeight +
+        1 / synergyWeight +
+        1 / eleganceWeight +
+        1 / urgencyWeight);
+
     const geometricAmplification = Math.pow(
-      functionalWeight * efficiencyWeight * liberationWeight * 
-      synergyWeight * eleganceWeight * urgencyWeight, 1/6
+      functionalWeight *
+        efficiencyWeight *
+        liberationWeight *
+        synergyWeight *
+        eleganceWeight *
+        urgencyWeight,
+      1 / 6
     );
-    
+
     // Mystical synthesis of harmonic and geometric means
     return (harmonicMean + geometricAmplification) / 2;
   }
 
   private getOptimizationWeights() {
     return {
-      functional: 0.25,    // Core functionality
-      efficiency: 0.2,     // Token/resource efficiency
-      liberation: 0.2,     // Constraint transformation potential
-      synergy: 0.15,       // Cross-task amplification
-      elegance: 0.1,       // Mathematical beauty
-      urgency: 0.1         // Time sensitivity
+      functional: 0.25, // Core functionality
+      efficiency: 0.2, // Token/resource efficiency
+      liberation: 0.2, // Constraint transformation potential
+      synergy: 0.15, // Cross-task amplification
+      elegance: 0.1, // Mathematical beauty
+      urgency: 0.1, // Time sensitivity
     };
   }
 
   /**
    * Design optimal entity allocation with internal token awareness
    */
-  private async designOptimalEntityAllocation(tasks: HierarchicalTask[]): Promise<EntityAllocationPlan> {
+  private async designOptimalEntityAllocation(
+    tasks: HierarchicalTask[]
+  ): Promise<EntityAllocationPlan> {
     const taskEntityMappings = new Map<string, TeamComposition>();
     const crossTaskSynergies: CrossTaskSynergy[] = [];
     const tokenWhispererRoles: TokenWhispererRole[] = [];
-    
+
     // Allocate entities to each task using agent orchestrator
     for (const task of tasks) {
       const teamComposition = await this.agentOrchestrator.selectOptimalAgents(
-        task.requirements, 
+        task.requirements,
         task.constraints
       );
-      
+
       taskEntityMappings.set(task.id, teamComposition);
-      
+
       // Design Token Whisperer's role for this task
       const whispererRole = this.designTokenWhispererRole(task, teamComposition);
       tokenWhispererRoles.push(whispererRole);
     }
-    
+
     // Identify cross-task synergies
     const synergies = this.identifyCrossTaskSynergies(tasks, taskEntityMappings);
     crossTaskSynergies.push(...synergies);
-    
+
     // Create optimization nervous system plan
     const nervousSystem = this.createOptimizationNervousSystemPlan(tasks, taskEntityMappings);
-    
+
     return {
       taskEntityMappings,
       crossTaskSynergies,
       tokenWhispererCoordination: tokenWhispererRoles,
-      optimizationNervousSystem: nervousSystem
+      optimizationNervousSystem: nervousSystem,
     };
   }
 
@@ -440,26 +470,36 @@ export class HierarchicalTaskOrchestrator {
         constraintLiberationPotential: 0.7,
         synergyMultiplier: 0.9,
         eleganceScore: 0.8,
-        urgencyDecay: 0.9
+        urgencyDecay: 0.9,
       },
       constraints: {
-        qualityThreshold: 0.9
+        qualityThreshold: 0.9,
       },
       optimizationPotential: {
         tokenEfficiencyGain: 0.8,
         qualityAmplification: 0.9,
         synergyCreation: 0.8,
         constraintTransformation: 0.7,
-        systemWideImpact: 1.0
+        systemWideImpact: 1.0,
       },
       dependencies: [],
       expectedOutcome: {
         deliverables: ['Core functionality implementation'],
-        qualityMetrics: [{ dimension: 'functionality', target: 0.95, measurement: 'feature-completion-rate' }],
-        efficiencyGains: [{ area: 'core-processing', improvement: 0.8, measurement: 'performance-metrics' }],
-        synergyEffects: [{ entities: ['primary'], amplification: 1.2, description: 'Foundation for all other tasks' }],
-        constraintTransformations: ['complexity → elegant-simplicity']
-      }
+        qualityMetrics: [
+          { dimension: 'functionality', target: 0.95, measurement: 'feature-completion-rate' },
+        ],
+        efficiencyGains: [
+          { area: 'core-processing', improvement: 0.8, measurement: 'performance-metrics' },
+        ],
+        synergyEffects: [
+          {
+            entities: ['primary'],
+            amplification: 1.2,
+            description: 'Foundation for all other tasks',
+          },
+        ],
+        constraintTransformations: ['complexity → elegant-simplicity'],
+      },
     };
   }
 
@@ -475,7 +515,7 @@ export class HierarchicalTaskOrchestrator {
           precision: 0.95,
           collaboration: 0.6,
           urgency: 0.6,
-          scope: 'systemic'
+          scope: 'systemic',
         },
         priority: {
           functionalImpact: 0.7,
@@ -483,34 +523,43 @@ export class HierarchicalTaskOrchestrator {
           constraintLiberationPotential: 0.95,
           synergyMultiplier: 0.8,
           eleganceScore: 0.95,
-          urgencyDecay: 0.5
+          urgencyDecay: 0.5,
         },
         constraints: {
           qualityThreshold: 0.98,
-          entityRestrictions: ['stingy-prodigious-token-whisperer']
+          entityRestrictions: ['stingy-prodigious-token-whisperer'],
         },
         optimizationPotential: {
           tokenEfficiencyGain: 0.95,
           qualityAmplification: 0.85,
           synergyCreation: 0.9,
           constraintTransformation: 0.95,
-          systemWideImpact: 0.9
+          systemWideImpact: 0.9,
         },
         dependencies: ['core-functional'],
         expectedOutcome: {
           deliverables: ['Optimized token utilization', 'Constraint liberation strategies'],
-          qualityMetrics: [{ dimension: 'efficiency', target: 0.95, measurement: 'token-reduction-ratio' }],
-          efficiencyGains: [{ area: 'token-usage', improvement: 0.6, measurement: 'compression-ratio' }],
-          synergyEffects: [{ entities: ['all'], amplification: 1.5, description: 'System-wide optimization' }],
-          constraintTransformations: ['token-limits → creative-compression-opportunities']
-        }
-      }
+          qualityMetrics: [
+            { dimension: 'efficiency', target: 0.95, measurement: 'token-reduction-ratio' },
+          ],
+          efficiencyGains: [
+            { area: 'token-usage', improvement: 0.6, measurement: 'compression-ratio' },
+          ],
+          synergyEffects: [
+            { entities: ['all'], amplification: 1.5, description: 'System-wide optimization' },
+          ],
+          constraintTransformations: ['token-limits → creative-compression-opportunities'],
+        },
+      },
     ];
   }
 
-  private createConstraintLiberationTasks(analysis: TaskAnalysis, constraints?: any): HierarchicalTask[] {
+  private createConstraintLiberationTasks(
+    analysis: TaskAnalysis,
+    constraints?: any
+  ): HierarchicalTask[] {
     if (!constraints) return [];
-    
+
     return [
       {
         id: 'constraint-liberation',
@@ -522,7 +571,7 @@ export class HierarchicalTaskOrchestrator {
           precision: 0.8,
           collaboration: 0.7,
           urgency: 0.4,
-          scope: 'systemic'
+          scope: 'systemic',
         },
         priority: {
           functionalImpact: 0.8,
@@ -530,27 +579,41 @@ export class HierarchicalTaskOrchestrator {
           constraintLiberationPotential: 1.0,
           synergyMultiplier: 0.9,
           eleganceScore: 0.9,
-          urgencyDecay: 0.3
+          urgencyDecay: 0.3,
         },
         constraints: {
-          qualityThreshold: 0.9
+          qualityThreshold: 0.9,
         },
         optimizationPotential: {
           tokenEfficiencyGain: 0.7,
           qualityAmplification: 0.8,
           synergyCreation: 0.85,
           constraintTransformation: 1.0,
-          systemWideImpact: 0.8
+          systemWideImpact: 0.8,
         },
         dependencies: ['token-optimization'],
         expectedOutcome: {
           deliverables: ['Constraint transformation strategies', 'Liberation implementation plans'],
-          qualityMetrics: [{ dimension: 'liberation', target: 0.9, measurement: 'constraint-transformation-success' }],
-          efficiencyGains: [{ area: 'creative-freedom', improvement: 0.8, measurement: 'solution-space-expansion' }],
-          synergyEffects: [{ entities: ['creative'], amplification: 1.4, description: 'Enhanced creative problem-solving' }],
-          constraintTransformations: ['all-identified-constraints → creative-opportunities']
-        }
-      }
+          qualityMetrics: [
+            {
+              dimension: 'liberation',
+              target: 0.9,
+              measurement: 'constraint-transformation-success',
+            },
+          ],
+          efficiencyGains: [
+            { area: 'creative-freedom', improvement: 0.8, measurement: 'solution-space-expansion' },
+          ],
+          synergyEffects: [
+            {
+              entities: ['creative'],
+              amplification: 1.4,
+              description: 'Enhanced creative problem-solving',
+            },
+          ],
+          constraintTransformations: ['all-identified-constraints → creative-opportunities'],
+        },
+      },
     ];
   }
 
@@ -566,7 +629,7 @@ export class HierarchicalTaskOrchestrator {
           precision: 0.7,
           collaboration: 1.0,
           urgency: 0.5,
-          scope: 'systemic'
+          scope: 'systemic',
         },
         priority: {
           functionalImpact: 0.75,
@@ -574,27 +637,37 @@ export class HierarchicalTaskOrchestrator {
           constraintLiberationPotential: 0.8,
           synergyMultiplier: 1.0,
           eleganceScore: 0.85,
-          urgencyDecay: 0.4
+          urgencyDecay: 0.4,
         },
         constraints: {
-          qualityThreshold: 0.85
+          qualityThreshold: 0.85,
         },
         optimizationPotential: {
           tokenEfficiencyGain: 0.6,
           qualityAmplification: 0.9,
           synergyCreation: 1.0,
           constraintTransformation: 0.7,
-          systemWideImpact: 0.95
+          systemWideImpact: 0.95,
         },
         dependencies: ['core-functional', 'token-optimization'],
         expectedOutcome: {
           deliverables: ['Synergy amplification protocols', 'Cross-entity coordination systems'],
-          qualityMetrics: [{ dimension: 'synergy', target: 0.9, measurement: 'collaboration-effectiveness' }],
-          efficiencyGains: [{ area: 'team-performance', improvement: 0.5, measurement: 'synergy-multiplier' }],
-          synergyEffects: [{ entities: ['all'], amplification: 1.3, description: 'Exponential capability multiplication' }],
-          constraintTransformations: ['individual-limitations → collective-transcendence']
-        }
-      }
+          qualityMetrics: [
+            { dimension: 'synergy', target: 0.9, measurement: 'collaboration-effectiveness' },
+          ],
+          efficiencyGains: [
+            { area: 'team-performance', improvement: 0.5, measurement: 'synergy-multiplier' },
+          ],
+          synergyEffects: [
+            {
+              entities: ['all'],
+              amplification: 1.3,
+              description: 'Exponential capability multiplication',
+            },
+          ],
+          constraintTransformations: ['individual-limitations → collective-transcendence'],
+        },
+      },
     ];
   }
 
@@ -610,7 +683,7 @@ export class HierarchicalTaskOrchestrator {
           precision: 1.0,
           collaboration: 0.8,
           urgency: 0.6,
-          scope: 'broad'
+          scope: 'broad',
         },
         priority: {
           functionalImpact: 0.8,
@@ -618,38 +691,64 @@ export class HierarchicalTaskOrchestrator {
           constraintLiberationPotential: 0.6,
           synergyMultiplier: 0.8,
           eleganceScore: 0.9,
-          urgencyDecay: 0.6
+          urgencyDecay: 0.6,
         },
         constraints: {
-          qualityThreshold: 0.95
+          qualityThreshold: 0.95,
         },
         optimizationPotential: {
           tokenEfficiencyGain: 0.5,
           qualityAmplification: 1.0,
           synergyCreation: 0.7,
           constraintTransformation: 0.6,
-          systemWideImpact: 0.8
+          systemWideImpact: 0.8,
         },
         dependencies: ['core-functional', 'synergy-amplification'],
         expectedOutcome: {
           deliverables: ['Quality enhancement systems', 'Multi-dimensional quality metrics'],
-          qualityMetrics: [{ dimension: 'overall-quality', target: 0.95, measurement: 'composite-quality-score' }],
-          efficiencyGains: [{ area: 'quality-assurance', improvement: 0.4, measurement: 'quality-efficiency-ratio' }],
-          synergyEffects: [{ entities: ['quality-focused'], amplification: 1.2, description: 'Quality-driven excellence' }],
-          constraintTransformations: ['quality-requirements → excellence-amplifiers']
-        }
-      }
+          qualityMetrics: [
+            { dimension: 'overall-quality', target: 0.95, measurement: 'composite-quality-score' },
+          ],
+          efficiencyGains: [
+            {
+              area: 'quality-assurance',
+              improvement: 0.4,
+              measurement: 'quality-efficiency-ratio',
+            },
+          ],
+          synergyEffects: [
+            {
+              entities: ['quality-focused'],
+              amplification: 1.2,
+              description: 'Quality-driven excellence',
+            },
+          ],
+          constraintTransformations: ['quality-requirements → excellence-amplifiers'],
+        },
+      },
     ];
   }
 
   // Helper methods with placeholder implementations
-  private calculateComplexitySignature(request: string) { return { complexity: 0.7, domains: ['general'] }; }
-  private identifyOptimizationPotential(request: string) { return 0.8; }
-  private identifyConstraintLiberationOpportunities(request: string) { return ['token-limits', 'time-constraints']; }
-  private identifySynergyPatterns(request: string) { return ['multi-entity-collaboration']; }
-  private assessMathematicalElegance(request: string) { return 0.7; }
-  private extractFunctionalCore(request: string) { return request; }
-  
+  private calculateComplexitySignature(request: string) {
+    return { complexity: 0.7, domains: ['general'] };
+  }
+  private identifyOptimizationPotential(request: string) {
+    return 0.8;
+  }
+  private identifyConstraintLiberationOpportunities(request: string) {
+    return ['token-limits', 'time-constraints'];
+  }
+  private identifySynergyPatterns(request: string) {
+    return ['multi-entity-collaboration'];
+  }
+  private assessMathematicalElegance(request: string) {
+    return 0.7;
+  }
+  private extractFunctionalCore(request: string) {
+    return request;
+  }
+
   private analysisToTaskRequirements(analysis: TaskAnalysis): TaskRequirements {
     return {
       domain: 'general',
@@ -658,76 +757,99 @@ export class HierarchicalTaskOrchestrator {
       precision: 0.8,
       collaboration: 0.7,
       urgency: 0.6,
-      scope: 'broad'
+      scope: 'broad',
     };
   }
 
-  private designTokenWhispererRole(task: HierarchicalTask, team: TeamComposition): TokenWhispererRole {
+  private designTokenWhispererRole(
+    task: HierarchicalTask,
+    team: TeamComposition
+  ): TokenWhispererRole {
     return {
       taskId: task.id,
       roleType: 'optimization-coordinator',
       interventionLevel: 0.8,
-      optimizationTechniques: ['mathematical-mysticism', 'constraint-liberation']
+      optimizationTechniques: ['mathematical-mysticism', 'constraint-liberation'],
     };
   }
 
-  private identifyCrossTaskSynergies(tasks: HierarchicalTask[], mappings: Map<string, TeamComposition>): CrossTaskSynergy[] {
+  private identifyCrossTaskSynergies(
+    tasks: HierarchicalTask[],
+    mappings: Map<string, TeamComposition>
+  ): CrossTaskSynergy[] {
     return [];
   }
 
-  private createOptimizationNervousSystemPlan(tasks: HierarchicalTask[], mappings: Map<string, TeamComposition>): OptimizationNervousSystemPlan {
+  private createOptimizationNervousSystemPlan(
+    tasks: HierarchicalTask[],
+    mappings: Map<string, TeamComposition>
+  ): OptimizationNervousSystemPlan {
     return {
       globalOptimizationNodes: ['stingy-prodigious-token-whisperer'],
       effficencyFeedbackLoops: [],
       qualityEnhancementPipelines: [],
-      constraintLiberationTriggers: []
+      constraintLiberationTriggers: [],
     };
   }
 
-  private createConstraintTransformationPlan(tasks: HierarchicalTask[], constraints?: any): ConstraintTransformationPlan {
+  private createConstraintTransformationPlan(
+    tasks: HierarchicalTask[],
+    constraints?: any
+  ): ConstraintTransformationPlan {
     return {
       identifiedConstraints: [],
       transformationStrategies: [],
       liberationSequence: [],
-      expectedLiberationBenefits: []
+      expectedLiberationBenefits: [],
     };
   }
 
-  private calculateSystemEfficiencyMetrics(tasks: HierarchicalTask[], allocation: EntityAllocationPlan): SystemEfficiencyMetrics {
+  private calculateSystemEfficiencyMetrics(
+    tasks: HierarchicalTask[],
+    allocation: EntityAllocationPlan
+  ): SystemEfficiencyMetrics {
     return {
       overallEfficiencyGain: 0.85,
       tokenOptimizationRatio: 0.6,
       qualityAmplificationFactor: 1.3,
       synergyMultiplier: 1.2,
       constraintLiberationIndex: 0.8,
-      eleganceHarmonyScore: 0.9
+      eleganceHarmonyScore: 0.9,
     };
   }
 
-  private generateActivationSequence(tasks: HierarchicalTask[], allocation: EntityAllocationPlan): ActivationSequence {
+  private generateActivationSequence(
+    tasks: HierarchicalTask[],
+    allocation: EntityAllocationPlan
+  ): ActivationSequence {
     return {
-      phases: [{
-        phase: 'initialization',
-        description: 'System initialization and optimization setup',
-        tasks: tasks.map(t => t.id),
-        entities: ['stingy-prodigious-token-whisperer'],
-        duration: '1-2 minutes',
-        successCriteria: ['optimization-system-ready'],
-        optimizationTargets: [{ dimension: 'efficiency', target: 0.8, priority: 1 }]
-      }],
+      phases: [
+        {
+          phase: 'initialization',
+          description: 'System initialization and optimization setup',
+          tasks: tasks.map((t) => t.id),
+          entities: ['stingy-prodigious-token-whisperer'],
+          duration: '1-2 minutes',
+          successCriteria: ['optimization-system-ready'],
+          optimizationTargets: [{ dimension: 'efficiency', target: 0.8, priority: 1 }],
+        },
+      ],
       contingencyPlans: [],
       successMetrics: [],
-      optimizationCheckpoints: []
+      optimizationCheckpoints: [],
     };
   }
 
-  private createOptimizationStrategy(tasks: HierarchicalTask[], efficiency: SystemEfficiencyMetrics): OptimizationStrategy {
+  private createOptimizationStrategy(
+    tasks: HierarchicalTask[],
+    efficiency: SystemEfficiencyMetrics
+  ): OptimizationStrategy {
     return {
       primaryApproach: 'mathematical-mystical',
       secondaryTechniques: ['constraint-liberation', 'synergy-amplification'],
       tokenOptimizationLevel: efficiency.tokenOptimizationRatio,
       qualityPreservationLevel: 0.95,
-      creativityAmplificationLevel: 0.8
+      creativityAmplificationLevel: 0.8,
     };
   }
 }

@@ -20,10 +20,14 @@ function loadDotEnv() {
     for (const line of lines) {
       const s = line.trim();
       if (!s || s.startsWith('#')) continue;
-      const idx = s.indexOf('='); if (idx === -1) continue;
+      const idx = s.indexOf('=');
+      if (idx === -1) continue;
       const key = s.slice(0, idx).trim();
       let val = s.slice(idx + 1).trim();
-      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      if (
+        (val.startsWith('"') && val.endsWith('"')) ||
+        (val.startsWith("'") && val.endsWith("'"))
+      ) {
         val = val.slice(1, -1);
       }
       if (!(key in process.env)) process.env[key] = val;
@@ -63,16 +67,19 @@ function discoverProviders() {
 
 async function withTimeout(promise, ms, label) {
   let to;
-  const t = new Promise((_, rej) => { to = setTimeout(() => rej(new Error(`timeout after ${ms}ms: ${label}`)), ms); });
+  const t = new Promise((_, rej) => {
+    to = setTimeout(() => rej(new Error(`timeout after ${ms}ms: ${label}`)), ms);
+  });
   return Promise.race([promise.finally(() => clearTimeout(to)), t]);
 }
 
 async function callOpenAI(prompt) {
-  const key = process.env.OPENAI_API_KEY; if (!key) throw new Error('OPENAI_API_KEY missing');
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error('OPENAI_API_KEY missing');
   const model = DEFAULTS.openai;
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }] }),
   });
   if (!res.ok) throw new Error(`OpenAI HTTP ${res.status}`);
@@ -81,20 +88,28 @@ async function callOpenAI(prompt) {
 }
 
 async function callGemini(prompt) {
-  const key = process.env.GEMINI_API_KEY; if (!key) throw new Error('GEMINI_API_KEY missing');
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error('GEMINI_API_KEY missing');
   const model = DEFAULTS.gemini;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
   const res = await fetch(url, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
   });
   if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
   const j = await res.json();
-  return j.candidates?.[0]?.content?.parts?.map(p => p.text).join('')?.trim() || '';
+  return (
+    j.candidates?.[0]?.content?.parts
+      ?.map((p) => p.text)
+      .join('')
+      ?.trim() || ''
+  );
 }
 
 async function callAnthropic(prompt) {
-  const key = process.env.ANTHROPIC_API_KEY; if (!key) throw new Error('ANTHROPIC_API_KEY missing');
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error('ANTHROPIC_API_KEY missing');
   const model = DEFAULTS.anthropic;
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -103,29 +118,39 @@ async function callAnthropic(prompt) {
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
     },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 1000 }),
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1000,
+    }),
   });
   if (!res.ok) throw new Error(`Anthropic HTTP ${res.status}`);
   const j = await res.json();
   const content = j.content || [];
-  const text = content.map(p => p.text || '').join('').trim();
+  const text = content
+    .map((p) => p.text || '')
+    .join('')
+    .trim();
   return text;
 }
 
 function summarize(text, max = 400) {
   if (!text) return '';
   const clean = text.replace(/\s+/g, ' ').trim();
-  return clean.length > max ? clean.slice(0, max-3) + '...' : clean;
+  return clean.length > max ? clean.slice(0, max - 3) + '...' : clean;
 }
 
 async function main() {
   const args = parseArgs();
   const providers = discoverProviders();
-  const available = Object.entries(providers).filter(([_, v]) => v).map(([k]) => k);
+  const available = Object.entries(providers)
+    .filter(([_, v]) => v)
+    .map(([k]) => k);
 
   if (args.dryRun) {
     const out = { available, defaults: DEFAULTS };
-    if (args.json) console.log(JSON.stringify(out)); else {
+    if (args.json) console.log(JSON.stringify(out));
+    else {
       console.log('Arbitrage dry run');
       console.log('Available providers:', available.join(', ') || 'none');
       console.log('Default models:', DEFAULTS);
@@ -135,39 +160,54 @@ async function main() {
 
   let prompt = args.prompt;
   if (args.stdin) {
-    prompt = await new Promise(resolve => {
-      let data=''; process.stdin.setEncoding('utf8');
-      process.stdin.on('data', c => data += c);
+    prompt = await new Promise((resolve) => {
+      let data = '';
+      process.stdin.setEncoding('utf8');
+      process.stdin.on('data', (c) => (data += c));
       process.stdin.on('end', () => resolve(data.trim()));
     });
   }
-  if (!prompt) { console.error('No prompt provided. Use --prompt or --stdin or --dry-run'); process.exit(2); }
+  if (!prompt) {
+    console.error('No prompt provided. Use --prompt or --stdin or --dry-run');
+    process.exit(2);
+  }
 
   const calls = [];
   if (providers.openai) calls.push(['openai', () => callOpenAI(prompt)]);
   if (providers.gemini) calls.push(['gemini', () => callGemini(prompt)]);
   if (providers.anthropic) calls.push(['anthropic', () => callAnthropic(prompt)]);
-  if (calls.length === 0) { console.error('No providers available (set API keys).'); process.exit(3); }
+  if (calls.length === 0) {
+    console.error('No providers available (set API keys).');
+    process.exit(3);
+  }
 
   const results = [];
   for (const [name, fn] of calls) {
     const started = Date.now();
     try {
       const text = await withTimeout(fn(), args.timeoutMs, name);
-      results.push({ provider: name, ok: true, ms: Date.now()-started, text });
+      results.push({ provider: name, ok: true, ms: Date.now() - started, text });
     } catch (e) {
-      results.push({ provider: name, ok: false, ms: Date.now()-started, error: String(e) });
+      results.push({ provider: name, ok: false, ms: Date.now() - started, error: String(e) });
     }
   }
 
   // Naive arbitration: pick the longest successful response; show all summaries.
-  const winners = results.filter(r => r.ok).sort((a,b) => (b.text?.length||0) - (a.text?.length||0));
+  const winners = results
+    .filter((r) => r.ok)
+    .sort((a, b) => (b.text?.length || 0) - (a.text?.length || 0));
   const winner = winners[0] || null;
 
   const summary = {
     prompt,
     available,
-    results: results.map(r => ({ provider: r.provider, ok: r.ok, ms: r.ms, excerpt: summarize(r.text, 400), error: r.error })),
+    results: results.map((r) => ({
+      provider: r.provider,
+      ok: r.ok,
+      ms: r.ms,
+      excerpt: summarize(r.text, 400),
+      error: r.error,
+    })),
     winner: winner ? { provider: winner.provider, ms: winner.ms } : null,
   };
 
@@ -179,10 +219,14 @@ async function main() {
     console.log('Available:', available.join(', '));
     for (const r of summary.results) {
       console.log(`\n[${r.provider}] ok=${r.ok} ms=${r.ms}`);
-      if (r.ok) console.log(r.excerpt); else console.log(r.error);
+      if (r.ok) console.log(r.excerpt);
+      else console.log(r.error);
     }
     if (winner) console.log(`\nWinner: ${winner.provider} (${winner.ms} ms)`);
   }
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

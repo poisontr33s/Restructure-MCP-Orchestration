@@ -76,9 +76,7 @@
       "dir": "packages/unified-engine",
       "devDepDuplicatesWithRoot": [],
       "unusedDeclared": [],
-      "missingDeclared": [
-        "child_process"
-      ]
+      "missingDeclared": ["child_process"]
     },
     {
       "package": "@mcp/shared",
@@ -99,42 +97,21 @@
         "@vitejs/plugin-react-swc",
         "postcss"
       ],
-      "missingDeclared": [
-        "@vitejs",
-        "@tailwindcss",
-        "@tanstack",
-        "@mcp"
-      ]
+      "missingDeclared": ["@vitejs", "@tailwindcss", "@tanstack", "@mcp"]
     },
     {
       "package": "@mcp/core",
       "dir": "packages/core",
       "devDepDuplicatesWithRoot": [],
-      "unusedDeclared": [
-        "@mcp/shared",
-        "node-fetch",
-        "zod"
-      ],
-      "missingDeclared": [
-        "@mcp",
-        "child_process",
-        "path",
-        "http",
-        "fs",
-        "os"
-      ]
+      "unusedDeclared": ["@mcp/shared", "node-fetch", "zod"],
+      "missingDeclared": ["@mcp", "child_process", "path", "http", "fs", "os"]
     },
     {
       "package": "@mcp/cli",
       "dir": "packages/cli",
       "devDepDuplicatesWithRoot": [],
-      "unusedDeclared": [
-        "@mcp/core",
-        "@mcp/shared"
-      ],
-      "missingDeclared": [
-        "@mcp"
-      ]
+      "unusedDeclared": ["@mcp/core", "@mcp/shared"],
+      "missingDeclared": ["@mcp"]
     }
   ],
   "sizeCensus": {

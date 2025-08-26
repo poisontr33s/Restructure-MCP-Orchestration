@@ -19,7 +19,7 @@ async function main() {
     apiKey: process.env.GEMINI_API_KEY || 'AIzaSyBylYOTQrX1GIdThln1mKLQ9E0Dvg6ltx0',
     streaming: true,
     tools: ['googleSearch'],
-    thinkingBudget: -1
+    thinkingBudget: -1,
   };
 
   console.log('📋 Target Configuration:');
@@ -27,16 +27,18 @@ async function main() {
   console.log(`   API Key: ${targetSettings.apiKey.substring(0, 12)}...`);
   console.log(`   Streaming: ${targetSettings.streaming}`);
   console.log(`   Tools: ${targetSettings.tools.join(', ')}`);
-  console.log(`   Thinking Budget: ${targetSettings.thinkingBudget === -1 ? 'Unlimited' : targetSettings.thinkingBudget}`);
+  console.log(
+    `   Thinking Budget: ${targetSettings.thinkingBudget === -1 ? 'Unlimited' : targetSettings.thinkingBudget}`
+  );
   console.log('');
 
   // Update VS Code settings
   const vsCodeSettingsPath = path.join(process.cwd(), '.vscode', 'settings.json');
-  
+
   try {
     if (fs.existsSync(vsCodeSettingsPath)) {
       const settingsContent = fs.readFileSync(vsCodeSettingsPath, 'utf8');
-      
+
       // Check if model is already set correctly
       if (settingsContent.includes(`"GEMINI_MODEL": "${targetModel}"`)) {
         console.log('✅ VS Code settings already configured with target model');
@@ -83,7 +85,7 @@ node scripts/test-gemini-direct.js "Your prompt here"
   const configPath = path.join(process.cwd(), 'docs', 'gemini-config.md');
   fs.writeFileSync(configPath, configSummary);
   console.log('✅ Created configuration summary at docs/gemini-config.md');
-  
+
   console.log('');
   console.log('🎯 Next Steps:');
   console.log('1. Restart VS Code terminals to pick up new environment variables');

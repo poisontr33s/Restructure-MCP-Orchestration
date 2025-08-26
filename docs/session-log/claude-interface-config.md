@@ -6,24 +6,27 @@
 ## Available Claude Code Interface Modes
 
 ### 1. VS Code Integration (Recommended for Arbitrage)
+
 ```json
 // .vscode/settings.json additions for Claude Code
 {
-  "claude.interface.mode": "sidebar",           // Sidebar panel vs full-screen
-  "claude.interface.position": "right",         // right/left sidebar placement  
-  "claude.interface.splitView": true,          // Allow split with editor
-  "claude.chat.context.autoInclude": true,     // Auto-include open files
-  "claude.mcp.discovery": false,               // Already set (prevents drift)
-  "claude.arbitrage.respectCopilot": true      // Hypothetical: coordinate with Copilot
+  "claude.interface.mode": "sidebar", // Sidebar panel vs full-screen
+  "claude.interface.position": "right", // right/left sidebar placement
+  "claude.interface.splitView": true, // Allow split with editor
+  "claude.chat.context.autoInclude": true, // Auto-include open files
+  "claude.mcp.discovery": false, // Already set (prevents drift)
+  "claude.arbitrage.respectCopilot": true // Hypothetical: coordinate with Copilot
 }
 ```
 
 ### 2. Command Palette Access
+
 - `Ctrl+Shift+P` → "Claude: Open Chat" (sidebar)
 - `Ctrl+Shift+P` → "Claude: Open in Editor" (full editor tab)
 - `Ctrl+Shift+P` → "Claude: Quick Chat" (popup overlay)
 
 ### 3. Terminal Integration (Current Mode)
+
 ```bash
 # What you're using now - good for arbitrage coordination
 claude --interactive    # Full terminal session
@@ -34,13 +37,14 @@ claude --help           # See all interface options
 ## Optimal Multi-Agent Configuration
 
 ### VS Code Layout for GPT-5 + Claude Arbitrage:
+
 ```
 ┌─────────────────────────┬─────────────────┐
 │                         │ Claude Sidebar  │
 │   Main Editor           │ (Chat/Context)  │
 │   (Your Code)           │                 │
 ├─────────────────────────┤                 │
-│ GPT-5 Copilot Inline    │                 │  
+│ GPT-5 Copilot Inline    │                 │
 │ (Suggestions/Chat)      │                 │
 ├─────────────────────────┼─────────────────┤
 │ Terminal (pnpm/scripts) │ Explorer        │
@@ -48,24 +52,27 @@ claude --help           # See all interface options
 ```
 
 ### Setup Commands:
+
 ```bash
 # Enable Claude sidebar
 claude config set interface.mode sidebar
 claude config set interface.position right
 claude config set context.autoInclude true
 
-# Verify configuration  
+# Verify configuration
 claude config list
 ```
 
 ## Security Context: NPM Supply Chain Attacks
 
 **North Korean Lazarus Group** incidents you referenced:
+
 - **2024**: Malicious npm packages targeting crypto developers
 - **Method**: Typosquatting, dependency confusion, legitimate packages with malicious updates
 - **Your Defense**: `pnpm` + monorepo with explicit dependency management
 
 **Your pnpm Monorepo Security Advantages**:
+
 ```bash
 # pnpm's security features vs npm
 pnpm audit                    # Faster, more accurate vulnerability scanning
@@ -80,28 +87,29 @@ pnpm guard-pnpm-only.ps1     # Your custom guardrail (already implemented)
 ## Claude Doctor Fix for pnpm Environment
 
 **Safe Health Check Integration**:
+
 ```javascript
 // Update scripts/env-report.js
 function getClaudeStatus() {
   try {
     // Use non-interactive version check (avoids Ink/raw mode)
-    const version = execSync('claude --version', { 
-      encoding: 'utf8', 
+    const version = execSync('claude --version', {
+      encoding: 'utf8',
       timeout: 5000,
-      stdio: ['ignore', 'pipe', 'pipe']  // Explicit stdio for pnpm environments
+      stdio: ['ignore', 'pipe', 'pipe'], // Explicit stdio for pnpm environments
     }).trim();
-    
+
     return {
       installed: true,
       version: version,
       interface: 'sidebar-capable',
-      status: 'healthy'
+      status: 'healthy',
     };
   } catch (error) {
     return {
       installed: false,
       error: error.message,
-      status: 'needs-install'
+      status: 'needs-install',
     };
   }
 }
@@ -110,11 +118,13 @@ function getClaudeStatus() {
 ## Arbitrage System Configuration
 
 **Multi-Agent Coordination**:
+
 1. **GPT-5/Copilot**: Inline suggestions, real-time code completion
 2. **Claude Code**: Sidebar for architectural discussions, file analysis
 3. **Terminal**: pnpm commands, health checks, repo management
 
 **Recommended Workflow**:
+
 ```bash
 # 1. Start with health check (avoids claude doctor raw mode issue)
 node scripts/env-report.js
@@ -137,7 +147,8 @@ powershell scripts/guard-pnpm-only.ps1
 4. **Document the interface setup** in ARBITRAGE-BRIDGE.md
 
 This setup gives you:
-- ✅ Safe Claude health checking (no raw mode issues)  
+
+- ✅ Safe Claude health checking (no raw mode issues)
 - ✅ Multi-agent visibility (GPT-5 + Claude coordination)
 - ✅ pnpm monorepo security (supply chain protection)
 - ✅ Captain Guthilda compliance (systematic approach)

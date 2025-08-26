@@ -22,7 +22,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, value, icon, status }) =
         return 'bg-card border-border';
     }
   };
-  
+
   // Get icon color based on status
   const getIconColor = () => {
     switch (status) {
@@ -36,7 +36,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, value, icon, status }) =
         return 'text-primary';
     }
   };
-  
+
   // Render the appropriate icon
   const renderIcon = () => {
     switch (icon) {
@@ -52,7 +52,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, value, icon, status }) =
         return <Server className={`h-6 w-6 ${getIconColor()}`} />;
     }
   };
-  
+
   return (
     <div className={`rounded-lg border shadow-sm p-6 ${getBgColor()}`}>
       <div className="flex justify-between">

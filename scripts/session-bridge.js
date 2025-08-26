@@ -16,31 +16,31 @@ class SessionBridge {
       genesis: this.genesisStrategy.bind(this),
       evolution: this.evolutionStrategy.bind(this),
       specialization: this.specializationStrategy.bind(this),
-      current: this.currentStrategy.bind(this)
+      current: this.currentStrategy.bind(this),
     };
   }
 
   async bridgeToSession(sessionId, targetContext = 'continue revolutionary development') {
     console.log(`🌉 Bridging to session: ${sessionId}`);
-    
+
     try {
       // Load session file
       const sessionPath = path.join(this.sessionsDir, `${sessionId}.session`);
       const sessionContent = await fs.readFile(sessionPath, 'utf8');
-      
+
       // Parse .session file
       const session = this.parseSessionFile(sessionContent);
-      
+
       // Generate bridge context using appropriate strategy
-      const strategy = this.bridgeStrategies[session.metadata.session_type] || this.bridgeStrategies.current;
+      const strategy =
+        this.bridgeStrategies[session.metadata.session_type] || this.bridgeStrategies.current;
       const bridgeContext = await strategy(session, targetContext);
-      
+
       // Create bridging command
       const bridgeCommand = this.generateBridgeCommand(session, bridgeContext);
-      
+
       console.log('✅ Bridge context generated successfully!');
       return bridgeCommand;
-      
     } catch (error) {
       console.error('❌ Bridge generation failed:', error.message);
       throw error;
@@ -51,33 +51,36 @@ class SessionBridge {
     // Extract YAML frontmatter
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (!frontmatterMatch) throw new Error('Invalid .session file format');
-    
+
     const frontmatterText = frontmatterMatch[1];
     const markdown = content.substring(frontmatterMatch[0].length);
-    
+
     // Parse YAML-like frontmatter (simple implementation)
     const metadata = {};
-    frontmatterText.split('\n').forEach(line => {
+    frontmatterText.split('\n').forEach((line) => {
       const match = line.match(/^(\w+):\s*(.+)$/);
       if (match) {
         const [, key, value] = match;
         // Parse arrays and strings
         if (value.startsWith('[') && value.endsWith(']')) {
-          metadata[key] = value.slice(1, -1).split(',').map(v => v.trim().replace(/"/g, ''));
+          metadata[key] = value
+            .slice(1, -1)
+            .split(',')
+            .map((v) => v.trim().replace(/"/g, ''));
         } else {
           metadata[key] = value.replace(/"/g, '');
         }
       }
     });
-    
+
     // Extract JSON appendix
     const jsonMatch = markdown.match(/```json\n([\s\S]*?)\n```/);
     const jsonData = jsonMatch ? JSON.parse(jsonMatch[1]) : {};
-    
+
     return {
       metadata,
       markdown,
-      intelligence: jsonData
+      intelligence: jsonData,
     };
   }
 
@@ -104,7 +107,7 @@ ${this.extractTopAchievements(session, 5)}
 **Bridge Command**: ${targetContext} with complete genesis context and revolutionary multi-agent foundation.
 
 **Next Phase**: Build upon established foundation with full architectural awareness and agent coordination protocols.
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -127,13 +130,13 @@ ${this.extractTopAchievements(session, 3)}
 - **System Improvements**: ${this.extractImprovements(session)}
 
 **Bridge Command**: ${targetContext} with evolved capabilities and refined understanding.
-      `.trim()
+      `.trim(),
     };
   }
 
   async specializationStrategy(session, targetContext) {
     return {
-      type: 'SPECIALIZATION_BRIDGE', 
+      type: 'SPECIALIZATION_BRIDGE',
       priority: 'FOCUSED',
       context: `
 🎯 SPECIALIZATION SESSION BRIDGE - EXPERT FOCUS
@@ -149,7 +152,7 @@ ${this.extractTopAchievements(session, 2)}
 - **Expert Tools**: ${session.metadata.tools_used?.slice(0, 3).join(', ') || 'Domain-specific'}
 
 **Bridge Command**: ${targetContext} with specialized expertise and focused domain knowledge.
-      `.trim()
+      `.trim(),
     };
   }
 
@@ -167,19 +170,26 @@ ${this.extractTopAchievements(session, 2)}
 ${this.extractTopAchievements(session, 1)}
 
 **Bridge Command**: ${targetContext} with current development state and active context.
-      `.trim()
+      `.trim(),
     };
   }
 
   extractVision(session) {
     const visionMatch = session.markdown.match(/## 🎯[^#]*?vision[^#]*?\n([^#]*)/i);
-    return visionMatch ? visionMatch[1].trim().substring(0, 200) + '...' : 'Revolutionary multi-agent system development';
+    return visionMatch
+      ? visionMatch[1].trim().substring(0, 200) + '...'
+      : 'Revolutionary multi-agent system development';
   }
 
   extractTopAchievements(session, count = 3) {
-    const achievementsMatch = session.markdown.match(/## 🏆 Major Achievements\n([\s\S]*?)(?=\n## |$)/);
+    const achievementsMatch = session.markdown.match(
+      /## 🏆 Major Achievements\n([\s\S]*?)(?=\n## |$)/
+    );
     if (achievementsMatch) {
-      const achievements = achievementsMatch[1].split('\n').filter(line => line.match(/^\d+\./)).slice(0, count);
+      const achievements = achievementsMatch[1]
+        .split('\n')
+        .filter((line) => line.match(/^\d+\./))
+        .slice(0, count);
       return achievements.join('\n') || '- Revolutionary system development progress';
     }
     return '- Session intelligence preserved and structured';
@@ -191,9 +201,9 @@ ${this.extractTopAchievements(session, 1)}
   }
 
   extractImprovements(session) {
-    return session.metadata.files_modified?.length ? 
-      `${session.metadata.files_modified.length} files enhanced` : 
-      'System improvements implemented';
+    return session.metadata.files_modified?.length
+      ? `${session.metadata.files_modified.length} files enhanced`
+      : 'System improvements implemented';
   }
 
   extractSpecialization(session) {
@@ -206,7 +216,7 @@ ${this.extractTopAchievements(session, 1)}
 
   generateBridgeCommand(session, bridgeContext) {
     const bridgePrompt = `Bridge from ${session.metadata.session_type} session (${session.metadata.session_id}) - ${bridgeContext.context}`;
-    
+
     return {
       session_type: session.metadata.session_type,
       intelligence_score: session.metadata.intelligence_score,
@@ -232,7 +242,7 @@ ${`claude --print "${bridgePrompt}"`}
 \`\`\`
 
 **Bridge Context Active**: Revolutionary continuity maintained across sessions.
-      `
+      `,
     };
   }
 
@@ -240,17 +250,17 @@ ${`claude --print "${bridgePrompt}"`}
     try {
       const indexPath = path.join(this.sessionsDir, 'sessions.index.md');
       const indexContent = await fs.readFile(indexPath, 'utf8');
-      
+
       console.log('🔍 Available Sessions for Bridging:');
       console.log(indexContent);
-      
+
       // Parse available sessions
       const sessionMatches = indexContent.matchAll(/### (\w+): ([a-f0-9-]+)/g);
-      const sessions = Array.from(sessionMatches).map(match => ({
+      const sessions = Array.from(sessionMatches).map((match) => ({
         type: match[1],
-        id: match[2]
+        id: match[2],
       }));
-      
+
       return sessions;
     } catch (error) {
       console.error('❌ Could not load session index:', error.message);
@@ -260,20 +270,24 @@ ${`claude --print "${bridgePrompt}"`}
 
   async generateBridgeMenu() {
     const sessions = await this.listAvailableSessions();
-    
+
     const menu = `
 🌉 SESSION BRIDGE MENU
 
-${sessions.map((session, index) => `
+${sessions
+  .map(
+    (session, index) => `
 ${index + 1}. **${session.type.toUpperCase()} SESSION**
    - ID: ${session.id}
    - Bridge Command: node scripts/session-bridge.js bridge ${session.id}
-`).join('')}
+`
+  )
+  .join('')}
 
 **Usage Examples**:
 \`\`\`bash
 # Bridge to genesis session (maximum context)
-node scripts/session-bridge.js bridge ${sessions.find(s => s.type === 'Genesis')?.id || sessions[0]?.id}
+node scripts/session-bridge.js bridge ${sessions.find((s) => s.type === 'Genesis')?.id || sessions[0]?.id}
 
 # Bridge with custom target context
 node scripts/session-bridge.js bridge ${sessions[0]?.id} "implement new revolutionary features"
@@ -284,7 +298,7 @@ node scripts/session-bridge.js list
 
 **Revolutionary Continuity**: Each bridge maintains complete intelligence and context transfer.
     `;
-    
+
     console.log(menu);
     return menu;
   }
@@ -306,21 +320,20 @@ if (require.main === module) {
           if (!sessionId) {
             throw new Error('Session ID required. Use: node session-bridge.js bridge <session-id>');
           }
-          
+
           const bridgeCommand = await bridge.bridgeToSession(sessionId, targetContext);
           console.log('\n' + bridgeCommand.usage_instructions);
           break;
-          
+
         case 'list':
           await bridge.listAvailableSessions();
           break;
-          
+
         case 'menu':
         default:
           await bridge.generateBridgeMenu();
           break;
       }
-      
     } catch (error) {
       console.error('❌ Bridge operation failed:', error.message);
       process.exit(1);

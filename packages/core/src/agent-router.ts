@@ -45,20 +45,21 @@ export class AgentRouter {
       timeConstraint?: 'immediate' | 'hours' | 'days';
     }
   ): Promise<AgentDelegationResult> {
-    
     // Get agent recommendation from orchestrator
     const recommendation = this.orchestrator.getAgentRecommendation(taskDescription);
-    
+
     // Apply constraints
     let filteredTeam = recommendation.team;
     if (constraints?.excludedAgents) {
-      filteredTeam = filteredTeam.filter(agent => !constraints.excludedAgents!.includes(agent));
+      filteredTeam = filteredTeam.filter((agent) => !constraints.excludedAgents!.includes(agent));
     }
     if (constraints?.preferredAgents) {
-      const preferred = filteredTeam.filter(agent => constraints.preferredAgents!.includes(agent));
+      const preferred = filteredTeam.filter((agent) =>
+        constraints.preferredAgents!.includes(agent)
+      );
       if (preferred.length > 0) {
         filteredTeam = preferred.concat(
-          filteredTeam.filter(agent => !constraints.preferredAgents!.includes(agent))
+          filteredTeam.filter((agent) => !constraints.preferredAgents!.includes(agent))
         );
       }
     }
@@ -68,7 +69,7 @@ export class AgentRouter {
 
     // Break down task into fragments
     const taskBreakdown = this.decomposeTask(taskDescription, filteredTeam);
-    
+
     // Create execution plan
     const executionPlan = this.createExecutionPlan(taskBreakdown, constraints?.timeConstraint);
 
@@ -77,12 +78,12 @@ export class AgentRouter {
       team: filteredTeam,
       taskBreakdown,
       reasoning: this.enhanceReasoning(recommendation.reasoning, constraints),
-      executionPlan
+      executionPlan,
     };
 
     // Store in history for learning
     this.taskHistory.set(this.generateTaskId(taskDescription), result);
-    
+
     return result;
   }
 
@@ -90,13 +91,16 @@ export class AgentRouter {
     // Analyze patterns in previous similar tasks
     const similarTasks = Array.from(this.taskHistory.entries())
       .filter(([id, result]) => this.calculateTaskSimilarity(taskDescription, id) > 0.7)
-      .sort((a, b) => this.calculateTaskSimilarity(taskDescription, b[0]) - 
-                     this.calculateTaskSimilarity(taskDescription, a[0]));
+      .sort(
+        (a, b) =>
+          this.calculateTaskSimilarity(taskDescription, b[0]) -
+          this.calculateTaskSimilarity(taskDescription, a[0])
+      );
 
     if (similarTasks.length > 0) {
       return similarTasks[0][0];
     }
-    
+
     return null;
   }
 
@@ -113,8 +117,8 @@ export class AgentRouter {
 
     for (const [taskId, result] of this.taskHistory) {
       totalTeamSize += result.team.length;
-      
-      result.team.forEach(agent => {
+
+      result.team.forEach((agent) => {
         agentUtilization.set(agent, (agentUtilization.get(agent) || 0) + 1);
       });
 
@@ -132,13 +136,13 @@ export class AgentRouter {
       totalTasks,
       agentUtilization,
       averageTeamSize: totalTasks > 0 ? totalTeamSize / totalTasks : 0,
-      commonPatterns: [...new Set(patterns)]
+      commonPatterns: [...new Set(patterns)],
     };
   }
 
   private decomposeTask(taskDescription: string, team: string[]): TaskFragment[] {
     const fragments: TaskFragment[] = [];
-    
+
     if (team.length === 1) {
       // Single agent - create one main fragment
       fragments.push({
@@ -147,7 +151,7 @@ export class AgentRouter {
         assignedAgent: team[0],
         dependencies: [],
         priority: 1,
-        estimatedComplexity: this.estimateComplexity(taskDescription)
+        estimatedComplexity: this.estimateComplexity(taskDescription),
       });
     } else {
       // Multi-agent - decompose based on agent specializations
@@ -157,47 +161,46 @@ export class AgentRouter {
         assignedAgent: this.findCoordinator(team),
         dependencies: [],
         priority: 1,
-        estimatedComplexity: 3
+        estimatedComplexity: 3,
       };
       fragments.push(mainFragment);
 
       // Create specialized fragments
-      team.filter(agent => agent !== mainFragment.assignedAgent).forEach((agent, index) => {
-        const specialization = this.getAgentSpecialization(agent, taskDescription);
-        fragments.push({
-          id: `specialist-${index + 1}`,
-          description: `${specialization} aspects of: ${taskDescription}`,
-          assignedAgent: agent,
-          dependencies: ['coordination'],
-          priority: 2,
-          estimatedComplexity: this.estimateComplexity(specialization)
+      team
+        .filter((agent) => agent !== mainFragment.assignedAgent)
+        .forEach((agent, index) => {
+          const specialization = this.getAgentSpecialization(agent, taskDescription);
+          fragments.push({
+            id: `specialist-${index + 1}`,
+            description: `${specialization} aspects of: ${taskDescription}`,
+            assignedAgent: agent,
+            dependencies: ['coordination'],
+            priority: 2,
+            estimatedComplexity: this.estimateComplexity(specialization),
+          });
         });
-      });
 
       // Add integration fragment
       fragments.push({
         id: 'integration',
         description: `Integrate and finalize results for: ${taskDescription}`,
         assignedAgent: mainFragment.assignedAgent,
-        dependencies: fragments.filter(f => f.priority === 2).map(f => f.id),
+        dependencies: fragments.filter((f) => f.priority === 2).map((f) => f.id),
         priority: 3,
-        estimatedComplexity: 2
+        estimatedComplexity: 2,
       });
     }
 
     return fragments;
   }
 
-  private createExecutionPlan(
-    fragments: TaskFragment[], 
-    timeConstraint?: string
-  ): ExecutionStep[] {
+  private createExecutionPlan(fragments: TaskFragment[], timeConstraint?: string): ExecutionStep[] {
     const steps: ExecutionStep[] = [];
     let order = 1;
 
     // Group fragments by priority (dependencies)
     const fragmentsByPriority = new Map<number, TaskFragment[]>();
-    fragments.forEach(fragment => {
+    fragments.forEach((fragment) => {
       const priority = fragment.priority;
       if (!fragmentsByPriority.has(priority)) {
         fragmentsByPriority.set(priority, []);
@@ -207,18 +210,17 @@ export class AgentRouter {
 
     // Create execution steps
     for (const [priority, priorityFragments] of fragmentsByPriority) {
-      const canRunInParallel = priorityFragments.length > 1 && 
-                               timeConstraint !== 'immediate' &&
-                               priority > 1;
+      const canRunInParallel =
+        priorityFragments.length > 1 && timeConstraint !== 'immediate' && priority > 1;
 
-      priorityFragments.forEach(fragment => {
+      priorityFragments.forEach((fragment) => {
         steps.push({
           order: order++,
           agent: fragment.assignedAgent,
           action: fragment.description,
           expectedOutput: this.generateExpectedOutput(fragment),
           dependencies: fragment.dependencies,
-          parallel: canRunInParallel
+          parallel: canRunInParallel,
         });
       });
     }
@@ -232,7 +234,7 @@ export class AgentRouter {
       'overseer-taskmaster-allocator',
       'eva-green-code-oracle',
       'infrastructure-polyglot-architect',
-      'savant-multidisciplinarian-autodidact'
+      'savant-multidisciplinarian-autodidact',
     ];
 
     for (const coordinator of coordinatorPriority) {
@@ -259,7 +261,7 @@ export class AgentRouter {
       'role-reversal-agent': 'Perspective analysis and role dynamics',
       'claude-companion-girlfriend': 'Supportive guidance and encouragement',
       'rae-lil-black-persona': 'Creative technical solutions',
-      'kendra-sunderland-persona': 'Creative content and character development'
+      'kendra-sunderland-persona': 'Creative content and character development',
     };
 
     return agentSpecializations[agent] || 'Specialized analysis';
@@ -267,25 +269,33 @@ export class AgentRouter {
 
   private estimateComplexity(description: string): number {
     const complexityIndicators = [
-      'architecture', 'system', 'complex', 'advanced', 'sophisticated', 
-      'multiple', 'integrate', 'optimize', 'performance', 'scalable'
+      'architecture',
+      'system',
+      'complex',
+      'advanced',
+      'sophisticated',
+      'multiple',
+      'integrate',
+      'optimize',
+      'performance',
+      'scalable',
     ];
-    
-    const matches = complexityIndicators.filter(indicator => 
+
+    const matches = complexityIndicators.filter((indicator) =>
       description.toLowerCase().includes(indicator)
     ).length;
-    
+
     return Math.min(5, Math.max(1, matches + 1));
   }
 
   private generateExpectedOutput(fragment: TaskFragment): string {
     const outputTypes = {
-      'coordination': 'Strategic plan and task delegation',
-      'analysis': 'Detailed analysis report with recommendations',
-      'implementation': 'Working code implementation with documentation',
-      'review': 'Code review with improvement suggestions',
-      'design': 'Design specifications and wireframes',
-      'optimization': 'Performance improvements and metrics'
+      coordination: 'Strategic plan and task delegation',
+      analysis: 'Detailed analysis report with recommendations',
+      implementation: 'Working code implementation with documentation',
+      review: 'Code review with improvement suggestions',
+      design: 'Design specifications and wireframes',
+      optimization: 'Performance improvements and metrics',
     };
 
     const fragmentType = this.categorizeFragment(fragment.description);
@@ -305,16 +315,17 @@ export class AgentRouter {
   private calculateTaskSimilarity(task1: string, task2: string): number {
     const words1 = new Set(task1.toLowerCase().split(/\s+/));
     const words2 = new Set(task2.toLowerCase().split(/\s+/));
-    
-    const intersection = new Set([...words1].filter(word => words2.has(word)));
+
+    const intersection = new Set([...words1].filter((word) => words2.has(word)));
     const union = new Set([...words1, ...words2]);
-    
+
     return intersection.size / union.size;
   }
 
   private generateTaskId(taskDescription: string): string {
     const timestamp = Date.now();
-    const hash = taskDescription.toLowerCase()
+    const hash = taskDescription
+      .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
       .substring(0, 30);
@@ -323,7 +334,7 @@ export class AgentRouter {
 
   private enhanceReasoning(baseReasoning: string, constraints?: any): string {
     let enhanced = baseReasoning;
-    
+
     if (constraints) {
       enhanced += '\nConstraints Applied:\n';
       if (constraints.maxTeamSize) {
@@ -339,7 +350,7 @@ export class AgentRouter {
         enhanced += `- Excluded agents: ${constraints.excludedAgents.join(', ')}\n`;
       }
     }
-    
+
     return enhanced;
   }
 }

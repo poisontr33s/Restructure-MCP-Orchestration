@@ -85,4 +85,5 @@ This plan is a granular, prerequisite-aware sequence designed to keep the repo s
 - Expand MCP policy to surface local servers once built artifacts exist.
 
 ---
+
 This document is temporary; regenerate as the rituals evolve to keep parity with the session and codebase state.

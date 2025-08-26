@@ -36,13 +36,30 @@ const CONFIG = {
     /\.exe$/,
     /\.dll$/,
     /\.so$/,
-    /\.dylib$/
+    /\.dylib$/,
   ],
   INCLUDE_EXTENSIONS: [
-    '.js', '.ts', '.tsx', '.jsx', '.json', '.md', '.yml', '.yaml', 
-    '.ps1', '.sh', '.py', '.go', '.rs', '.toml', '.xml', '.html',
-    '.css', '.scss', '.vue', '.svelte'
-  ]
+    '.js',
+    '.ts',
+    '.tsx',
+    '.jsx',
+    '.json',
+    '.md',
+    '.yml',
+    '.yaml',
+    '.ps1',
+    '.sh',
+    '.py',
+    '.go',
+    '.rs',
+    '.toml',
+    '.xml',
+    '.html',
+    '.css',
+    '.scss',
+    '.vue',
+    '.svelte',
+  ],
 };
 
 class TurboRepoScanner {
@@ -58,28 +75,30 @@ class TurboRepoScanner {
         totalFiles: 0,
         totalSize: 0,
         errors: [],
-        performance: {}
-      }
+        performance: {},
+      },
     };
   }
 
   async initializeWorkers() {
     const workerPromises = [];
-    
+
     for (let i = 0; i < CONFIG.MAX_WORKERS; i++) {
       const worker = new Worker(__filename, {
-        workerData: { isWorker: true, workerId: i }
+        workerData: { isWorker: true, workerId: i },
       });
-      
+
       this.workers.push(worker);
-      
-      workerPromises.push(new Promise((resolve, reject) => {
-        worker.once('message', (msg) => {
-          if (msg.type === 'ready') resolve();
-          else reject(new Error('Worker failed to initialize'));
-        });
-        worker.once('error', reject);
-      }));
+
+      workerPromises.push(
+        new Promise((resolve, reject) => {
+          worker.once('message', (msg) => {
+            if (msg.type === 'ready') resolve();
+            else reject(new Error('Worker failed to initialize'));
+          });
+          worker.once('error', reject);
+        })
+      );
     }
 
     await Promise.all(workerPromises);
@@ -112,7 +131,7 @@ class TurboRepoScanner {
   }
 
   shouldIgnore(relativePath) {
-    return CONFIG.IGNORE_PATTERNS.some(pattern => pattern.test(relativePath));
+    return CONFIG.IGNORE_PATTERNS.some((pattern) => pattern.test(relativePath));
   }
 
   async getAllFiles() {
@@ -129,7 +148,7 @@ class TurboRepoScanner {
         this.results.metadata.errors.push({
           type: 'directory_scan',
           path: currentDir,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -144,7 +163,7 @@ class TurboRepoScanner {
     for (let i = 0; i < chunks.length; i++) {
       const workerIndex = i % this.workers.length;
       const worker = this.workers[workerIndex];
-      
+
       workerPromises.push(this.processChunk(worker, chunks[i], i));
     }
 
@@ -170,7 +189,7 @@ class TurboRepoScanner {
       worker.postMessage({
         type: 'process_chunk',
         files,
-        chunkId
+        chunkId,
       });
     });
   }
@@ -198,14 +217,14 @@ class TurboRepoScanner {
     if (previousScan) {
       for (const [filePath, currentData] of this.results.files) {
         const previousData = previousScan.files[filePath];
-        
+
         if (!previousData) {
           this.results.changes.set(filePath, { type: 'added', current: currentData });
         } else if (previousData.hash !== currentData.hash) {
-          this.results.changes.set(filePath, { 
-            type: 'modified', 
-            previous: previousData, 
-            current: currentData 
+          this.results.changes.set(filePath, {
+            type: 'modified',
+            previous: previousData,
+            current: currentData,
           });
         }
       }
@@ -223,7 +242,7 @@ class TurboRepoScanner {
     const cacheData = {
       timestamp: new Date().toISOString(),
       metadata: this.results.metadata,
-      files: Object.fromEntries(this.results.files)
+      files: Object.fromEntries(this.results.files),
     };
 
     const cachePath = path.join(this.rootPath, '.repo-scan-cache.json');
@@ -238,16 +257,18 @@ class TurboRepoScanner {
         total_files: this.results.metadata.totalFiles,
         total_size_mb: (this.results.metadata.totalSize / (1024 * 1024)).toFixed(2),
         workers_used: CONFIG.MAX_WORKERS,
-        errors: this.results.metadata.errors.length
+        errors: this.results.metadata.errors.length,
       },
       changes_summary: {
         total_changes: this.results.changes.size,
-        added: Array.from(this.results.changes.values()).filter(c => c.type === 'added').length,
-        modified: Array.from(this.results.changes.values()).filter(c => c.type === 'modified').length,
-        deleted: Array.from(this.results.changes.values()).filter(c => c.type === 'deleted').length
+        added: Array.from(this.results.changes.values()).filter((c) => c.type === 'added').length,
+        modified: Array.from(this.results.changes.values()).filter((c) => c.type === 'modified')
+          .length,
+        deleted: Array.from(this.results.changes.values()).filter((c) => c.type === 'deleted')
+          .length,
       },
       file_breakdown: {},
-      recent_changes: []
+      recent_changes: [],
     };
 
     // File type breakdown
@@ -268,7 +289,7 @@ class TurboRepoScanner {
     report.recent_changes = recentChanges.map(([filePath, change]) => ({
       file: path.relative(this.rootPath, filePath),
       type: change.type,
-      mtime: change.current?.mtime || change.previous?.mtime
+      mtime: change.current?.mtime || change.previous?.mtime,
     }));
 
     return report;
@@ -280,7 +301,7 @@ class TurboRepoScanner {
 
     try {
       await this.initializeWorkers();
-      
+
       console.log('📁 Discovering files...');
       const allFiles = await this.getAllFiles();
       console.log(`📊 Found ${allFiles.length} files to process`);
@@ -304,13 +325,14 @@ class TurboRepoScanner {
       this.results.metadata.scanEnd = performance.now();
 
       const report = await this.generateReport();
-      
+
       console.log('✅ Scan complete!');
       console.log(`📈 Performance: ${report.scan_metadata.duration_ms.toFixed(2)}ms`);
-      console.log(`📊 Changes: ${report.changes_summary.total_changes} (${report.changes_summary.added}+ ${report.changes_summary.modified}~ ${report.changes_summary.deleted}-)`);
+      console.log(
+        `📊 Changes: ${report.changes_summary.total_changes} (${report.changes_summary.added}+ ${report.changes_summary.modified}~ ${report.changes_summary.deleted}-)`
+      );
 
       return report;
-
     } finally {
       // Cleanup workers
       for (const worker of this.workers) {
@@ -328,33 +350,32 @@ if (!isMainThread && workerData?.isWorker) {
     if (msg.type === 'process_chunk') {
       try {
         const results = [];
-        
+
         for (const filePath of msg.files) {
           try {
             const stats = await fs.stat(filePath);
-            
+
             if (stats.size > CONFIG.MAX_FILE_SIZE) {
               results.push({
                 path: filePath,
                 size: stats.size,
                 mtime: stats.mtime.getTime(),
                 hash: 'too_large',
-                content_preview: null
+                content_preview: null,
               });
               continue;
             }
 
             const content = await fs.readFile(filePath, 'utf-8');
             const hash = crypto.createHash('sha256').update(content).digest('hex');
-            
+
             results.push({
               path: filePath,
               size: stats.size,
               mtime: stats.mtime.getTime(),
               hash,
-              content_preview: content.substring(0, 500)
+              content_preview: content.substring(0, 500),
             });
-
           } catch (error) {
             results.push({
               path: filePath,
@@ -362,7 +383,7 @@ if (!isMainThread && workerData?.isWorker) {
               mtime: 0,
               hash: 'error',
               content_preview: null,
-              error: error.message
+              error: error.message,
             });
           }
         }
@@ -370,14 +391,13 @@ if (!isMainThread && workerData?.isWorker) {
         parentPort.postMessage({
           type: 'chunk_complete',
           results,
-          chunkId: msg.chunkId
+          chunkId: msg.chunkId,
         });
-
       } catch (error) {
         parentPort.postMessage({
           type: 'error',
           error: error.message,
-          chunkId: msg.chunkId
+          chunkId: msg.chunkId,
         });
       }
     }
@@ -388,12 +408,13 @@ if (!isMainThread && workerData?.isWorker) {
 if (isMainThread && require.main === module) {
   const rootPath = process.argv[2] || process.cwd();
   const scanner = new TurboRepoScanner(rootPath);
-  
-  scanner.scan()
-    .then(report => {
+
+  scanner
+    .scan()
+    .then((report) => {
       console.log('\n📋 SCAN REPORT:');
       console.log(JSON.stringify(report, null, 2));
-      
+
       // Save detailed report
       const reportPath = path.join(rootPath, 'docs/repo-scan-report.json');
       return fs.writeFile(reportPath, JSON.stringify(report, null, 2));
@@ -402,7 +423,7 @@ if (isMainThread && require.main === module) {
       console.log('\n💾 Detailed report saved to docs/repo-scan-report.json');
       process.exit(0);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('❌ Scan failed:', error);
       process.exit(1);
     });

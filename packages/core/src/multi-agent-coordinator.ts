@@ -38,20 +38,20 @@ export interface SessionMetadata {
 
 export enum SessionStatus {
   INITIALIZING = 'initializing',
-  PLANNING = 'planning', 
+  PLANNING = 'planning',
   EXECUTING = 'executing',
   COORDINATING = 'coordinating',
   INTEGRATING = 'integrating',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  PAUSED = 'paused'
+  PAUSED = 'paused',
 }
 
 export enum RiskLevel {
   LOW = 'low',
   MEDIUM = 'medium',
-  HIGH = 'high', 
-  CRITICAL = 'critical'
+  HIGH = 'high',
+  CRITICAL = 'critical',
 }
 
 export class MultiAgentCoordinator {
@@ -77,10 +77,11 @@ export class MultiAgentCoordinator {
       excludedAgents?: string[];
     }
   ): Promise<CoordinationSession> {
-    
     // Check capacity
     if (this.activeSessions.size >= this.maxConcurrentSessions) {
-      throw new Error('Maximum concurrent sessions reached. Please wait for completion or increase capacity.');
+      throw new Error(
+        'Maximum concurrent sessions reached. Please wait for completion or increase capacity.'
+      );
     }
 
     // Create session
@@ -90,7 +91,7 @@ export class MultiAgentCoordinator {
       maxTeamSize: options?.maxAgents,
       preferredAgents: options?.preferredAgents,
       excludedAgents: options?.excludedAgents,
-      timeConstraint: options?.timeConstraint
+      timeConstraint: options?.timeConstraint,
     });
 
     const session: CoordinationSession = {
@@ -103,14 +104,14 @@ export class MultiAgentCoordinator {
       results: new Map(),
       startTime: new Date(),
       lastUpdate: new Date(),
-      metadata: this.calculateSessionMetadata(classification, delegation, options)
+      metadata: this.calculateSessionMetadata(classification, delegation, options),
     };
 
     this.activeSessions.set(sessionId, session);
-    
+
     // Begin coordination
     this.beginCoordination(sessionId);
-    
+
     return session;
   }
 
@@ -158,12 +159,12 @@ export class MultiAgentCoordinator {
   } {
     const sessions = Array.from(this.activeSessions.values());
     const total = sessions.length;
-    
+
     const byStatus = new Map<SessionStatus, number>();
     let totalProgress = 0;
     let totalUtilization = 0;
 
-    sessions.forEach(session => {
+    sessions.forEach((session) => {
       byStatus.set(session.status, (byStatus.get(session.status) || 0) + 1);
       totalProgress += this.calculateSessionProgress(session);
       totalUtilization += session.metadata.resourceUtilization;
@@ -173,7 +174,7 @@ export class MultiAgentCoordinator {
       total,
       byStatus,
       avgProgress: total > 0 ? totalProgress / total : 0,
-      resourceUtilization: total > 0 ? totalUtilization / total : 0
+      resourceUtilization: total > 0 ? totalUtilization / total : 0,
     };
   }
 
@@ -188,28 +189,34 @@ export class MultiAgentCoordinator {
 
     // Analyze agent utilization
     const agentWorkload = new Map<string, number>();
-    sessions.forEach(session => {
-      session.delegation.team.forEach(agent => {
+    sessions.forEach((session) => {
+      session.delegation.team.forEach((agent) => {
         agentWorkload.set(agent, (agentWorkload.get(agent) || 0) + 1);
       });
     });
 
     // Identify overutilized agents
-    const avgWorkload = Array.from(agentWorkload.values()).reduce((a, b) => a + b, 0) / agentWorkload.size;
-    const overutilized = Array.from(agentWorkload.entries())
-      .filter(([agent, workload]) => workload > avgWorkload * 1.5);
+    const avgWorkload =
+      Array.from(agentWorkload.values()).reduce((a, b) => a + b, 0) / agentWorkload.size;
+    const overutilized = Array.from(agentWorkload.entries()).filter(
+      ([agent, workload]) => workload > avgWorkload * 1.5
+    );
 
     if (overutilized.length > 0) {
-      recommendations.push(`Consider redistributing workload from overutilized agents: ${overutilized.map(([agent]) => agent).join(', ')}`);
+      recommendations.push(
+        `Consider redistributing workload from overutilized agents: ${overutilized.map(([agent]) => agent).join(', ')}`
+      );
     }
 
     // Look for efficiency improvements
-    const stagnantSessions = sessions.filter(session => 
-      Date.now() - session.lastUpdate.getTime() > 30 * 60 * 1000 // 30 minutes
+    const stagnantSessions = sessions.filter(
+      (session) => Date.now() - session.lastUpdate.getTime() > 30 * 60 * 1000 // 30 minutes
     );
 
     if (stagnantSessions.length > 0) {
-      recommendations.push(`${stagnantSessions.length} sessions appear stagnant - consider intervention or reassignment`);
+      recommendations.push(
+        `${stagnantSessions.length} sessions appear stagnant - consider intervention or reassignment`
+      );
     }
 
     const efficiency = this.calculateOverallEfficiency(sessions);
@@ -226,7 +233,7 @@ export class MultiAgentCoordinator {
       session.lastUpdate = new Date();
 
       // Initialize agent results
-      session.delegation.taskBreakdown.forEach(fragment => {
+      session.delegation.taskBreakdown.forEach((fragment) => {
         session.results.set(fragment.id, {
           agentName: fragment.assignedAgent,
           fragmentId: fragment.id,
@@ -234,14 +241,13 @@ export class MultiAgentCoordinator {
           status: 'pending',
           confidence: 0,
           dependencies: fragment.dependencies,
-          followUpTasks: []
+          followUpTasks: [],
         });
       });
 
       // Begin execution
       session.status = SessionStatus.EXECUTING;
       await this.executeNextSteps(sessionId);
-
     } catch (error) {
       session.status = SessionStatus.FAILED;
       console.error(`Coordination failed for session ${sessionId}:`, error);
@@ -253,23 +259,23 @@ export class MultiAgentCoordinator {
     if (!session) return;
 
     // Find executable steps (dependencies satisfied)
-    const executableSteps = session.delegation.executionPlan.filter(step => {
+    const executableSteps = session.delegation.executionPlan.filter((step) => {
       const result = session.results.get(this.findFragmentIdForStep(step, session));
-      const dependenciesSatisfied = step.dependencies.every(depId => {
+      const dependenciesSatisfied = step.dependencies.every((depId) => {
         const depResult = session.results.get(depId);
         return depResult && depResult.status === 'completed';
       });
-      
+
       return result && result.status === 'pending' && dependenciesSatisfied;
     });
 
     // Execute parallel steps
-    const parallelSteps = executableSteps.filter(step => step.parallel);
-    const sequentialSteps = executableSteps.filter(step => !step.parallel);
+    const parallelSteps = executableSteps.filter((step) => step.parallel);
+    const sequentialSteps = executableSteps.filter((step) => !step.parallel);
 
     // Process parallel steps concurrently
     if (parallelSteps.length > 0) {
-      await Promise.all(parallelSteps.map(step => this.executeStep(sessionId, step)));
+      await Promise.all(parallelSteps.map((step) => this.executeStep(sessionId, step)));
     }
 
     // Process sequential steps one by one
@@ -296,18 +302,17 @@ export class MultiAgentCoordinator {
     try {
       // Simulate agent execution (in real implementation, this would call the actual agent)
       const agentOutput = await this.simulateAgentExecution(step.agent, step.action);
-      
+
       result.output = agentOutput.output;
       result.confidence = agentOutput.confidence;
       result.followUpTasks = agentOutput.followUpTasks;
       result.status = 'completed';
       result.endTime = new Date();
-      
+
       session.lastUpdate = new Date();
 
       // Continue with next steps
       setTimeout(() => this.executeNextSteps(sessionId), 100);
-
     } catch (error) {
       result.status = 'failed';
       result.output = `Execution failed: ${error}`;
@@ -316,7 +321,10 @@ export class MultiAgentCoordinator {
     }
   }
 
-  private async simulateAgentExecution(agent: string, action: string): Promise<{
+  private async simulateAgentExecution(
+    agent: string,
+    action: string
+  ): Promise<{
     output: string;
     confidence: number;
     followUpTasks: string[];
@@ -324,12 +332,12 @@ export class MultiAgentCoordinator {
     // In real implementation, this would delegate to the actual agent
     // For now, simulate with realistic delays and outputs
     const delay = Math.random() * 2000 + 1000; // 1-3 second delay
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
     return {
       output: `${agent} completed: ${action}`,
       confidence: 0.8 + Math.random() * 0.2,
-      followUpTasks: []
+      followUpTasks: [],
     };
   }
 
@@ -338,8 +346,8 @@ export class MultiAgentCoordinator {
     if (!session) return;
 
     const allResults = Array.from(session.results.values());
-    const completedCount = allResults.filter(result => result.status === 'completed').length;
-    const failedCount = allResults.filter(result => result.status === 'failed').length;
+    const completedCount = allResults.filter((result) => result.status === 'completed').length;
+    const failedCount = allResults.filter((result) => result.status === 'failed').length;
     const totalCount = allResults.length;
 
     if (completedCount + failedCount === totalCount) {
@@ -359,14 +367,13 @@ export class MultiAgentCoordinator {
 
     try {
       // Simulate result integration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       session.status = SessionStatus.COMPLETED;
       session.metadata.actualDuration = Date.now() - session.startTime.getTime();
       session.lastUpdate = new Date();
-      
+
       this.archiveSession(sessionId);
-      
     } catch (error) {
       session.status = SessionStatus.FAILED;
       this.archiveSession(sessionId);
@@ -374,18 +381,19 @@ export class MultiAgentCoordinator {
   }
 
   private findFragmentIdForStep(step: ExecutionStep, session: CoordinationSession): string {
-    return session.delegation.taskBreakdown.find(fragment => 
-      fragment.assignedAgent === step.agent && 
-      fragment.description === step.action
-    )?.id || 'unknown';
+    return (
+      session.delegation.taskBreakdown.find(
+        (fragment) => fragment.assignedAgent === step.agent && fragment.description === step.action
+      )?.id || 'unknown'
+    );
   }
 
   private calculateSessionProgress(session: CoordinationSession): number {
     const allResults = Array.from(session.results.values());
     const totalSteps = allResults.length;
-    const completedSteps = allResults.filter(result => result.status === 'completed').length;
-    const inProgressSteps = allResults.filter(result => result.status === 'in-progress').length;
-    
+    const completedSteps = allResults.filter((result) => result.status === 'completed').length;
+    const inProgressSteps = allResults.filter((result) => result.status === 'in-progress').length;
+
     return totalSteps > 0 ? (completedSteps + inProgressSteps * 0.5) / totalSteps : 0;
   }
 
@@ -405,7 +413,7 @@ export class MultiAgentCoordinator {
       estimatedDuration,
       resourceUtilization,
       complexityFactors,
-      riskAssessment
+      riskAssessment,
     };
   }
 
@@ -414,82 +422,94 @@ export class MultiAgentCoordinator {
     delegation: AgentDelegationResult
   ): number {
     const baseTime = 30 * 60 * 1000; // 30 minutes base
-    const complexityMultiplier = {
-      'trivial': 0.5,
-      'low': 0.75,
-      'medium': 1,
-      'high': 1.5,
-      'expert': 2,
-      'breakthrough': 3
-    }[classification.complexityLevel] || 1;
-    
+    const complexityMultiplier =
+      {
+        trivial: 0.5,
+        low: 0.75,
+        medium: 1,
+        high: 1.5,
+        expert: 2,
+        breakthrough: 3,
+      }[classification.complexityLevel] || 1;
+
     const teamSizeMultiplier = delegation.team.length > 1 ? 1.2 : 1;
-    
+
     return Math.round(baseTime * complexityMultiplier * teamSizeMultiplier);
   }
 
   private calculatePriority(classification: TaskClassification): number {
-    const urgencyWeight = {
-      'low': 1,
-      'medium': 2,
-      'high': 3,
-      'critical': 4,
-      'emergency': 5
-    }[classification.urgencyLevel] || 2;
-    
-    const complexityWeight = {
-      'trivial': 1,
-      'low': 1,
-      'medium': 2,
-      'high': 3,
-      'expert': 4,
-      'breakthrough': 5
-    }[classification.complexityLevel] || 2;
-    
+    const urgencyWeight =
+      {
+        low: 1,
+        medium: 2,
+        high: 3,
+        critical: 4,
+        emergency: 5,
+      }[classification.urgencyLevel] || 2;
+
+    const complexityWeight =
+      {
+        trivial: 1,
+        low: 1,
+        medium: 2,
+        high: 3,
+        expert: 4,
+        breakthrough: 5,
+      }[classification.complexityLevel] || 2;
+
     return Math.min(10, urgencyWeight + complexityWeight);
   }
 
   private identifyComplexityFactors(classification: TaskClassification): string[] {
     const factors: string[] = [];
-    
+
     if (classification.secondaryCategories.length > 2) {
       factors.push('multi-domain');
     }
-    
+
     if (classification.collaborationStyle === 'cross-functional') {
       factors.push('cross-functional-coordination');
     }
-    
-    if (classification.complexityLevel === 'expert' || classification.complexityLevel === 'breakthrough') {
+
+    if (
+      classification.complexityLevel === 'expert' ||
+      classification.complexityLevel === 'breakthrough'
+    ) {
       factors.push('high-expertise-required');
     }
-    
+
     if (classification.taskPatterns.includes('parallel-execution' as any)) {
       factors.push('parallel-coordination');
     }
-    
+
     return factors;
   }
 
-  private assessRisk(classification: TaskClassification, delegation: AgentDelegationResult): RiskLevel {
+  private assessRisk(
+    classification: TaskClassification,
+    delegation: AgentDelegationResult
+  ): RiskLevel {
     let riskScore = 0;
-    
-    if (classification.complexityLevel === 'expert' || classification.complexityLevel === 'breakthrough') {
+
+    if (
+      classification.complexityLevel === 'expert' ||
+      classification.complexityLevel === 'breakthrough'
+    ) {
       riskScore += 2;
     }
-    
+
     if (delegation.team.length > 4) {
       riskScore += 1;
     }
-    
+
     if (classification.urgencyLevel === 'critical' || classification.urgencyLevel === 'emergency') {
       riskScore += 1;
     }
-    
+
     if (classification.confidence < 0.6) {
       riskScore += 2;
     }
-    
+
     if (riskScore >= 4) return RiskLevel.CRITICAL;
     if (riskScore >= 3) return RiskLevel.HIGH;
     if (riskScore >= 2) return RiskLevel.MEDIUM;
@@ -498,10 +518,13 @@ export class MultiAgentCoordinator {
 
   private calculateOverallEfficiency(sessions: CoordinationSession[]): number {
     if (sessions.length === 0) return 1.0;
-    
-    const completedSessions = sessions.filter(s => s.status === SessionStatus.COMPLETED);
-    const totalProgress = sessions.reduce((sum, session) => sum + this.calculateSessionProgress(session), 0);
-    
+
+    const completedSessions = sessions.filter((s) => s.status === SessionStatus.COMPLETED);
+    const totalProgress = sessions.reduce(
+      (sum, session) => sum + this.calculateSessionProgress(session),
+      0
+    );
+
     return sessions.length > 0 ? totalProgress / sessions.length : 0;
   }
 
@@ -514,7 +537,7 @@ export class MultiAgentCoordinator {
     if (session) {
       this.sessionHistory.push(session);
       this.activeSessions.delete(sessionId);
-      
+
       // Keep only last 100 sessions in history
       if (this.sessionHistory.length > 100) {
         this.sessionHistory = this.sessionHistory.slice(-100);

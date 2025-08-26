@@ -26,7 +26,8 @@ export async function detectHardware(): Promise<HardwareInfo> {
         vulkan?: { present?: boolean };
       };
       const json: Profile = JSON.parse(fs.readFileSync(profilePath, 'utf-8')) as Profile;
-      const nvidia = json?.gpu?.present && Array.isArray(json?.gpu?.gpus) && json.gpu.gpus.length > 0;
+      const nvidia =
+        json?.gpu?.present && Array.isArray(json?.gpu?.gpus) && json.gpu.gpus.length > 0;
       if (nvidia) gpuVendors.push('nvidia');
       const info: HardwareInfo = {
         os,

@@ -18,20 +18,20 @@ class SessionLogGuardian {
       maxProblemsFiles: options.maxProblemsFiles || 10,
       maxProblemsAge: options.maxProblemsAge || 24 * 60 * 60 * 1000, // 24 hours
       maxTotalSize: options.maxTotalSize || 50 * 1024 * 1024, // 50MB
-      
+
       // Session log management
       maxSessionEntries: options.maxSessionEntries || 1000,
       archiveThreshold: options.archiveThreshold || 500,
-      
+
       // Prevention mechanisms
       detectRecursion: options.detectRecursion !== false,
       emergencyCleanup: options.emergencyCleanup !== false,
-      
+
       // Reporting
       verbose: options.verbose || false,
       dryRun: options.dryRun || false,
-      
-      ...options
+
+      ...options,
     };
 
     this.stats = {
@@ -40,7 +40,7 @@ class SessionLogGuardian {
       sizeReclaimed: 0,
       recursionDetected: false,
       emergencyTriggered: false,
-      errors: []
+      errors: [],
     };
   }
 
@@ -55,13 +55,13 @@ class SessionLogGuardian {
         files: {},
         patterns: {},
         risks: [],
-        recommendations: []
+        recommendations: [],
       };
 
       // Scan all files
       const files = await this.scanDirectory();
       analysis.files = await this.categorizeFiles(files);
-      
+
       // Detect patterns and risks
       analysis.patterns = this.analyzePatterns(analysis.files);
       analysis.risks = this.assessRisks(analysis.patterns);
@@ -71,7 +71,6 @@ class SessionLogGuardian {
       analysis.performance = { duration_ms: duration.toFixed(2) };
 
       return analysis;
-
     } catch (error) {
       this.stats.errors.push({ type: 'analysis', error: error.message });
       throw error;
@@ -80,21 +79,21 @@ class SessionLogGuardian {
 
   async scanDirectory() {
     const files = [];
-    
+
     try {
       const entries = await fs.readdir(this.logDir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         if (entry.isFile()) {
           const filePath = path.join(this.logDir, entry.name);
           const stats = await fs.stat(filePath);
-          
+
           files.push({
             name: entry.name,
             path: filePath,
             size: stats.size,
             mtime: stats.mtime,
-            age: Date.now() - stats.mtime.getTime()
+            age: Date.now() - stats.mtime.getTime(),
           });
         }
       }
@@ -114,8 +113,8 @@ class SessionLogGuardian {
       other: [],
       totals: {
         count: files.length,
-        size: 0
-      }
+        size: 0,
+      },
     };
 
     for (const file of files) {
@@ -142,7 +141,7 @@ class SessionLogGuardian {
       problems_explosion: false,
       rapid_generation: false,
       size_growth: false,
-      time_clustering: false
+      time_clustering: false,
     };
 
     // Problems file explosion detection
@@ -151,7 +150,7 @@ class SessionLogGuardian {
         detected: true,
         count: files.problems.length,
         threshold: this.config.maxProblemsFiles,
-        severity: 'critical'
+        severity: 'critical',
       };
     }
 
@@ -160,12 +159,13 @@ class SessionLogGuardian {
       const sortedByTime = files.problems.sort((a, b) => b.mtime - a.mtime);
       const recentFiles = sortedByTime.slice(0, 10);
       const timeSpan = recentFiles[0].mtime - recentFiles[recentFiles.length - 1].mtime;
-      
-      if (timeSpan < 5 * 60 * 1000) { // 5 minutes
+
+      if (timeSpan < 5 * 60 * 1000) {
+        // 5 minutes
         patterns.rapid_generation = {
           detected: true,
           files_in_5min: recentFiles.length,
-          severity: 'high'
+          severity: 'high',
         };
       }
     }
@@ -177,7 +177,7 @@ class SessionLogGuardian {
         detected: true,
         current_size: totalProblemsSize,
         threshold: this.config.maxTotalSize,
-        severity: 'high'
+        severity: 'high',
       };
     }
 
@@ -193,7 +193,7 @@ class SessionLogGuardian {
         severity: 'critical',
         description: 'Massive problems file generation detected',
         impact: 'System instability, disk space exhaustion',
-        recommendation: 'Immediate cleanup and prevention'
+        recommendation: 'Immediate cleanup and prevention',
       });
     }
 
@@ -203,7 +203,7 @@ class SessionLogGuardian {
         severity: 'high',
         description: 'Rapid file generation in short timespan',
         impact: 'Performance degradation, resource exhaustion',
-        recommendation: 'Identify and stop generating process'
+        recommendation: 'Identify and stop generating process',
       });
     }
 
@@ -213,7 +213,7 @@ class SessionLogGuardian {
         severity: 'medium',
         description: 'Session log directory approaching size limits',
         impact: 'Potential disk space issues',
-        recommendation: 'Archive and cleanup old files'
+        recommendation: 'Archive and cleanup old files',
       });
     }
 
@@ -223,15 +223,15 @@ class SessionLogGuardian {
   generateRecommendations(risks) {
     const recommendations = [];
 
-    const criticalRisks = risks.filter(r => r.severity === 'critical');
-    const highRisks = risks.filter(r => r.severity === 'high');
+    const criticalRisks = risks.filter((r) => r.severity === 'critical');
+    const highRisks = risks.filter((r) => r.severity === 'high');
 
     if (criticalRisks.length > 0) {
       recommendations.push({
         priority: 'immediate',
         action: 'emergency_cleanup',
         description: 'Run emergency cleanup to remove bulk problems files',
-        command: 'node scripts/session-log-guardian.js --emergency-cleanup'
+        command: 'node scripts/session-log-guardian.js --emergency-cleanup',
       });
     }
 
@@ -240,7 +240,7 @@ class SessionLogGuardian {
         priority: 'urgent',
         action: 'process_investigation',
         description: 'Identify and stop the process generating excessive files',
-        command: 'node scripts/session-log-guardian.js --analyze --verbose'
+        command: 'node scripts/session-log-guardian.js --analyze --verbose',
       });
     }
 
@@ -248,7 +248,7 @@ class SessionLogGuardian {
       priority: 'routine',
       action: 'regular_maintenance',
       description: 'Set up automated cleanup schedule',
-      command: 'node scripts/session-log-guardian.js --cleanup --schedule'
+      command: 'node scripts/session-log-guardian.js --cleanup --schedule',
     });
 
     return recommendations;
@@ -256,7 +256,7 @@ class SessionLogGuardian {
 
   async emergencyCleanup() {
     console.log('🚨 EMERGENCY CLEANUP INITIATED');
-    
+
     if (this.config.dryRun) {
       console.log('🔍 DRY RUN MODE - No files will be deleted');
     }
@@ -275,7 +275,7 @@ class SessionLogGuardian {
     }
 
     // 2. Remove old problems files (older than threshold)
-    const oldProblems = categorized.problems.filter(f => f.age > this.config.maxProblemsAge);
+    const oldProblems = categorized.problems.filter((f) => f.age > this.config.maxProblemsAge);
     cleanupTargets.push(...oldProblems);
 
     // Execute cleanup
@@ -289,7 +289,7 @@ class SessionLogGuardian {
         }
         sizeReclaimed += file.size;
         filesRemoved++;
-        
+
         if (this.config.verbose) {
           console.log(`🗑️  Removed: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`);
         }
@@ -309,13 +309,13 @@ class SessionLogGuardian {
     return {
       filesRemoved,
       sizeReclaimed,
-      errors: this.stats.errors
+      errors: this.stats.errors,
     };
   }
 
   async preventiveCleanup() {
     console.log('🛡️  Running preventive cleanup...');
-    
+
     const files = await this.scanDirectory();
     const categorized = await this.categorizeFiles(files);
 
@@ -325,24 +325,22 @@ class SessionLogGuardian {
     // 1. Limit problems files to reasonable number
     if (categorized.problems.length > this.config.maxProblemsFiles) {
       const excess = categorized.problems.length - this.config.maxProblemsFiles;
-      const oldest = categorized.problems
-        .sort((a, b) => a.mtime - b.mtime)
-        .slice(0, excess);
-      
+      const oldest = categorized.problems.sort((a, b) => a.mtime - b.mtime).slice(0, excess);
+
       actions.push({
         type: 'remove_excess_problems',
         files: oldest,
-        reason: `Exceeded max problems files (${this.config.maxProblemsFiles})`
+        reason: `Exceeded max problems files (${this.config.maxProblemsFiles})`,
       });
     }
 
     // 2. Archive large session logs
-    const largeSessionLogs = categorized.sessions.filter(f => f.size > 1024 * 1024); // 1MB+
+    const largeSessionLogs = categorized.sessions.filter((f) => f.size > 1024 * 1024); // 1MB+
     if (largeSessionLogs.length > 0) {
       actions.push({
         type: 'archive_large_sessions',
         files: largeSessionLogs,
-        reason: 'Session logs exceeding size threshold'
+        reason: 'Session logs exceeding size threshold',
       });
     }
 
@@ -353,7 +351,7 @@ class SessionLogGuardian {
 
     return {
       actionsExecuted: actions.length,
-      stats: this.stats
+      stats: this.stats,
     };
   }
 
@@ -366,7 +364,7 @@ class SessionLogGuardian {
           }
           this.stats.filesRemoved++;
           this.stats.sizeReclaimed += file.size;
-          
+
           if (this.config.verbose) {
             console.log(`🗑️  ${action.reason}: ${file.name}`);
           }
@@ -380,7 +378,7 @@ class SessionLogGuardian {
             await fs.mkdir(path.dirname(archivePath), { recursive: true });
             await fs.rename(file.path, archivePath);
           }
-          
+
           if (this.config.verbose) {
             console.log(`📦 Archived: ${file.name}`);
           }
@@ -480,12 +478,12 @@ process.on('SIGINT', () => {
 
     // Create scheduled cleanup task
     const scheduledTask = {
-      label: "Guardian: Session Log Cleanup",
-      type: "shell",
-      command: "node scripts/session-log-guardian.js --cleanup",
-      options: { cwd: "${workspaceFolder}" },
+      label: 'Guardian: Session Log Cleanup',
+      type: 'shell',
+      command: 'node scripts/session-log-guardian.js --cleanup',
+      options: { cwd: '${workspaceFolder}' },
       problemMatcher: [],
-      runOptions: { runOn: "folderOpen" }
+      runOptions: { runOn: 'folderOpen' },
     };
 
     console.log('✅ Prevention mechanisms installed');
@@ -496,7 +494,7 @@ process.on('SIGINT', () => {
     return {
       ...this.stats,
       config: this.config,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -504,8 +502,8 @@ process.on('SIGINT', () => {
 // CLI interface
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const logDir = args.find(arg => !arg.startsWith('--')) || 'docs/session-log';
-  
+  const logDir = args.find((arg) => !arg.startsWith('--')) || 'docs/session-log';
+
   const options = {
     dryRun: args.includes('--dry-run'),
     verbose: args.includes('--verbose'),
@@ -513,7 +511,7 @@ if (require.main === module) {
     analyze: args.includes('--analyze'),
     cleanup: args.includes('--cleanup'),
     install: args.includes('--install'),
-    schedule: args.includes('--schedule')
+    schedule: args.includes('--schedule'),
   };
 
   const guardian = new SessionLogGuardian(logDir, options);
@@ -555,7 +553,6 @@ Examples:
       }
 
       console.log('\n📈 Guardian stats:', guardian.getStats());
-
     } catch (error) {
       console.error('❌ Guardian error:', error.message);
       process.exit(1);

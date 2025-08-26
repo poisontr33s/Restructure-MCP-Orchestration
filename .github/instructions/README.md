@@ -20,4 +20,3 @@ Files
 - `monitor.instructions.md`: applies to `packages/monitor/**`.
 - `servers.instructions.md`: applies to `packages/servers/**`.
 - `shared.instructions.md`: applies to `packages/shared/**`.
-

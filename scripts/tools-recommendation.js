@@ -12,14 +12,16 @@ function main() {
   try {
     const cfg = JSON.parse(fs.readFileSync(mcpPath, 'utf8'));
     servers = Object.keys(cfg.servers || {});
-  } catch (_) { /* ignore: missing mcp.json */ }
+  } catch (_) {
+    /* ignore: missing mcp.json */
+  }
 
   const builtins = [
     'Built-in: terminalSelection',
     'Built-in: usages',
     'Built-in: vscodeAPI',
     // optional:
-    'Built-in: testFailure (optional)'
+    'Built-in: testFailure (optional)',
   ];
 
   const mcp = servers.map((k) => `MCP Server: ${k}`);
@@ -41,10 +43,12 @@ function main() {
   lines.push('- [ ] Azure tool packs (Resource Graph, Load Testing, DevCenter, etc.)');
   lines.push('- [ ] CodeQL/advanced security packs while not auditing');
   lines.push('- [ ] Jupyter/Notebook tools if not using notebooks');
-  lines.push('- [ ] Excess language packs or linters you don\'t use today');
+  lines.push("- [ ] Excess language packs or linters you don't use today");
   lines.push('- [ ] Redundant web/doc search tools if one provider suffices');
   lines.push('');
-  lines.push('Tip: After switching intents (tasks: “MCP: Intents …”), run “MCP: Generate Dynamic Config” so the MCP list stays small.');
+  lines.push(
+    'Tip: After switching intents (tasks: “MCP: Intents …”), run “MCP: Generate Dynamic Config” so the MCP list stays small.'
+  );
 
   const outDir = path.join(root, 'docs', 'repo-index');
   fs.mkdirSync(outDir, { recursive: true });

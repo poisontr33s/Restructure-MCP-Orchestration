@@ -201,7 +201,7 @@ export class RealtimeKnowledgeIntegrator {
     context?: string
   ): Promise<Map<string, KnowledgeResult>> {
     const results = new Map<string, KnowledgeResult>();
-    
+
     // Process each knowledge requirement
     for (const requirement of requirements) {
       try {
@@ -214,7 +214,7 @@ export class RealtimeKnowledgeIntegrator {
         results.set(requirement.domain, this.createFallbackResult(requirement));
       }
     }
-    
+
     return results;
   }
 
@@ -223,29 +223,25 @@ export class RealtimeKnowledgeIntegrator {
     focusAreas: string[],
     urgency: 'low' | 'medium' | 'high' = 'medium'
   ): Promise<any> {
-    
     // Identify knowledge enhancement opportunities
     const enhancementOpportunities = await this.identifyEnhancementOpportunities(
       baseKnowledge,
       focusAreas
     );
-    
+
     // Create targeted research strategy
-    const researchStrategy = await this.createResearchStrategy(
-      enhancementOpportunities,
-      urgency
-    );
-    
+    const researchStrategy = await this.createResearchStrategy(enhancementOpportunities, urgency);
+
     // Execute research
     const freshKnowledge = await this.executeResearchStrategy(researchStrategy);
-    
+
     // Synthesize with base knowledge
     const enhancedKnowledge = await this.synthesizeKnowledge(
       baseKnowledge,
       freshKnowledge,
       focusAreas
     );
-    
+
     return enhancedKnowledge;
   }
 
@@ -260,12 +256,12 @@ export class RealtimeKnowledgeIntegrator {
     const isCurrents = new Map<string, boolean>();
     const updateRecommendations: string[] = [];
     const stalenessReasons = new Map<string, string[]>();
-    
+
     for (const domain of domains) {
       const currentnessAnalysis = await this.analyzeKnowledgeCurrentness(knowledge, domain);
-      
+
       isCurrents.set(domain, currentnessAnalysis.isCurrent);
-      
+
       if (!currentnessAnalysis.isCurrent) {
         stalenessReasons.set(domain, currentnessAnalysis.reasons);
         updateRecommendations.push(
@@ -273,7 +269,7 @@ export class RealtimeKnowledgeIntegrator {
         );
       }
     }
-    
+
     return { isCurrents, updateRecommendations, stalenessReasons };
   }
 
@@ -287,40 +283,42 @@ export class RealtimeKnowledgeIntegrator {
       excludeDomains?: string[];
     }
   ): Promise<KnowledgeResult> {
-    
     // Decompose research question into searchable components
     const searchComponents = await this.decomposeResearchQuestion(researchQuestion);
-    
+
     // Create comprehensive search strategy
     const searchStrategy = await this.createSearchStrategy(searchComponents, constraints);
-    
+
     // Execute searches with intelligent retry and adaptation
     const searchResults = await this.executeIntelligentSearch(searchStrategy);
-    
+
     // Analyze and filter results for quality
-    const qualityResults = await this.filterAndRankResults(searchResults, constraints?.qualityThreshold || 0.7);
-    
+    const qualityResults = await this.filterAndRankResults(
+      searchResults,
+      constraints?.qualityThreshold || 0.7
+    );
+
     // Synthesize findings into coherent knowledge
     const synthesizedKnowledge = await this.synthesisEngine.synthesize(
       qualityResults,
       researchQuestion
     );
-    
+
     // Create comprehensive result
     const result: KnowledgeResult = {
       query: this.createQueryFromQuestion(researchQuestion, constraints),
-      sources: qualityResults.map(r => r.source),
+      sources: qualityResults.map((r) => r.source),
       synthesizedContent: synthesizedKnowledge,
       confidence: this.calculateOverallConfidence(qualityResults),
       completeness: this.calculateCompleteness(searchComponents, qualityResults),
       freshness: new Date(),
       gaps: await this.identifyKnowledgeGaps(searchComponents, qualityResults),
-      recommendations: await this.generateResearchRecommendations(qualityResults, searchComponents)
+      recommendations: await this.generateResearchRecommendations(qualityResults, searchComponents),
     };
-    
+
     // Cache result for future use
     this.cacheKnowledgeResult(researchQuestion, result);
-    
+
     return result;
   }
 
@@ -330,17 +328,17 @@ export class RealtimeKnowledgeIntegrator {
     if (cachedResult && this.isCacheValid(cachedResult, query)) {
       return cachedResult;
     }
-    
+
     // Select optimal sources for this query
     const selectedSources = await this.selectOptimalSources(query);
-    
+
     // Execute searches across sources
     const sourceResults = await this.searchAcrossSources(query, selectedSources);
-    
+
     // Verify and synthesize results
     const verifiedResults = await this.verificationEngine.verify(sourceResults);
     const synthesizedContent = await this.synthesisEngine.synthesize(verifiedResults, query.domain);
-    
+
     // Create result
     const result: KnowledgeResult = {
       query,
@@ -350,18 +348,18 @@ export class RealtimeKnowledgeIntegrator {
       completeness: this.calculateCompleteness(query, verifiedResults),
       freshness: new Date(),
       gaps: await this.identifyGaps(query, verifiedResults),
-      recommendations: await this.generateRecommendations(verifiedResults)
+      recommendations: await this.generateRecommendations(verifiedResults),
     };
-    
+
     // Cache result
     this.cacheKnowledgeResult(this.createCacheKey(query), result);
-    
+
     return result;
   }
 
   private async executeIntelligentSearch(strategy: ResearchStrategy): Promise<any[]> {
     const allResults: any[] = [];
-    
+
     // Execute primary source searches
     for (const source of strategy.primarySources) {
       if (await this.rateLimitManager.canMakeRequest(source)) {
@@ -374,7 +372,7 @@ export class RealtimeKnowledgeIntegrator {
         }
       }
     }
-    
+
     // Execute secondary source searches if needed
     const completeness = this.assessSearchCompleteness(allResults);
     if (completeness < 0.8) {
@@ -384,7 +382,7 @@ export class RealtimeKnowledgeIntegrator {
             const results = await this.searchSource(source, strategy.searchQueries);
             allResults.push(...results);
             await this.rateLimitManager.recordRequest(source);
-            
+
             if (this.assessSearchCompleteness(allResults) >= 0.8) {
               break; // Sufficient results obtained
             }
@@ -394,17 +392,17 @@ export class RealtimeKnowledgeIntegrator {
         }
       }
     }
-    
+
     return allResults;
   }
 
   private async searchSource(source: KnowledgeSource, queries: SearchQuery[]): Promise<any[]> {
     const results: any[] = [];
-    
+
     for (const query of queries) {
       try {
         let searchResults: any[];
-        
+
         if (source.type === 'web') {
           // Use WebSearch for web sources
           const searchQuery = this.buildWebSearchQuery(query);
@@ -413,16 +411,15 @@ export class RealtimeKnowledgeIntegrator {
           // Use specialized search methods for other source types
           searchResults = await this.performSpecializedSearch(source, query);
         }
-        
+
         // Apply quality filters
         const filteredResults = this.applyQualityFilters(searchResults, source);
         results.push(...filteredResults);
-        
       } catch (error) {
         console.warn(`Query execution failed:`, error);
       }
     }
-    
+
     return results;
   }
 
@@ -435,8 +432,8 @@ export class RealtimeKnowledgeIntegrator {
         snippet: `Comprehensive information about ${query}`,
         relevance: 0.8,
         authority: 0.7,
-        freshness: new Date()
-      }
+        freshness: new Date(),
+      },
     ];
   }
 
@@ -446,20 +443,20 @@ export class RealtimeKnowledgeIntegrator {
       content: `Detailed analysis of ${url}`,
       keyPoints: [],
       technicalDetails: {},
-      recommendations: []
+      recommendations: [],
     };
   }
 
   private buildWebSearchQuery(query: SearchQuery): string {
     let searchString = query.terms.join(' ');
-    
+
     // Apply operators
     if (query.operators.includes('AND')) {
       searchString = query.terms.join(' AND ');
     } else if (query.operators.includes('OR')) {
       searchString = query.terms.join(' OR ');
     }
-    
+
     // Apply filters
     for (const filter of query.filters) {
       switch (filter.type) {
@@ -479,7 +476,7 @@ export class RealtimeKnowledgeIntegrator {
           break;
       }
     }
-    
+
     return searchString;
   }
 
@@ -496,31 +493,34 @@ export class RealtimeKnowledgeIntegrator {
         requestsPerMinute: 10,
         requestsPerHour: 300,
         requestsPerDay: 1000,
-        currentUsage: { minute: 0, hour: 0, day: 0, lastReset: new Date() }
-      }
+        currentUsage: { minute: 0, hour: 0, day: 0, lastReset: new Date() },
+      },
     });
-    
+
     this.sourceRegistry.set('documentation', {
       type: 'documentation',
       reliability: 0.9,
       recency: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day old
       authority: 0.95,
       relevance: 0.9,
-      accessMethod: 'web_fetch'
+      accessMethod: 'web_fetch',
     });
-    
+
     this.sourceRegistry.set('academic', {
       type: 'academic',
       reliability: 0.95,
       recency: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week old
       authority: 0.98,
       relevance: 0.7,
-      accessMethod: 'specialized_search'
+      accessMethod: 'specialized_search',
     });
   }
 
   // Utility methods
-  private createKnowledgeQuery(requirement: KnowledgeRequirement, context?: string): KnowledgeQuery {
+  private createKnowledgeQuery(
+    requirement: KnowledgeRequirement,
+    context?: string
+  ): KnowledgeQuery {
     return {
       domain: requirement.domain,
       specificTopics: [requirement.domain],
@@ -529,7 +529,7 @@ export class RealtimeKnowledgeIntegrator {
       reliabilityThreshold: 0.7,
       maxSources: 5,
       timeLimit: 30000, // 30 seconds
-      contextualFilters: context ? [context] : []
+      contextualFilters: context ? [context] : [],
     };
   }
 
@@ -544,13 +544,21 @@ export class RealtimeKnowledgeIntegrator {
         trends: [],
         expertOpinions: [],
         practicalApplications: [],
-        futureDirections: []
+        futureDirections: [],
       },
       confidence: 0.3,
       completeness: 0.2,
       freshness: new Date(),
-      gaps: [{ area: requirement.domain, description: 'Complete knowledge gap', impact: 'high', suggestedResearch: [], potentialSources: [] }],
-      recommendations: [`Research ${requirement.domain} manually`]
+      gaps: [
+        {
+          area: requirement.domain,
+          description: 'Complete knowledge gap',
+          impact: 'high',
+          suggestedResearch: [],
+          potentialSources: [],
+        },
+      ],
+      recommendations: [`Research ${requirement.domain} manually`],
     };
   }
 
@@ -568,9 +576,9 @@ export class RealtimeKnowledgeIntegrator {
   private getMaxCacheAge(recency: string): number {
     const ages = {
       'real-time': 5 * 60 * 1000, // 5 minutes
-      'current': 60 * 60 * 1000, // 1 hour
-      'recent': 24 * 60 * 60 * 1000, // 1 day
-      'historical': 7 * 24 * 60 * 60 * 1000 // 1 week
+      current: 60 * 60 * 1000, // 1 hour
+      recent: 24 * 60 * 60 * 1000, // 1 day
+      historical: 7 * 24 * 60 * 60 * 1000, // 1 week
     };
     return ages[recency as keyof typeof ages] || ages.current;
   }
@@ -581,12 +589,12 @@ export class RealtimeKnowledgeIntegrator {
 
   private cacheKnowledgeResult(key: string, result: KnowledgeResult): void {
     this.knowledgeCache.set(key, result);
-    
+
     // Cleanup old cache entries (keep last 1000)
     if (this.knowledgeCache.size > 1000) {
       const entries = Array.from(this.knowledgeCache.entries());
       entries.sort((a, b) => a[1].freshness.getTime() - b[1].freshness.getTime());
-      
+
       // Remove oldest 100 entries
       for (let i = 0; i < 100; i++) {
         this.knowledgeCache.delete(entries[i][0]);
@@ -599,7 +607,10 @@ export class RealtimeKnowledgeIntegrator {
     return Array.from(this.sourceRegistry.values()).slice(0, 3);
   }
 
-  private async searchAcrossSources(query: KnowledgeQuery, sources: KnowledgeSource[]): Promise<any[]> {
+  private async searchAcrossSources(
+    query: KnowledgeQuery,
+    sources: KnowledgeSource[]
+  ): Promise<any[]> {
     return []; // Simplified implementation
   }
 
@@ -620,18 +631,24 @@ export class RealtimeKnowledgeIntegrator {
   }
 
   // Additional placeholder methods for the comprehensive implementation
-  private async identifyEnhancementOpportunities(baseKnowledge: any, focusAreas: string[]): Promise<any> {
+  private async identifyEnhancementOpportunities(
+    baseKnowledge: any,
+    focusAreas: string[]
+  ): Promise<any> {
     return {};
   }
 
-  private async createResearchStrategy(opportunities: any, urgency: string): Promise<ResearchStrategy> {
+  private async createResearchStrategy(
+    opportunities: any,
+    urgency: string
+  ): Promise<ResearchStrategy> {
     return {
       primarySources: [],
       secondarySources: [],
       searchQueries: [],
       verificationMethods: [],
       synthesisApproach: 'comprehensive',
-      qualityFilters: []
+      qualityFilters: [],
     };
   }
 
@@ -647,32 +664,38 @@ export class RealtimeKnowledgeIntegrator {
     return {
       isCurrent: true,
       reasons: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
   private async decomposeResearchQuestion(question: string): Promise<string[]> {
-    return question.toLowerCase().split(/\s+/).filter(word => word.length > 3);
+    return question
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 3);
   }
 
-  private async createSearchStrategy(components: string[], constraints?: any): Promise<ResearchStrategy> {
+  private async createSearchStrategy(
+    components: string[],
+    constraints?: any
+  ): Promise<ResearchStrategy> {
     return {
       primarySources: Array.from(this.sourceRegistry.values()).slice(0, 2),
       secondarySources: Array.from(this.sourceRegistry.values()).slice(2),
-      searchQueries: components.map(comp => ({
+      searchQueries: components.map((comp) => ({
         terms: [comp],
         operators: ['AND'],
         filters: [],
-        expectedResults: 10
+        expectedResults: 10,
       })),
       verificationMethods: [],
       synthesisApproach: 'analytical',
-      qualityFilters: []
+      qualityFilters: [],
     };
   }
 
   private async filterAndRankResults(results: any[], threshold: number): Promise<any[]> {
-    return results.filter(r => (r.relevance || 0.5) >= threshold);
+    return results.filter((r) => (r.relevance || 0.5) >= threshold);
   }
 
   private createQueryFromQuestion(question: string, constraints?: any): KnowledgeQuery {
@@ -684,56 +707,72 @@ export class RealtimeKnowledgeIntegrator {
       reliabilityThreshold: constraints?.qualityThreshold || 0.7,
       maxSources: constraints?.maxSources || 10,
       timeLimit: constraints?.timeLimit || 60000,
-      contextualFilters: []
+      contextualFilters: [],
     };
   }
 
   private calculateOverallConfidence(results: any[]): number {
     if (results.length === 0) return 0.1;
-    const avgConfidence = results.reduce((sum, r) => sum + (r.confidence || 0.5), 0) / results.length;
+    const avgConfidence =
+      results.reduce((sum, r) => sum + (r.confidence || 0.5), 0) / results.length;
     return Math.min(avgConfidence * (results.length / 10), 0.95);
   }
 
-  private async identifyKnowledgeGaps(components: string[], results: any[]): Promise<KnowledgeGap[]> {
+  private async identifyKnowledgeGaps(
+    components: string[],
+    results: any[]
+  ): Promise<KnowledgeGap[]> {
     return [];
   }
 
-  private async generateResearchRecommendations(results: any[], components: string[]): Promise<string[]> {
-    return ['Expand search terms', 'Include more recent sources', 'Verify claims across multiple sources'];
+  private async generateResearchRecommendations(
+    results: any[],
+    components: string[]
+  ): Promise<string[]> {
+    return [
+      'Expand search terms',
+      'Include more recent sources',
+      'Verify claims across multiple sources',
+    ];
   }
 
   private assessSearchCompleteness(results: any[]): number {
     return Math.min(results.length / 20, 1.0);
   }
 
-  private async performSpecializedSearch(source: KnowledgeSource, query: SearchQuery): Promise<any[]> {
+  private async performSpecializedSearch(
+    source: KnowledgeSource,
+    query: SearchQuery
+  ): Promise<any[]> {
     return []; // Would implement specialized search logic for different source types
   }
 
   private applyQualityFilters(results: any[], source: KnowledgeSource): any[] {
-    return results.filter(r => (r.authority || source.authority) >= 0.5);
+    return results.filter((r) => (r.authority || source.authority) >= 0.5);
   }
 }
 
 export class RateLimitManager {
   public async canMakeRequest(source: KnowledgeSource): Promise<boolean> {
     if (!source.rateLimits) return true;
-    
+
     const now = new Date();
     const usage = source.rateLimits.currentUsage;
-    
+
     // Reset counters if needed
     this.resetCountersIfNeeded(usage, now);
-    
+
     // Check limits
-    return usage.minute < source.rateLimits.requestsPerMinute &&
-           usage.hour < source.rateLimits.requestsPerHour &&
-           usage.day < source.rateLimits.requestsPerDay;
+    return (
+      usage.minute < source.rateLimits.requestsPerMinute &&
+      usage.hour < source.rateLimits.requestsPerHour &&
+      usage.day < source.rateLimits.requestsPerDay
+    );
   }
 
   public async recordRequest(source: KnowledgeSource): Promise<void> {
     if (!source.rateLimits) return;
-    
+
     const usage = source.rateLimits.currentUsage;
     usage.minute++;
     usage.hour++;
@@ -742,16 +781,19 @@ export class RateLimitManager {
 
   private resetCountersIfNeeded(usage: UsageStats, now: Date): void {
     const timeSinceReset = now.getTime() - usage.lastReset.getTime();
-    
-    if (timeSinceReset >= 24 * 60 * 60 * 1000) { // 1 day
+
+    if (timeSinceReset >= 24 * 60 * 60 * 1000) {
+      // 1 day
       usage.day = 0;
       usage.hour = 0;
       usage.minute = 0;
       usage.lastReset = now;
-    } else if (timeSinceReset >= 60 * 60 * 1000) { // 1 hour
+    } else if (timeSinceReset >= 60 * 60 * 1000) {
+      // 1 hour
       usage.hour = 0;
       usage.minute = 0;
-    } else if (timeSinceReset >= 60 * 1000) { // 1 minute
+    } else if (timeSinceReset >= 60 * 1000) {
+      // 1 minute
       usage.minute = 0;
     }
   }
@@ -759,10 +801,10 @@ export class RateLimitManager {
 
 export class VerificationEngine {
   public async verify(results: any[]): Promise<any[]> {
-    return results.map(result => ({
+    return results.map((result) => ({
       ...result,
       verified: true,
-      verificationScore: 0.8
+      verificationScore: 0.8,
     }));
   }
 }
@@ -776,7 +818,7 @@ export class SynthesisEngine {
       trends: [],
       expertOpinions: [],
       practicalApplications: [],
-      futureDirections: []
+      futureDirections: [],
     };
   }
 }

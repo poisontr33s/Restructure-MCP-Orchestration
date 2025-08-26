@@ -11,7 +11,6 @@ What it does:
 
 ## Tasks
 
-
 - Logs: Ingest Session Logs — builds dataset under `docs/session-log/dataset/`
 - Logs: Triage + Autofix — runs Prettier/ESLint on targeted files, prunes redundant logs
 - Logs: Ingest -> Triage -> Snapshot — end-to-end including a daily snapshot entry

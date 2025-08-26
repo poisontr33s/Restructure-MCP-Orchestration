@@ -2,11 +2,11 @@
 
 /**
  * Cross-Session Learning and Pattern Transfer System
- * 
+ *
  * Implements sophisticated transfer learning mechanisms that preserve and apply
  * knowledge across different sessions, creating a persistent learning agent that
  * continuously improves.
- * 
+ *
  * Part of the Meta-Learning Framework - enables "wet-paper" isolated sessions
  * to become "gold" interconnected learning experiences.
  */
@@ -45,7 +45,12 @@ interface SessionContext {
 
 interface SessionPattern {
   pattern_id: string;
-  pattern_type: 'prompt_structure' | 'provider_preference' | 'optimization_preference' | 'error_recovery' | 'workflow';
+  pattern_type:
+    | 'prompt_structure'
+    | 'provider_preference'
+    | 'optimization_preference'
+    | 'error_recovery'
+    | 'workflow';
   pattern_data: Record<string, any>;
   confidence: number;
   frequency: number;
@@ -82,7 +87,11 @@ interface TransferContribution {
   contribution_id: string;
   source_session: string;
   target_pattern: string;
-  transfer_type: 'direct_application' | 'pattern_adaptation' | 'negative_learning' | 'meta_strategy';
+  transfer_type:
+    | 'direct_application'
+    | 'pattern_adaptation'
+    | 'negative_learning'
+    | 'meta_strategy';
   confidence: number;
   impact_score: number;
   validation_results: ValidationResult[];
@@ -99,7 +108,11 @@ interface ValidationResult {
 
 interface MetaInsight {
   insight_id: string;
-  insight_type: 'optimization_discovery' | 'pattern_generalization' | 'cross_domain_transfer' | 'failure_analysis';
+  insight_type:
+    | 'optimization_discovery'
+    | 'pattern_generalization'
+    | 'cross_domain_transfer'
+    | 'failure_analysis';
   insight_data: Record<string, any>;
   confidence: number;
   applicability_scope: string[];
@@ -128,7 +141,13 @@ interface KnowledgeEdge {
   edge_id: string;
   source_node: string;
   target_node: string;
-  relationship_type: 'causes' | 'improves' | 'contradicts' | 'generalizes' | 'specializes' | 'correlates';
+  relationship_type:
+    | 'causes'
+    | 'improves'
+    | 'contradicts'
+    | 'generalizes'
+    | 'specializes'
+    | 'correlates';
   strength: number;
   confidence: number;
   context_constraints: string[];
@@ -163,7 +182,7 @@ class CrossSessionLearningEngine {
       edges: new Map(),
       clusters: new Map(),
       version: '1.0',
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
     this.initializeTransferRules();
   }
@@ -173,15 +192,11 @@ class CrossSessionLearningEngine {
     this.transferRules.set('provider_performance_transfer', {
       rule_id: 'provider_performance_transfer',
       rule_type: 'performance_optimization',
-      applicability_conditions: [
-        'similar_prompt_type',
-        'similar_complexity_level',
-        'same_domain'
-      ],
+      applicability_conditions: ['similar_prompt_type', 'similar_complexity_level', 'same_domain'],
       transfer_function: this.transferProviderPerformance.bind(this),
       confidence_threshold: 0.7,
       impact_weight: 0.8,
-      validation_required: true
+      validation_required: true,
     });
 
     // Configuration Optimization Transfer Rule
@@ -191,12 +206,12 @@ class CrossSessionLearningEngine {
       applicability_conditions: [
         'similar_user_behavior',
         'similar_session_context',
-        'proven_effectiveness'
+        'proven_effectiveness',
       ],
       transfer_function: this.transferConfigurationOptimizations.bind(this),
       confidence_threshold: 0.6,
       impact_weight: 0.7,
-      validation_required: false
+      validation_required: false,
     });
 
     // Error Recovery Transfer Rule
@@ -206,12 +221,12 @@ class CrossSessionLearningEngine {
       applicability_conditions: [
         'similar_error_pattern',
         'successful_resolution',
-        'context_compatibility'
+        'context_compatibility',
       ],
       transfer_function: this.transferErrorRecoveryPatterns.bind(this),
       confidence_threshold: 0.8,
       impact_weight: 0.9,
-      validation_required: true
+      validation_required: true,
     });
 
     // Workflow Optimization Transfer Rule
@@ -221,12 +236,12 @@ class CrossSessionLearningEngine {
       applicability_conditions: [
         'similar_task_sequence',
         'similar_user_goals',
-        'context_transferability'
+        'context_transferability',
       ],
       transfer_function: this.transferWorkflowOptimizations.bind(this),
       confidence_threshold: 0.65,
       impact_weight: 0.75,
-      validation_required: false
+      validation_required: false,
     });
 
     // Meta-Strategy Transfer Rule
@@ -236,12 +251,12 @@ class CrossSessionLearningEngine {
       applicability_conditions: [
         'cross_domain_applicability',
         'high_generalization_potential',
-        'validated_effectiveness'
+        'validated_effectiveness',
       ],
       transfer_function: this.transferMetaStrategies.bind(this),
       confidence_threshold: 0.75,
       impact_weight: 0.85,
-      validation_required: true
+      validation_required: true,
     });
   }
 
@@ -251,7 +266,7 @@ class CrossSessionLearningEngine {
       const graphPath = path.join(this.dataDirectory, 'knowledge-graph.json');
       const graphData = await fs.readFile(graphPath, 'utf-8');
       const parsedGraph = JSON.parse(graphData);
-      
+
       this.knowledgeGraph.nodes = new Map(Object.entries(parsedGraph.nodes || {}));
       this.knowledgeGraph.edges = new Map(Object.entries(parsedGraph.edges || {}));
       this.knowledgeGraph.clusters = new Map(Object.entries(parsedGraph.clusters || {}));
@@ -262,10 +277,12 @@ class CrossSessionLearningEngine {
       const sessionsPath = path.join(this.dataDirectory, 'sessions-history.json');
       const sessionsData = await fs.readFile(sessionsPath, 'utf-8');
       const parsedSessions = JSON.parse(sessionsData);
-      
+
       this.sessionsHistory = new Map(Object.entries(parsedSessions || {}));
 
-      console.log(`📚 Loaded knowledge base: ${this.knowledgeGraph.nodes.size} nodes, ${this.knowledgeGraph.edges.size} edges, ${this.sessionsHistory.size} sessions`);
+      console.log(
+        `📚 Loaded knowledge base: ${this.knowledgeGraph.nodes.size} nodes, ${this.knowledgeGraph.edges.size} edges, ${this.sessionsHistory.size} sessions`
+      );
     } catch (error) {
       console.log('🆕 Initializing new knowledge base (no previous data found)');
       await this.initializeEmptyKnowledgeBase();
@@ -275,7 +292,7 @@ class CrossSessionLearningEngine {
   private async initializeEmptyKnowledgeBase(): Promise<void> {
     // Create directory if it doesn't exist
     await fs.mkdir(this.dataDirectory, { recursive: true });
-    
+
     // Initialize with some baseline knowledge nodes
     const baselineNodes = [
       {
@@ -285,7 +302,7 @@ class CrossSessionLearningEngine {
         connections: [],
         activation_score: 0.8,
         trust_score: 0.9,
-        update_frequency: 0
+        update_frequency: 0,
       },
       {
         node_id: 'token_efficiency_optimization',
@@ -294,7 +311,7 @@ class CrossSessionLearningEngine {
         connections: [],
         activation_score: 0.7,
         trust_score: 0.8,
-        update_frequency: 0
+        update_frequency: 0,
       },
       {
         node_id: 'provider_fallback_strategy',
@@ -303,11 +320,11 @@ class CrossSessionLearningEngine {
         connections: [],
         activation_score: 0.9,
         trust_score: 0.95,
-        update_frequency: 0
-      }
+        update_frequency: 0,
+      },
     ];
 
-    baselineNodes.forEach(node => {
+    baselineNodes.forEach((node) => {
       this.knowledgeGraph.nodes.set(node.node_id, node as KnowledgeNode);
     });
 
@@ -324,17 +341,17 @@ class CrossSessionLearningEngine {
         edges: Object.fromEntries(this.knowledgeGraph.edges),
         clusters: Object.fromEntries(this.knowledgeGraph.clusters),
         version: this.knowledgeGraph.version,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
-      
+
       const graphPath = path.join(this.dataDirectory, 'knowledge-graph.json');
       await fs.writeFile(graphPath, JSON.stringify(graphData, null, 2));
 
       // Save sessions history (keep only recent sessions)
       const recentSessions = Array.from(this.sessionsHistory.entries())
-        .sort(([,a], [,b]) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
+        .sort(([, a], [, b]) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
         .slice(0, this.maxSessionsHistory);
-      
+
       const sessionsData = Object.fromEntries(recentSessions);
       const sessionsPath = path.join(this.dataDirectory, 'sessions-history.json');
       await fs.writeFile(sessionsPath, JSON.stringify(sessionsData, null, 2));
@@ -345,7 +362,10 @@ class CrossSessionLearningEngine {
     }
   }
 
-  async startSession(sessionId: string, context: Partial<SessionContext>): Promise<LearningSession> {
+  async startSession(
+    sessionId: string,
+    context: Partial<SessionContext>
+  ): Promise<LearningSession> {
     const session: LearningSession = {
       session_id: sessionId,
       start_time: new Date().toISOString(),
@@ -358,21 +378,21 @@ class CrossSessionLearningEngine {
           platform: process.platform,
           ide_mode: false,
           time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          locale: 'en-US'
+          locale: 'en-US',
         },
-        ...context
+        ...context,
       },
       patterns: [],
       outcomes: [],
       transfer_contributions: [],
-      meta_insights: []
+      meta_insights: [],
     };
 
     this.sessionsHistory.set(sessionId, session);
-    
+
     // Apply cross-session learning immediately
     await this.applyTransferLearning(session);
-    
+
     console.log(`🔄 Started learning session: ${sessionId}`);
     return session;
   }
@@ -391,19 +411,21 @@ class CrossSessionLearningEngine {
 
     // Extract and consolidate learning from this session
     await this.extractSessionLearning(session);
-    
+
     // Update knowledge graph
     await this.updateKnowledgeGraph(session);
-    
+
     // Save all learned knowledge
     await this.saveKnowledgeBase();
-    
-    console.log(`✅ Ended learning session: ${sessionId}, extracted ${session.patterns.length} patterns`);
+
+    console.log(
+      `✅ Ended learning session: ${sessionId}, extracted ${session.patterns.length} patterns`
+    );
   }
 
   async applyTransferLearning(session: LearningSession): Promise<TransferContribution[]> {
     const contributions: TransferContribution[] = [];
-    
+
     // Find applicable transfer rules
     for (const [ruleId, rule] of this.transferRules.entries()) {
       if (this.evaluateRuleApplicability(rule, session)) {
@@ -412,7 +434,7 @@ class CrossSessionLearningEngine {
           if (contribution && contribution.confidence >= rule.confidence_threshold) {
             contributions.push(contribution);
             session.transfer_contributions.push(contribution);
-            
+
             // Schedule validation if required
             if (rule.validation_required) {
               this.scheduleValidation(contribution, session);
@@ -424,7 +446,9 @@ class CrossSessionLearningEngine {
       }
     }
 
-    console.log(`🔄 Applied ${contributions.length} transfer learning contributions to session ${session.session_id}`);
+    console.log(
+      `🔄 Applied ${contributions.length} transfer learning contributions to session ${session.session_id}`
+    );
     return contributions;
   }
 
@@ -476,20 +500,29 @@ class CrossSessionLearningEngine {
   }
 
   // Transfer rule implementations
-  private async transferProviderPerformance(session: LearningSession): Promise<TransferContribution | null> {
+  private async transferProviderPerformance(
+    session: LearningSession
+  ): Promise<TransferContribution | null> {
     const similarSessions = this.findSimilarSessions(session, ['domain_focus', 'primary_model']);
     if (similarSessions.length === 0) return null;
 
     // Aggregate provider performance data
-    const providerPerformance: Record<string, { success_rate: number; avg_response_time: number; quality_score: number }> = {};
-    
-    similarSessions.forEach(similarSession => {
-      similarSession.outcomes.forEach(outcome => {
+    const providerPerformance: Record<
+      string,
+      { success_rate: number; avg_response_time: number; quality_score: number }
+    > = {};
+
+    similarSessions.forEach((similarSession) => {
+      similarSession.outcomes.forEach((outcome) => {
         if (outcome.technical_metrics.provider_success_rate) {
           // Extract provider from outcome context (would need to be tracked)
           const provider = 'inferred_provider'; // Placeholder
           if (!providerPerformance[provider]) {
-            providerPerformance[provider] = { success_rate: 0, avg_response_time: 0, quality_score: 0 };
+            providerPerformance[provider] = {
+              success_rate: 0,
+              avg_response_time: 0,
+              quality_score: 0,
+            };
           }
           // Aggregate metrics
         }
@@ -503,17 +536,19 @@ class CrossSessionLearningEngine {
       transfer_type: 'direct_application',
       confidence: 0.8,
       impact_score: 0.7,
-      validation_results: []
+      validation_results: [],
     };
   }
 
-  private async transferConfigurationOptimizations(session: LearningSession): Promise<TransferContribution | null> {
+  private async transferConfigurationOptimizations(
+    session: LearningSession
+  ): Promise<TransferContribution | null> {
     const patterns = this.findOptimizationPatterns(session);
     if (patterns.length === 0) return null;
 
     // Find most effective configuration patterns
     const effectivePatterns = patterns
-      .filter(p => p.effectiveness_score > 0.7)
+      .filter((p) => p.effectiveness_score > 0.7)
       .sort((a, b) => b.effectiveness_score - a.effectiveness_score);
 
     if (effectivePatterns.length === 0) return null;
@@ -525,15 +560,17 @@ class CrossSessionLearningEngine {
       transfer_type: 'pattern_adaptation',
       confidence: Math.min(0.9, effectivePatterns[0].effectiveness_score),
       impact_score: 0.75,
-      validation_results: []
+      validation_results: [],
     };
   }
 
-  private async transferErrorRecoveryPatterns(session: LearningSession): Promise<TransferContribution | null> {
+  private async transferErrorRecoveryPatterns(
+    session: LearningSession
+  ): Promise<TransferContribution | null> {
     const errorPatterns = this.findErrorRecoveryPatterns(session);
     if (errorPatterns.length === 0) return null;
 
-    const successfulPatterns = errorPatterns.filter(p => p.effectiveness_score > 0.8);
+    const successfulPatterns = errorPatterns.filter((p) => p.effectiveness_score > 0.8);
     if (successfulPatterns.length === 0) return null;
 
     return {
@@ -543,11 +580,13 @@ class CrossSessionLearningEngine {
       transfer_type: 'direct_application',
       confidence: 0.85,
       impact_score: 0.9,
-      validation_results: []
+      validation_results: [],
     };
   }
 
-  private async transferWorkflowOptimizations(session: LearningSession): Promise<TransferContribution | null> {
+  private async transferWorkflowOptimizations(
+    session: LearningSession
+  ): Promise<TransferContribution | null> {
     const workflowPatterns = this.findWorkflowPatterns(session);
     if (workflowPatterns.length === 0) return null;
 
@@ -558,15 +597,17 @@ class CrossSessionLearningEngine {
       transfer_type: 'pattern_adaptation',
       confidence: 0.7,
       impact_score: 0.75,
-      validation_results: []
+      validation_results: [],
     };
   }
 
-  private async transferMetaStrategies(session: LearningSession): Promise<TransferContribution | null> {
+  private async transferMetaStrategies(
+    session: LearningSession
+  ): Promise<TransferContribution | null> {
     const metaStrategies = this.findMetaStrategies(session);
     if (metaStrategies.length === 0) return null;
 
-    const highImpactStrategies = metaStrategies.filter(s => s.impact_score > 0.8);
+    const highImpactStrategies = metaStrategies.filter((s) => s.impact_score > 0.8);
     if (highImpactStrategies.length === 0) return null;
 
     return {
@@ -576,7 +617,7 @@ class CrossSessionLearningEngine {
       transfer_type: 'meta_strategy',
       confidence: 0.8,
       impact_score: 0.85,
-      validation_results: []
+      validation_results: [],
     };
   }
 
@@ -591,8 +632,9 @@ class CrossSessionLearningEngine {
   }
 
   private hasSameDomain(session: LearningSession): boolean {
-    const sameDomainSessions = Array.from(this.sessionsHistory.values())
-      .filter(s => s.context.domain_focus === session.context.domain_focus);
+    const sameDomainSessions = Array.from(this.sessionsHistory.values()).filter(
+      (s) => s.context.domain_focus === session.context.domain_focus
+    );
     return sameDomainSessions.length > 0;
   }
 
@@ -606,8 +648,9 @@ class CrossSessionLearningEngine {
   }
 
   private hasProvenEffectiveness(session: LearningSession): boolean {
-    return Array.from(this.sessionsHistory.values())
-      .some(s => s.outcomes.some(o => o.user_satisfaction > 0.8));
+    return Array.from(this.sessionsHistory.values()).some((s) =>
+      s.outcomes.some((o) => o.user_satisfaction > 0.8)
+    );
   }
 
   private hasSimilarErrorPatterns(session: LearningSession): boolean {
@@ -615,8 +658,9 @@ class CrossSessionLearningEngine {
   }
 
   private hasSuccessfulResolutions(session: LearningSession): boolean {
-    return Array.from(this.sessionsHistory.values())
-      .some(s => s.outcomes.some(o => o.technical_metrics.error_recovery_success));
+    return Array.from(this.sessionsHistory.values()).some((s) =>
+      s.outcomes.some((o) => o.technical_metrics.error_recovery_success)
+    );
   }
 
   private hasContextCompatibility(session: LearningSession): boolean {
@@ -644,15 +688,15 @@ class CrossSessionLearningEngine {
   }
 
   private hasValidatedEffectiveness(session: LearningSession): boolean {
-    return this.validationQueue.some(v => v.validation_status === 'validated_successful');
+    return this.validationQueue.some((v) => v.validation_status === 'validated_successful');
   }
 
   // Pattern finding methods
   private findSimilarSessions(session: LearningSession, contextKeys: string[]): LearningSession[] {
-    return Array.from(this.sessionsHistory.values()).filter(s => {
+    return Array.from(this.sessionsHistory.values()).filter((s) => {
       if (s.session_id === session.session_id) return false;
-      
-      return contextKeys.every(key => {
+
+      return contextKeys.every((key) => {
         const sessionValue = this.getNestedValue(session.context, key);
         const otherValue = this.getNestedValue(s.context, key);
         return sessionValue === otherValue;
@@ -662,39 +706,39 @@ class CrossSessionLearningEngine {
 
   private findOptimizationPatterns(session: LearningSession): SessionPattern[] {
     const allPatterns: SessionPattern[] = [];
-    
-    this.sessionsHistory.forEach(s => {
-      allPatterns.push(...s.patterns.filter(p => p.pattern_type === 'optimization_preference'));
+
+    this.sessionsHistory.forEach((s) => {
+      allPatterns.push(...s.patterns.filter((p) => p.pattern_type === 'optimization_preference'));
     });
-    
+
     return allPatterns;
   }
 
   private findErrorRecoveryPatterns(session: LearningSession): SessionPattern[] {
     const allPatterns: SessionPattern[] = [];
-    
-    this.sessionsHistory.forEach(s => {
-      allPatterns.push(...s.patterns.filter(p => p.pattern_type === 'error_recovery'));
+
+    this.sessionsHistory.forEach((s) => {
+      allPatterns.push(...s.patterns.filter((p) => p.pattern_type === 'error_recovery'));
     });
-    
+
     return allPatterns;
   }
 
   private findWorkflowPatterns(session: LearningSession): SessionPattern[] {
     const allPatterns: SessionPattern[] = [];
-    
-    this.sessionsHistory.forEach(s => {
-      allPatterns.push(...s.patterns.filter(p => p.pattern_type === 'workflow'));
+
+    this.sessionsHistory.forEach((s) => {
+      allPatterns.push(...s.patterns.filter((p) => p.pattern_type === 'workflow'));
     });
-    
+
     return allPatterns;
   }
 
   private findMetaStrategies(session: LearningSession): Array<{ impact_score: number }> {
     // Find high-level strategies that generalize across domains
     return Array.from(this.knowledgeGraph.nodes.values())
-      .filter(node => node.node_type === 'strategy' && node.trust_score > 0.8)
-      .map(node => ({ impact_score: node.activation_score }));
+      .filter((node) => node.node_type === 'strategy' && node.trust_score > 0.8)
+      .map((node) => ({ impact_score: node.activation_score }));
   }
 
   private getNestedValue(obj: any, key: string): any {
@@ -710,12 +754,14 @@ class CrossSessionLearningEngine {
     const insights = this.generateMetaInsights(session);
     session.meta_insights.push(...insights);
 
-    console.log(`🔍 Extracted ${patterns.length} patterns and ${insights.length} insights from session ${session.session_id}`);
+    console.log(
+      `🔍 Extracted ${patterns.length} patterns and ${insights.length} insights from session ${session.session_id}`
+    );
   }
 
   private extractPatternsFromOutcomes(session: LearningSession): SessionPattern[] {
     const patterns: SessionPattern[] = [];
-    
+
     if (session.outcomes.length === 0) return patterns;
 
     // Analyze provider preferences
@@ -735,9 +781,12 @@ class CrossSessionLearningEngine {
 
   private analyzeProviderPreferences(session: LearningSession): SessionPattern | null {
     // Analyze which providers were most successful
-    const providerStats: Record<string, { success_count: number; total_count: number; avg_satisfaction: number }> = {};
-    
-    session.outcomes.forEach(outcome => {
+    const providerStats: Record<
+      string,
+      { success_count: number; total_count: number; avg_satisfaction: number }
+    > = {};
+
+    session.outcomes.forEach((outcome) => {
       // Would need provider info in outcome data
       const provider = 'inferred_provider'; // Placeholder
       if (!providerStats[provider]) {
@@ -751,12 +800,13 @@ class CrossSessionLearningEngine {
     });
 
     // Calculate effectiveness scores
-    Object.values(providerStats).forEach(stats => {
+    Object.values(providerStats).forEach((stats) => {
       stats.avg_satisfaction /= stats.total_count;
     });
 
-    const bestProvider = Object.entries(providerStats)
-      .sort(([,a], [,b]) => (b.success_count / b.total_count) - (a.success_count / a.total_count))[0];
+    const bestProvider = Object.entries(providerStats).sort(
+      ([, a], [, b]) => b.success_count / b.total_count - a.success_count / a.total_count
+    )[0];
 
     if (!bestProvider || bestProvider[1].success_count / bestProvider[1].total_count < 0.6) {
       return null;
@@ -768,12 +818,12 @@ class CrossSessionLearningEngine {
       pattern_data: {
         preferred_provider: bestProvider[0],
         success_rate: bestProvider[1].success_count / bestProvider[1].total_count,
-        avg_satisfaction: bestProvider[1].avg_satisfaction
+        avg_satisfaction: bestProvider[1].avg_satisfaction,
       },
       confidence: 0.8,
       frequency: bestProvider[1].total_count,
       effectiveness_score: bestProvider[1].success_count / bestProvider[1].total_count,
-      context_tags: [session.context.domain_focus, session.context.primary_model]
+      context_tags: [session.context.domain_focus, session.context.primary_model],
     };
   }
 
@@ -785,12 +835,12 @@ class CrossSessionLearningEngine {
       pattern_data: {
         preferred_temperature: 0.7, // Would be calculated from actual data
         preferred_tokens: 2048,
-        preferred_streaming: true
+        preferred_streaming: true,
       },
       confidence: 0.7,
       frequency: session.outcomes.length,
       effectiveness_score: 0.75,
-      context_tags: [session.context.domain_focus]
+      context_tags: [session.context.domain_focus],
     };
   }
 
@@ -802,12 +852,12 @@ class CrossSessionLearningEngine {
       pattern_data: {
         effective_sequences: ['prompt_analysis', 'provider_selection', 'optimization_application'],
         avg_sequence_length: 3,
-        success_rate: 0.8
+        success_rate: 0.8,
       },
       confidence: 0.75,
       frequency: Math.floor(session.outcomes.length / 3),
       effectiveness_score: 0.8,
-      context_tags: [session.context.domain_focus, 'workflow_optimization']
+      context_tags: [session.context.domain_focus, 'workflow_optimization'],
     };
   }
 
@@ -815,17 +865,17 @@ class CrossSessionLearningEngine {
     const insights: MetaInsight[] = [];
 
     // Generate optimization discovery insights
-    if (session.outcomes.some(o => o.user_satisfaction > 0.9)) {
+    if (session.outcomes.some((o) => o.user_satisfaction > 0.9)) {
       insights.push({
         insight_id: this.generateId('insight'),
         insight_type: 'optimization_discovery',
         insight_data: {
           high_satisfaction_factors: this.identifyHighSatisfactionFactors(session),
-          optimization_potential: 0.85
+          optimization_potential: 0.85,
         },
         confidence: 0.8,
         applicability_scope: [session.context.domain_focus, 'high_quality_responses'],
-        evidence_strength: 0.9
+        evidence_strength: 0.9,
       });
     }
 
@@ -835,12 +885,12 @@ class CrossSessionLearningEngine {
         insight_id: this.generateId('insight'),
         insight_type: 'pattern_generalization',
         insight_data: {
-          generalizable_patterns: session.patterns.map(p => p.pattern_type),
-          cross_domain_potential: 0.7
+          generalizable_patterns: session.patterns.map((p) => p.pattern_type),
+          cross_domain_potential: 0.7,
         },
         confidence: 0.75,
         applicability_scope: ['cross_domain', 'pattern_transfer'],
-        evidence_strength: 0.8
+        evidence_strength: 0.8,
       });
     }
 
@@ -848,23 +898,33 @@ class CrossSessionLearningEngine {
   }
 
   private identifyHighSatisfactionFactors(session: LearningSession): Record<string, any> {
-    const highSatisfactionOutcomes = session.outcomes.filter(o => o.user_satisfaction > 0.9);
-    
+    const highSatisfactionOutcomes = session.outcomes.filter((o) => o.user_satisfaction > 0.9);
+
     // Analyze common factors in high satisfaction outcomes
     return {
-      avg_response_time: highSatisfactionOutcomes.reduce((sum, o) => sum + o.technical_metrics.response_time_ms, 0) / highSatisfactionOutcomes.length,
+      avg_response_time:
+        highSatisfactionOutcomes.reduce((sum, o) => sum + o.technical_metrics.response_time_ms, 0) /
+        highSatisfactionOutcomes.length,
       avg_quality_scores: {
-        accuracy: highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.accuracy, 0) / highSatisfactionOutcomes.length,
-        relevance: highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.relevance, 0) / highSatisfactionOutcomes.length,
-        creativity: highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.creativity, 0) / highSatisfactionOutcomes.length
+        accuracy:
+          highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.accuracy, 0) /
+          highSatisfactionOutcomes.length,
+        relevance:
+          highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.relevance, 0) /
+          highSatisfactionOutcomes.length,
+        creativity:
+          highSatisfactionOutcomes.reduce((sum, o) => sum + o.response_quality.creativity, 0) /
+          highSatisfactionOutcomes.length,
       },
-      common_domains: [...new Set(highSatisfactionOutcomes.map(o => o.input_characteristics.domain))]
+      common_domains: [
+        ...new Set(highSatisfactionOutcomes.map((o) => o.input_characteristics.domain)),
+      ],
     };
   }
 
   private async updateKnowledgeGraph(session: LearningSession): Promise<void> {
     // Add session patterns as nodes
-    session.patterns.forEach(pattern => {
+    session.patterns.forEach((pattern) => {
       const node: KnowledgeNode = {
         node_id: pattern.pattern_id,
         node_type: 'pattern',
@@ -872,13 +932,13 @@ class CrossSessionLearningEngine {
         connections: [],
         activation_score: pattern.effectiveness_score,
         trust_score: pattern.confidence,
-        update_frequency: 1
+        update_frequency: 1,
       };
       this.knowledgeGraph.nodes.set(pattern.pattern_id, node);
     });
 
     // Add meta-insights as nodes
-    session.meta_insights.forEach(insight => {
+    session.meta_insights.forEach((insight) => {
       const node: KnowledgeNode = {
         node_id: insight.insight_id,
         node_type: 'insight',
@@ -886,7 +946,7 @@ class CrossSessionLearningEngine {
         connections: [],
         activation_score: insight.confidence,
         trust_score: insight.evidence_strength,
-        update_frequency: 1
+        update_frequency: 1,
       };
       this.knowledgeGraph.nodes.set(insight.insight_id, node);
     });
@@ -902,8 +962,8 @@ class CrossSessionLearningEngine {
 
   private createKnowledgeEdges(session: LearningSession): void {
     // Create edges between patterns and insights
-    session.patterns.forEach(pattern => {
-      session.meta_insights.forEach(insight => {
+    session.patterns.forEach((pattern) => {
+      session.meta_insights.forEach((insight) => {
         if (this.areRelated(pattern, insight)) {
           const edge: KnowledgeEdge = {
             edge_id: this.generateId('edge'),
@@ -912,7 +972,7 @@ class CrossSessionLearningEngine {
             relationship_type: 'improves',
             strength: 0.7,
             confidence: Math.min(pattern.confidence, insight.confidence),
-            context_constraints: pattern.context_tags
+            context_constraints: pattern.context_tags,
           };
           this.knowledgeGraph.edges.set(edge.edge_id, edge);
         }
@@ -922,19 +982,19 @@ class CrossSessionLearningEngine {
 
   private areRelated(pattern: SessionPattern, insight: MetaInsight): boolean {
     // Check if pattern and insight are related
-    return pattern.context_tags.some(tag => insight.applicability_scope.includes(tag));
+    return pattern.context_tags.some((tag) => insight.applicability_scope.includes(tag));
   }
 
   private async updateKnowledgeClusters(): Promise<void> {
     // Simple clustering based on node types and relationships
     const domainClusters = this.clusterByDomain();
     const strategyClusters = this.clusterByStrategy();
-    
-    domainClusters.forEach(cluster => {
+
+    domainClusters.forEach((cluster) => {
       this.knowledgeGraph.clusters.set(cluster.cluster_id, cluster);
     });
-    
-    strategyClusters.forEach(cluster => {
+
+    strategyClusters.forEach((cluster) => {
       this.knowledgeGraph.clusters.set(cluster.cluster_id, cluster);
     });
   }
@@ -942,7 +1002,7 @@ class CrossSessionLearningEngine {
   private clusterByDomain(): KnowledgeCluster[] {
     const clusters: KnowledgeCluster[] = [];
     const domainNodes: Record<string, string[]> = {};
-    
+
     this.knowledgeGraph.nodes.forEach((node, nodeId) => {
       if (node.node_type === 'pattern') {
         const domain = node.data.domain || 'general';
@@ -950,7 +1010,7 @@ class CrossSessionLearningEngine {
         domainNodes[domain].push(nodeId);
       }
     });
-    
+
     Object.entries(domainNodes).forEach(([domain, nodes]) => {
       if (nodes.length >= 2) {
         clusters.push({
@@ -959,11 +1019,11 @@ class CrossSessionLearningEngine {
           member_nodes: nodes,
           centroid: { domain, node_count: nodes.length },
           coherence_score: nodes.length >= 5 ? 0.8 : 0.6,
-          stability: 0.7
+          stability: 0.7,
         });
       }
     });
-    
+
     return clusters;
   }
 
@@ -972,7 +1032,7 @@ class CrossSessionLearningEngine {
     const strategyNodes = Array.from(this.knowledgeGraph.nodes.entries())
       .filter(([, node]) => node.node_type === 'strategy')
       .map(([id]) => id);
-    
+
     if (strategyNodes.length >= 3) {
       clusters.push({
         cluster_id: 'optimization_strategies',
@@ -980,10 +1040,10 @@ class CrossSessionLearningEngine {
         member_nodes: strategyNodes,
         centroid: { strategy_type: 'optimization', effectiveness: 0.8 },
         coherence_score: 0.75,
-        stability: 0.8
+        stability: 0.8,
       });
     }
-    
+
     return clusters;
   }
 
@@ -997,10 +1057,10 @@ class CrossSessionLearningEngine {
       validation_status: 'scheduled',
       expected_metrics: {
         improvement_threshold: 0.1,
-        confidence_threshold: 0.7
-      }
+        confidence_threshold: 0.7,
+      },
     };
-    
+
     this.validationQueue.push(validationTask);
   }
 
@@ -1012,7 +1072,9 @@ class CrossSessionLearningEngine {
     }
 
     session.outcomes.push(outcome);
-    console.log(`📊 Recorded outcome for session ${sessionId}: satisfaction ${outcome.user_satisfaction.toFixed(2)}`);
+    console.log(
+      `📊 Recorded outcome for session ${sessionId}: satisfaction ${outcome.user_satisfaction.toFixed(2)}`
+    );
   }
 
   getTransferLearningStats(): Record<string, any> {
@@ -1027,25 +1089,25 @@ class CrossSessionLearningEngine {
       recent_sessions: Array.from(this.sessionsHistory.values())
         .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
         .slice(0, 5)
-        .map(s => ({
+        .map((s) => ({
           session_id: s.session_id,
           domain: s.context.domain_focus,
           patterns_count: s.patterns.length,
           outcomes_count: s.outcomes.length,
-          transfer_contributions: s.transfer_contributions.length
+          transfer_contributions: s.transfer_contributions.length,
         })),
       knowledge_graph_stats: {
         nodes_by_type: this.getNodesByType(),
         edges_by_relationship: this.getEdgesByRelationship(),
         top_trusted_nodes: this.getTopTrustedNodes(5),
-        most_active_clusters: this.getMostActiveClusters(3)
-      }
+        most_active_clusters: this.getMostActiveClusters(3),
+      },
     };
   }
 
   private getNodesByType(): Record<string, number> {
     const counts: Record<string, number> = {};
-    this.knowledgeGraph.nodes.forEach(node => {
+    this.knowledgeGraph.nodes.forEach((node) => {
       counts[node.node_type] = (counts[node.node_type] || 0) + 1;
     });
     return counts;
@@ -1053,31 +1115,35 @@ class CrossSessionLearningEngine {
 
   private getEdgesByRelationship(): Record<string, number> {
     const counts: Record<string, number> = {};
-    this.knowledgeGraph.edges.forEach(edge => {
+    this.knowledgeGraph.edges.forEach((edge) => {
       counts[edge.relationship_type] = (counts[edge.relationship_type] || 0) + 1;
     });
     return counts;
   }
 
-  private getTopTrustedNodes(limit: number): Array<{ node_id: string; trust_score: number; node_type: string }> {
+  private getTopTrustedNodes(
+    limit: number
+  ): Array<{ node_id: string; trust_score: number; node_type: string }> {
     return Array.from(this.knowledgeGraph.nodes.entries())
-      .sort(([,a], [,b]) => b.trust_score - a.trust_score)
+      .sort(([, a], [, b]) => b.trust_score - a.trust_score)
       .slice(0, limit)
       .map(([id, node]) => ({
         node_id: id,
         trust_score: node.trust_score,
-        node_type: node.node_type
+        node_type: node.node_type,
       }));
   }
 
-  private getMostActiveClusters(limit: number): Array<{ cluster_id: string; coherence_score: number; member_count: number }> {
+  private getMostActiveClusters(
+    limit: number
+  ): Array<{ cluster_id: string; coherence_score: number; member_count: number }> {
     return Array.from(this.knowledgeGraph.clusters.entries())
-      .sort(([,a], [,b]) => b.coherence_score - a.coherence_score)
+      .sort(([, a], [, b]) => b.coherence_score - a.coherence_score)
       .slice(0, limit)
       .map(([id, cluster]) => ({
         cluster_id: id,
         coherence_score: cluster.coherence_score,
-        member_count: cluster.member_nodes.length
+        member_count: cluster.member_nodes.length,
       }));
   }
 
@@ -1096,7 +1162,7 @@ class CrossSessionLearningEngine {
     this.knowledgeGraph.clusters.clear();
     this.sessionsHistory.clear();
     this.validationQueue = [];
-    
+
     await this.initializeEmptyKnowledgeBase();
     console.log('🔄 Knowledge base reset to baseline');
   }
@@ -1127,12 +1193,12 @@ interface ValidationTask {
 if (require.main === module) {
   const args = process.argv.slice(2);
   const command = args[0] || 'help';
-  
+
   const engine = new CrossSessionLearningEngine();
-  
+
   async function main() {
     await engine.loadKnowledgeBase();
-    
+
     switch (command) {
       case 'start-session':
         const sessionId = args[1] || `session_${Date.now()}`;
@@ -1140,7 +1206,7 @@ if (require.main === module) {
         const session = await engine.startSession(sessionId, { domain_focus: domain });
         console.log('🔄 Started session:', session.session_id);
         break;
-      
+
       case 'end-session':
         const endSessionId = args[1];
         if (!endSessionId) {
@@ -1149,17 +1215,17 @@ if (require.main === module) {
         }
         await engine.endSession(endSessionId);
         break;
-      
+
       case 'stats':
         const stats = engine.getTransferLearningStats();
         console.log('📊 Cross-Session Learning Statistics:');
         console.log(JSON.stringify(stats, null, 2));
         break;
-      
+
       case 'reset':
         await engine.resetKnowledgeBase();
         break;
-      
+
       default:
         console.log(`
 🧠 Cross-Session Learning Engine v2.0
@@ -1180,11 +1246,17 @@ Examples:
   node cross-session-learning.js stats
         `);
     }
-    
+
     await engine.saveKnowledgeBase();
   }
-  
+
   main().catch(console.error);
 }
 
-export { CrossSessionLearningEngine, LearningSession, SessionPattern, SessionOutcome, TransferContribution };
+export {
+  CrossSessionLearningEngine,
+  LearningSession,
+  SessionPattern,
+  SessionOutcome,
+  TransferContribution,
+};

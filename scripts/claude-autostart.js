@@ -13,12 +13,12 @@ const PRELOAD_CONFIG = {
   sessions: [],
   memory_file: 'AUTO-PRELOAD-CONTEXT.md',
   intelligence_mode: 'maximum',
-  auto_bridge: true
+  auto_bridge: true,
 };
 
 async function startClaudeWithPreload() {
   console.log('🚀 Starting Claude Code with auto-preload...');
-  
+
   // Construct preload command
   const preloadPrompt = `Auto-resumed with preloaded session intelligence:
 
@@ -32,7 +32,7 @@ Continue revolutionary development with full context awareness.`;
   // Start Claude Code with preload context
   const claude = spawn('claude', ['--continue', '--print', preloadPrompt], {
     stdio: 'inherit',
-    cwd: process.cwd()
+    cwd: process.cwd(),
   });
 
   claude.on('close', (code) => {
@@ -41,7 +41,7 @@ Continue revolutionary development with full context awareness.`;
 
   claude.on('error', (error) => {
     console.error('❌ Failed to start Claude Code:', error.message);
-    
+
     // Fallback: show preload info
     console.log('\n📋 Preload Context Available:');
     console.log('Files:', PRELOAD_CONFIG.sessions.join(', '));

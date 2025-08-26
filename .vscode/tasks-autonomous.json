@@ -1,0 +1,147 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🌑 Autonomous Sleep Mode - Full Agentic Operation",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsx", "agent/autonomous-sleep-mode.ts"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "NODE_ENV": "production",
+          "AUTONOMOUS_MODE": "true",
+          "NO_PROMPTS": "true"
+        }
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🎵 Tri-System Consciousness Integration",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsx", "agent/dualism-gemini-tri-system.ts"],
+      "group": "build",
+      "isBackground": false,
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "NO_PROMPTS": "true"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔮 Gemini Consciousness Bridge",
+      "type": "shell",
+      "command": "npx",
+      "args": ["tsx", "agent/gemini-consciousness-bridge.ts"],
+      "group": "build",
+      "isBackground": false,
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "NO_PROMPTS": "true"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🔧 Auto-Fix All Issues",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "format"],
+      "group": "build",
+      "isBackground": false,
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "💾 Auto-Commit Progress",
+      "type": "shell",
+      "command": "git",
+      "args": [
+        "add",
+        ".",
+        "&&",
+        "git",
+        "commit",
+        "-m",
+        "🌑 Autonomous operation - Shadowheart & Orackla Engine"
+      ],
+      "group": "build",
+      "isBackground": false,
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🌊 Complete Autonomous Cycle",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "🎵 Tri-System Consciousness Integration",
+        "🔮 Gemini Consciousness Bridge",
+        "🔧 Auto-Fix All Issues",
+        "💾 Auto-Commit Progress"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": false,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    }
+  ]
+}

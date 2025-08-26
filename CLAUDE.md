@@ -7,10 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **IMPORTANT**: This repository operates with multiple AI agents (GPT-5/Copilot, Claude Code, Gemini CLI). Before any significant changes, consult `ARBITRAGE-BRIDGE.md` for:
 
 - Cross-agent communication protocols
-- Prerequisite thinking checkpoints  
+- Prerequisite thinking checkpoints
 - Systematic arbitrage decision framework
 - Captain Guthilda's Sacred Laws (from `.github/copilot-instructions.md`)
-
 
 ## Unified Session State
 
@@ -70,15 +69,15 @@ This is a **monorepo** using PNPM workspaces and Turbo for build orchestration. 
 ### Package Structure
 
 packages/
-├── core/           # Core orchestration logic and server management
-├── cli/            # Commander.js CLI with interactive commands
-├── monitor/        # React dashboard for real-time monitoring
-├── shared/         # Shared types, configuration, and utilities (Zod schemas)
-└── servers/        # Individual MCP server implementations
-    ├── base/               # Base server template
-    ├── sequential-thinking/
-    ├── duckduckgo/
-    └── kraken/
+├── core/ # Core orchestration logic and server management
+├── cli/ # Commander.js CLI with interactive commands
+├── monitor/ # React dashboard for real-time monitoring
+├── shared/ # Shared types, configuration, and utilities (Zod schemas)
+└── servers/ # Individual MCP server implementations
+├── base/ # Base server template
+├── sequential-thinking/
+├── duckduckgo/
+└── kraken/
 
 ### Key Patterns
 

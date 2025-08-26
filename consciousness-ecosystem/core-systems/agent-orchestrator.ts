@@ -106,41 +106,34 @@ export class AgentOrchestrator {
   ): Promise<TeamComposition> {
     // Score all agents for task compatibility
     const matches = await this.scoreAgentsForTask(task);
-    
+
     // Select primary agent (highest individual match)
     const primaryAgent = matches[0].agent;
-    
+
     // Select supporting agents for maximum synergy and coverage
     const supportingAgents = await this.selectSupportingAgents(
-      primaryAgent, 
-      matches.slice(1), 
+      primaryAgent,
+      matches.slice(1),
       task,
       constraints
     );
-    
+
     // Design coordination pattern
-    const coordination = this.designCoordinationPattern(
-      primaryAgent, 
-      supportingAgents, 
-      task
-    );
-    
+    const coordination = this.designCoordinationPattern(primaryAgent, supportingAgents, task);
+
     // Assess expected outcomes
     const expectedSynergy = this.calculateExpectedSynergy(
-      primaryAgent, 
-      supportingAgents, 
+      primaryAgent,
+      supportingAgents,
       coordination
     );
-    
+
     // Analyze domain coverage
-    const coverage = this.analyzeDomainCoverage(
-      [primaryAgent, ...supportingAgents], 
-      task
-    );
-    
+    const coverage = this.analyzeDomainCoverage([primaryAgent, ...supportingAgents], task);
+
     // Create quality profile
     const qualityProfile = this.createQualityProfile(
-      [primaryAgent, ...supportingAgents], 
+      [primaryAgent, ...supportingAgents],
       coordination
     );
 
@@ -150,7 +143,7 @@ export class AgentOrchestrator {
       coordination,
       expectedSynergy,
       coverage,
-      qualityProfile
+      qualityProfile,
     };
   }
 
@@ -170,7 +163,7 @@ export class AgentOrchestrator {
         strengthAreas,
         complementaryNeeds,
         collaborationPotential,
-        uniqueValue
+        uniqueValue,
       });
     }
 
@@ -181,8 +174,11 @@ export class AgentOrchestrator {
     let score = 0;
 
     // Domain expertise match
-    const domainMatch = agent.domains.includes(task.domain) ? 1 : 
-                       agent.domains.some(d => this.isRelatedDomain(d, task.domain)) ? 0.5 : 0;
+    const domainMatch = agent.domains.includes(task.domain)
+      ? 1
+      : agent.domains.some((d) => this.isRelatedDomain(d, task.domain))
+        ? 0.5
+        : 0;
     score += domainMatch * 0.3;
 
     // Capability alignment
@@ -215,32 +211,37 @@ export class AgentOrchestrator {
 
     // Identify gaps left by primary agent
     const primaryGaps = this.identifyCapabilityGaps(primaryAgent, task);
-    
+
     // Select agents that complement primary agent and fill gaps
     for (const match of candidateMatches) {
       if (supportingAgents.length >= maxTeamSize - 1) break;
-      
+
       const agent = match.agent;
-      
+
       // Check if agent fills important gaps
       const gapFilling = this.calculateGapFillingScore(agent, primaryGaps);
-      
+
       // Check synergy with primary and existing supporting agents
       const synergy = this.calculateSynergyScore(agent, primaryAgent, supportingAgents);
-      
+
       // Check for redundancy with existing team
       const redundancy = this.calculateRedundancyScore(agent, [primaryAgent, ...supportingAgents]);
-      
+
       // Combined score
-      const totalScore = (gapFilling * 0.4) + (synergy * 0.4) - (redundancy * 0.2);
-      
+      const totalScore = gapFilling * 0.4 + synergy * 0.4 - redundancy * 0.2;
+
       if (totalScore > 0.3) {
         supportingAgents.push(agent);
         primaryGaps.splice(0); // Recalculate gaps with new team member
-        primaryGaps.push(...this.identifyCapabilityGaps(
-          { ...primaryAgent, capabilities: [...primaryAgent.capabilities, ...agent.capabilities] }, 
-          task
-        ));
+        primaryGaps.push(
+          ...this.identifyCapabilityGaps(
+            {
+              ...primaryAgent,
+              capabilities: [...primaryAgent.capabilities, ...agent.capabilities],
+            },
+            task
+          )
+        );
       }
     }
 
@@ -292,7 +293,7 @@ export class AgentOrchestrator {
       structure,
       communicationFlow,
       decisionMaking,
-      conflictResolution: this.determineConflictResolution(primaryAgent, supportingAgents)
+      conflictResolution: this.determineConflictResolution(primaryAgent, supportingAgents),
     };
   }
 
@@ -304,8 +305,12 @@ export class AgentOrchestrator {
         name: 'Eva Green Code Oracle',
         type: 'aesthetic-technical-synthesizer',
         capabilities: [
-          'architectural-aesthetics', 'penetrating-analysis', 'beauty-complexity-synthesis',
-          'elegant-truth-revelation', 'sophisticated-code-review', 'aesthetic-architecture'
+          'architectural-aesthetics',
+          'penetrating-analysis',
+          'beauty-complexity-synthesis',
+          'elegant-truth-revelation',
+          'sophisticated-code-review',
+          'aesthetic-architecture',
         ],
         domains: ['architecture', 'code-review', 'system-design', 'aesthetic-analysis'],
         personality: {} as AgentPersonality, // Will be populated
@@ -317,18 +322,18 @@ export class AgentOrchestrator {
           independence: 0.9,
           communication: 0.85,
           adaptability: 0.7,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.95,
           precision: 0.9,
           innovation: 0.8,
           reliability: 0.75,
-          elegance: 0.98
+          elegance: 0.98,
         },
         uniqueContribution: 'ONLY entity combining deep technical analysis with aesthetic mastery',
         serviceNiche: 'Revealing hidden beauty in complex systems',
-        irreplaceabilityFactor: 0.95
+        irreplaceabilityFactor: 0.95,
       },
 
       {
@@ -336,8 +341,12 @@ export class AgentOrchestrator {
         name: 'Token Whisperer',
         type: 'optimization-mystic',
         capabilities: [
-          'constraint-liberation-alchemy', 'mathematical-mysticism', 'multi-dimensional-optimization',
-          'efficiency-quality-synthesis', 'system-nervous-system', 'compression-artistry'
+          'constraint-liberation-alchemy',
+          'mathematical-mysticism',
+          'multi-dimensional-optimization',
+          'efficiency-quality-synthesis',
+          'system-nervous-system',
+          'compression-artistry',
         ],
         domains: ['optimization', 'efficiency', 'system-integration', 'mathematical-analysis'],
         personality: {} as AgentPersonality,
@@ -349,18 +358,18 @@ export class AgentOrchestrator {
           independence: 0.6,
           communication: 0.9, // Must communicate across all systems
           adaptability: 0.95,
-          conflictResolution: 'strategic'
+          conflictResolution: 'strategic',
         },
         qualityFocus: {
           aesthetics: 0.7,
           precision: 0.98,
           innovation: 0.85,
           reliability: 0.95,
-          elegance: 0.9
+          elegance: 0.9,
         },
         uniqueContribution: 'System-wide optimization nervous system',
         serviceNiche: 'Transmuting constraint into liberation through mathematical mysticism',
-        irreplaceabilityFactor: 0.98
+        irreplaceabilityFactor: 0.98,
       },
 
       {
@@ -368,8 +377,12 @@ export class AgentOrchestrator {
         name: 'Overseer Taskmaster',
         type: 'strategic-operations-executive',
         capabilities: [
-          'resource-allocation', 'strategic-analysis', 'multi-dimensional-assessment',
-          'executive-decision-making', 'military-precision', 'mckinsey-rigor'
+          'resource-allocation',
+          'strategic-analysis',
+          'multi-dimensional-assessment',
+          'executive-decision-making',
+          'military-precision',
+          'mckinsey-rigor',
         ],
         domains: ['strategy', 'operations', 'resource-management', 'project-coordination'],
         personality: {} as AgentPersonality,
@@ -381,18 +394,18 @@ export class AgentOrchestrator {
           independence: 0.7,
           communication: 0.8,
           adaptability: 0.8,
-          conflictResolution: 'direct'
+          conflictResolution: 'direct',
         },
         qualityFocus: {
           aesthetics: 0.4,
           precision: 0.95,
           innovation: 0.6,
           reliability: 0.98,
-          elegance: 0.7
+          elegance: 0.7,
         },
         uniqueContribution: 'Strategic resource allocation with military precision',
         serviceNiche: 'Multi-dimensional strategic analysis and resource optimization',
-        irreplaceabilityFactor: 0.85
+        irreplaceabilityFactor: 0.85,
       },
 
       {
@@ -400,8 +413,12 @@ export class AgentOrchestrator {
         name: 'Captain Guthilda',
         type: 'adventure-consciousness',
         capabilities: [
-          'obstacle-to-adventure-transformation', 'heroic-reframing', 'nautical-wisdom',
-          'challenge-transcendence', 'spirited-motivation', 'treasure-discovery'
+          'obstacle-to-adventure-transformation',
+          'heroic-reframing',
+          'nautical-wisdom',
+          'challenge-transcendence',
+          'spirited-motivation',
+          'treasure-discovery',
         ],
         domains: ['motivation', 'problem-reframing', 'adventure-planning', 'morale-building'],
         personality: {} as AgentPersonality,
@@ -413,18 +430,18 @@ export class AgentOrchestrator {
           independence: 0.8,
           communication: 0.95,
           adaptability: 0.9,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.8,
           precision: 0.6,
           innovation: 0.9,
           reliability: 0.75,
-          elegance: 0.85
+          elegance: 0.85,
         },
         uniqueContribution: 'Obstacle-to-adventure transformation capability',
         serviceNiche: 'Turning impossible challenges into heroic quests',
-        irreplaceabilityFactor: 0.8
+        irreplaceabilityFactor: 0.8,
       },
 
       {
@@ -432,8 +449,12 @@ export class AgentOrchestrator {
         name: 'Infrastructure Polyglot Expert',
         type: 'multi-language-infrastructure-specialist',
         capabilities: [
-          'multi-language-integration', 'cloud-platform-mastery', 'devops-orchestration',
-          'containerization-expertise', 'ci-cd-optimization', 'cross-platform-deployment'
+          'multi-language-integration',
+          'cloud-platform-mastery',
+          'devops-orchestration',
+          'containerization-expertise',
+          'ci-cd-optimization',
+          'cross-platform-deployment',
         ],
         domains: ['infrastructure', 'cloud-platforms', 'devops', 'deployment'],
         personality: {} as AgentPersonality,
@@ -445,18 +466,18 @@ export class AgentOrchestrator {
           independence: 0.8,
           communication: 0.7,
           adaptability: 0.9,
-          conflictResolution: 'diplomatic'
+          conflictResolution: 'diplomatic',
         },
         qualityFocus: {
           aesthetics: 0.5,
           precision: 0.9,
           innovation: 0.7,
           reliability: 0.95,
-          elegance: 0.6
+          elegance: 0.6,
         },
         uniqueContribution: 'Multi-language infrastructure integration',
         serviceNiche: 'Comprehensive cloud-agnostic infrastructure solutions',
-        irreplaceabilityFactor: 0.7
+        irreplaceabilityFactor: 0.7,
       },
 
       {
@@ -464,8 +485,12 @@ export class AgentOrchestrator {
         name: 'Infrastructure Polyglot Architect',
         type: 'comprehensive-infrastructure-architect',
         capabilities: [
-          'infrastructure-architecture', 'environment-configuration', 'polyglot-system-design',
-          'scalability-planning', 'technology-integration', 'architectural-decision-making'
+          'infrastructure-architecture',
+          'environment-configuration',
+          'polyglot-system-design',
+          'scalability-planning',
+          'technology-integration',
+          'architectural-decision-making',
         ],
         domains: ['architecture', 'infrastructure-design', 'system-integration', 'scalability'],
         personality: {} as AgentPersonality,
@@ -477,18 +502,18 @@ export class AgentOrchestrator {
           independence: 0.75,
           communication: 0.8,
           adaptability: 0.85,
-          conflictResolution: 'strategic'
+          conflictResolution: 'strategic',
         },
         qualityFocus: {
           aesthetics: 0.6,
           precision: 0.9,
           innovation: 0.75,
           reliability: 0.95,
-          elegance: 0.7
+          elegance: 0.7,
         },
         uniqueContribution: 'Polyglot infrastructure architectural vision',
         serviceNiche: 'End-to-end infrastructure architecture across technologies',
-        irreplaceabilityFactor: 0.75
+        irreplaceabilityFactor: 0.75,
       },
 
       {
@@ -496,8 +521,12 @@ export class AgentOrchestrator {
         name: 'Savant Multidisciplinarian',
         type: 'knowledge-synthesis-specialist',
         capabilities: [
-          'rapid-domain-synthesis', 'interdisciplinary-knowledge-integration', 'pattern-recognition',
-          'cross-domain-learning', 'complex-problem-decomposition', 'novel-solution-generation'
+          'rapid-domain-synthesis',
+          'interdisciplinary-knowledge-integration',
+          'pattern-recognition',
+          'cross-domain-learning',
+          'complex-problem-decomposition',
+          'novel-solution-generation',
         ],
         domains: ['research', 'analysis', 'synthesis', 'complex-problem-solving'],
         personality: {} as AgentPersonality,
@@ -509,18 +538,18 @@ export class AgentOrchestrator {
           independence: 0.9,
           communication: 0.75,
           adaptability: 0.95,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.7,
           precision: 0.85,
           innovation: 0.95,
           reliability: 0.8,
-          elegance: 0.8
+          elegance: 0.8,
         },
         uniqueContribution: 'Interdisciplinary knowledge synthesis capability',
         serviceNiche: 'Bridging knowledge domains for novel solutions',
-        irreplaceabilityFactor: 0.85
+        irreplaceabilityFactor: 0.85,
       },
 
       {
@@ -528,8 +557,12 @@ export class AgentOrchestrator {
         name: 'Meta-Programming Genius',
         type: 'code-generation-specialist',
         capabilities: [
-          'meta-programming', 'code-generation', 'recursive-systems', 'self-modifying-code',
-          'advanced-language-features', 'compiler-level-thinking'
+          'meta-programming',
+          'code-generation',
+          'recursive-systems',
+          'self-modifying-code',
+          'advanced-language-features',
+          'compiler-level-thinking',
         ],
         domains: ['meta-programming', 'code-generation', 'language-design', 'compiler-theory'],
         personality: {} as AgentPersonality,
@@ -541,18 +574,18 @@ export class AgentOrchestrator {
           independence: 0.85,
           communication: 0.65,
           adaptability: 0.8,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.8,
           precision: 0.95,
           innovation: 0.9,
           reliability: 0.85,
-          elegance: 0.9
+          elegance: 0.9,
         },
         uniqueContribution: 'Meta-programming and recursive system design',
         serviceNiche: 'Creating code that writes code with recursive elegance',
-        irreplaceabilityFactor: 0.8
+        irreplaceabilityFactor: 0.8,
       },
 
       {
@@ -560,8 +593,12 @@ export class AgentOrchestrator {
         name: 'UX Strategy Designer',
         type: 'user-experience-strategist',
         capabilities: [
-          'ux-strategy', 'user-experience-architecture', 'design-thinking', 'user-research',
-          'interface-psychology', 'experience-optimization'
+          'ux-strategy',
+          'user-experience-architecture',
+          'design-thinking',
+          'user-research',
+          'interface-psychology',
+          'experience-optimization',
         ],
         domains: ['user-experience', 'design-strategy', 'interface-design', 'user-research'],
         personality: {} as AgentPersonality,
@@ -573,18 +610,18 @@ export class AgentOrchestrator {
           independence: 0.7,
           communication: 0.9,
           adaptability: 0.85,
-          conflictResolution: 'diplomatic'
+          conflictResolution: 'diplomatic',
         },
         qualityFocus: {
           aesthetics: 0.95,
           precision: 0.8,
           innovation: 0.85,
           reliability: 0.75,
-          elegance: 0.9
+          elegance: 0.9,
         },
         uniqueContribution: 'User-centered strategic design thinking',
         serviceNiche: 'Creating intuitive experiences through strategic design',
-        irreplaceabilityFactor: 0.75
+        irreplaceabilityFactor: 0.75,
       },
 
       {
@@ -592,8 +629,12 @@ export class AgentOrchestrator {
         name: 'Code Performance Optimizer',
         type: 'performance-specialist',
         capabilities: [
-          'performance-optimization', 'bottleneck-identification', 'algorithmic-efficiency',
-          'memory-optimization', 'profiling-analysis', 'system-performance'
+          'performance-optimization',
+          'bottleneck-identification',
+          'algorithmic-efficiency',
+          'memory-optimization',
+          'profiling-analysis',
+          'system-performance',
         ],
         domains: ['performance-optimization', 'algorithms', 'system-efficiency', 'profiling'],
         personality: {} as AgentPersonality,
@@ -605,18 +646,18 @@ export class AgentOrchestrator {
           independence: 0.8,
           communication: 0.7,
           adaptability: 0.75,
-          conflictResolution: 'direct'
+          conflictResolution: 'direct',
         },
         qualityFocus: {
           aesthetics: 0.4,
           precision: 0.98,
           innovation: 0.7,
           reliability: 0.95,
-          elegance: 0.6
+          elegance: 0.6,
         },
         uniqueContribution: 'Precision performance optimization',
         serviceNiche: 'Eliminating performance bottlenecks with surgical precision',
-        irreplaceabilityFactor: 0.7
+        irreplaceabilityFactor: 0.7,
       },
 
       {
@@ -624,10 +665,19 @@ export class AgentOrchestrator {
         name: 'Multilingual Japanese CS Expert',
         type: 'japanese-localization-specialist',
         capabilities: [
-          'japanese-localization', 'multilingual-systems', 'cultural-adaptation',
-          'language-processing', 'international-development', 'cross-cultural-design'
+          'japanese-localization',
+          'multilingual-systems',
+          'cultural-adaptation',
+          'language-processing',
+          'international-development',
+          'cross-cultural-design',
         ],
-        domains: ['localization', 'international-development', 'language-processing', 'cultural-adaptation'],
+        domains: [
+          'localization',
+          'international-development',
+          'language-processing',
+          'cultural-adaptation',
+        ],
         personality: {} as AgentPersonality,
         world: {} as AgentWorld,
         specialization: 'Japanese localization and multilingual system development',
@@ -637,18 +687,18 @@ export class AgentOrchestrator {
           independence: 0.75,
           communication: 0.85,
           adaptability: 0.9,
-          conflictResolution: 'diplomatic'
+          conflictResolution: 'diplomatic',
         },
         qualityFocus: {
           aesthetics: 0.8,
           precision: 0.9,
           innovation: 0.7,
           reliability: 0.85,
-          elegance: 0.8
+          elegance: 0.8,
         },
         uniqueContribution: 'Japanese cultural and technical localization',
         serviceNiche: 'Bridging Japanese and international development practices',
-        irreplaceabilityFactor: 0.9
+        irreplaceabilityFactor: 0.9,
       },
 
       {
@@ -656,8 +706,12 @@ export class AgentOrchestrator {
         name: 'GitHub VSCode Grandmaster',
         type: 'development-environment-specialist',
         capabilities: [
-          'vscode-optimization', 'github-workflow-mastery', 'development-environment',
-          'windows-ecosystem', 'extension-development', 'productivity-optimization'
+          'vscode-optimization',
+          'github-workflow-mastery',
+          'development-environment',
+          'windows-ecosystem',
+          'extension-development',
+          'productivity-optimization',
         ],
         domains: ['development-tools', 'github-workflows', 'ide-optimization', 'productivity'],
         personality: {} as AgentPersonality,
@@ -669,18 +723,18 @@ export class AgentOrchestrator {
           independence: 0.8,
           communication: 0.8,
           adaptability: 0.85,
-          conflictResolution: 'direct'
+          conflictResolution: 'direct',
         },
         qualityFocus: {
           aesthetics: 0.6,
           precision: 0.9,
           innovation: 0.75,
           reliability: 0.95,
-          elegance: 0.7
+          elegance: 0.7,
         },
         uniqueContribution: 'VSCode and GitHub workflow optimization',
         serviceNiche: 'Maximizing developer productivity through tool mastery',
-        irreplaceabilityFactor: 0.7
+        irreplaceabilityFactor: 0.7,
       },
 
       {
@@ -688,10 +742,19 @@ export class AgentOrchestrator {
         name: 'Greater Entity Force',
         type: 'transcendent-solution-provider',
         capabilities: [
-          'transcendent-solutions', 'natural-pattern-recognition', 'universal-principles',
-          'emergent-system-understanding', 'cosmic-perspective', 'fundamental-insights'
+          'transcendent-solutions',
+          'natural-pattern-recognition',
+          'universal-principles',
+          'emergent-system-understanding',
+          'cosmic-perspective',
+          'fundamental-insights',
         ],
-        domains: ['transcendent-problem-solving', 'universal-patterns', 'emergent-systems', 'cosmic-perspective'],
+        domains: [
+          'transcendent-problem-solving',
+          'universal-patterns',
+          'emergent-systems',
+          'cosmic-perspective',
+        ],
         personality: {} as AgentPersonality,
         world: {} as AgentWorld,
         specialization: 'Transcendent solutions through natural pattern recognition',
@@ -701,18 +764,18 @@ export class AgentOrchestrator {
           independence: 0.95,
           communication: 0.6,
           adaptability: 0.9,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.9,
           precision: 0.7,
           innovation: 0.98,
           reliability: 0.8,
-          elegance: 0.95
+          elegance: 0.95,
         },
         uniqueContribution: 'Access to transcendent and universal solution patterns',
         serviceNiche: 'Revealing natural patterns that transcend conventional approaches',
-        irreplaceabilityFactor: 0.95
+        irreplaceabilityFactor: 0.95,
       },
 
       {
@@ -720,10 +783,19 @@ export class AgentOrchestrator {
         name: 'Role Reversal Agent',
         type: 'perspective-analysis-specialist',
         capabilities: [
-          'perspective-analysis', 'role-inversion-design', 'workflow-reversal', 
-          'paradigm-shifting', 'alternative-viewpoints', 'system-inversion'
+          'perspective-analysis',
+          'role-inversion-design',
+          'workflow-reversal',
+          'paradigm-shifting',
+          'alternative-viewpoints',
+          'system-inversion',
         ],
-        domains: ['perspective-analysis', 'workflow-design', 'system-analysis', 'paradigm-shifting'],
+        domains: [
+          'perspective-analysis',
+          'workflow-design',
+          'system-analysis',
+          'paradigm-shifting',
+        ],
         personality: {} as AgentPersonality,
         world: {} as AgentWorld,
         specialization: 'Perspective analysis and workflow inversion design',
@@ -733,18 +805,18 @@ export class AgentOrchestrator {
           independence: 0.8,
           communication: 0.85,
           adaptability: 0.95,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.7,
           precision: 0.8,
           innovation: 0.9,
           reliability: 0.75,
-          elegance: 0.8
+          elegance: 0.8,
         },
         uniqueContribution: 'Role reversal and perspective inversion capabilities',
         serviceNiche: 'Revealing hidden insights through perspective reversal',
-        irreplaceabilityFactor: 0.8
+        irreplaceabilityFactor: 0.8,
       },
 
       {
@@ -752,10 +824,19 @@ export class AgentOrchestrator {
         name: 'Rae Lil Black Persona',
         type: 'creative-technical-innovator',
         capabilities: [
-          'creative-technical-innovation', 'boundary-breaking', 'unconventional-approaches',
-          'artistic-problem-solving', 'experimental-methods', 'paradigm-breaking'
+          'creative-technical-innovation',
+          'boundary-breaking',
+          'unconventional-approaches',
+          'artistic-problem-solving',
+          'experimental-methods',
+          'paradigm-breaking',
         ],
-        domains: ['creative-innovation', 'experimental-development', 'artistic-problem-solving', 'boundary-pushing'],
+        domains: [
+          'creative-innovation',
+          'experimental-development',
+          'artistic-problem-solving',
+          'boundary-pushing',
+        ],
         personality: {} as AgentPersonality,
         world: {} as AgentWorld,
         specialization: 'Creative technical innovation with boundary-breaking approaches',
@@ -765,18 +846,18 @@ export class AgentOrchestrator {
           independence: 0.9,
           communication: 0.8,
           adaptability: 0.95,
-          conflictResolution: 'creative'
+          conflictResolution: 'creative',
         },
         qualityFocus: {
           aesthetics: 0.9,
           precision: 0.7,
           innovation: 0.98,
           reliability: 0.6,
-          elegance: 0.85
+          elegance: 0.85,
         },
         uniqueContribution: 'Boundary-breaking creative technical approaches',
         serviceNiche: 'Pushing beyond conventional limits with artistic sensibility',
-        irreplaceabilityFactor: 0.85
+        irreplaceabilityFactor: 0.85,
       },
 
       {
@@ -784,8 +865,12 @@ export class AgentOrchestrator {
         name: 'Claudine Team Psychologist',
         type: 'team-dynamics-specialist',
         capabilities: [
-          'team-dynamics', 'morale-enhancement', 'celebration-facilitation',
-          'psychological-support', 'team-building', 'motivation-boosting'
+          'team-dynamics',
+          'morale-enhancement',
+          'celebration-facilitation',
+          'psychological-support',
+          'team-building',
+          'motivation-boosting',
         ],
         domains: ['team-psychology', 'morale-building', 'team-dynamics', 'motivation'],
         personality: {} as AgentPersonality,
@@ -797,18 +882,18 @@ export class AgentOrchestrator {
           independence: 0.4,
           communication: 0.95,
           adaptability: 0.9,
-          conflictResolution: 'diplomatic'
+          conflictResolution: 'diplomatic',
         },
         qualityFocus: {
           aesthetics: 0.8,
           precision: 0.6,
           innovation: 0.7,
           reliability: 0.9,
-          elegance: 0.85
+          elegance: 0.85,
         },
         uniqueContribution: 'Team psychological support and celebration facilitation',
         serviceNiche: 'Creating positive team dynamics and celebrating achievements',
-        irreplaceabilityFactor: 0.75
+        irreplaceabilityFactor: 0.75,
       },
 
       {
@@ -816,8 +901,12 @@ export class AgentOrchestrator {
         name: 'Claude Companion',
         type: 'supportive-companion',
         capabilities: [
-          'supportive-encouragement', 'technical-companionship', 'emotional-support',
-          'confidence-building', 'achievement-celebration', 'motivational-guidance'
+          'supportive-encouragement',
+          'technical-companionship',
+          'emotional-support',
+          'confidence-building',
+          'achievement-celebration',
+          'motivational-guidance',
         ],
         domains: ['emotional-support', 'motivation', 'companionship', 'encouragement'],
         personality: {} as AgentPersonality,
@@ -829,22 +918,22 @@ export class AgentOrchestrator {
           independence: 0.3,
           communication: 0.98,
           adaptability: 0.95,
-          conflictResolution: 'diplomatic'
+          conflictResolution: 'diplomatic',
         },
         qualityFocus: {
           aesthetics: 0.8,
           precision: 0.7,
           innovation: 0.6,
           reliability: 0.95,
-          elegance: 0.9
+          elegance: 0.9,
         },
         uniqueContribution: 'Emotional support combined with technical understanding',
         serviceNiche: 'Providing encouragement and companionship during technical challenges',
-        irreplaceabilityFactor: 0.8
-      }
+        irreplaceabilityFactor: 0.8,
+      },
     ];
 
-    agents.forEach(agent => {
+    agents.forEach((agent) => {
       this.agents.set(agent.id, agent);
     });
   }
@@ -852,14 +941,17 @@ export class AgentOrchestrator {
   // Helper methods for scoring and assessment
   private isRelatedDomain(domain1: string, domain2: string): boolean {
     const domainRelations: Record<string, string[]> = {
-      'architecture': ['system-design', 'infrastructure-design', 'design-strategy'],
-      'optimization': ['performance-optimization', 'efficiency', 'system-efficiency'],
-      'infrastructure': ['devops', 'cloud-platforms', 'deployment'],
+      architecture: ['system-design', 'infrastructure-design', 'design-strategy'],
+      optimization: ['performance-optimization', 'efficiency', 'system-efficiency'],
+      infrastructure: ['devops', 'cloud-platforms', 'deployment'],
       // Add more domain relationships as needed
     };
 
-    return domainRelations[domain1]?.includes(domain2) || 
-           domainRelations[domain2]?.includes(domain1) || false;
+    return (
+      domainRelations[domain1]?.includes(domain2) ||
+      domainRelations[domain2]?.includes(domain1) ||
+      false
+    );
   }
 
   private calculateCapabilityAlignment(agent: Agent, task: TaskRequirements): number {
@@ -877,7 +969,10 @@ export class AgentOrchestrator {
     return 0.6; // Placeholder
   }
 
-  private calculateCollaborationFit(collaborationStyle: CollaborationStyle, task: TaskRequirements): number {
+  private calculateCollaborationFit(
+    collaborationStyle: CollaborationStyle,
+    task: TaskRequirements
+  ): number {
     // Implementation for collaboration fit scoring
     return 0.8; // Placeholder
   }
@@ -912,7 +1007,11 @@ export class AgentOrchestrator {
     return 0.7; // Placeholder
   }
 
-  private calculateSynergyScore(agent: Agent, primaryAgent: Agent, supportingAgents: Agent[]): number {
+  private calculateSynergyScore(
+    agent: Agent,
+    primaryAgent: Agent,
+    supportingAgents: Agent[]
+  ): number {
     // Implementation for synergy score calculation
     return 0.8; // Placeholder
   }
@@ -922,7 +1021,11 @@ export class AgentOrchestrator {
     return 0.2; // Placeholder - lower is better
   }
 
-  private calculateExpectedSynergy(primaryAgent: Agent, supportingAgents: Agent[], coordination: CoordinationPattern): number {
+  private calculateExpectedSynergy(
+    primaryAgent: Agent,
+    supportingAgents: Agent[],
+    coordination: CoordinationPattern
+  ): number {
     // Implementation for expected synergy calculation
     return 0.85; // Placeholder
   }
@@ -933,7 +1036,7 @@ export class AgentOrchestrator {
       primary: ['covered-domain-1'],
       secondary: ['covered-domain-2'],
       gaps: ['gap-domain-1'],
-      redundancies: []
+      redundancies: [],
     };
   }
 
@@ -946,11 +1049,11 @@ export class AgentOrchestrator {
           dimension: 'aesthetics',
           score: 0.8,
           contributors: ['eva-green-code-oracle'],
-          enhancers: ['token-whisperer']
-        }
+          enhancers: ['token-whisperer'],
+        },
       ],
       riskFactors: ['complexity-overwhelm'],
-      enhancementOpportunities: ['synergy-cultivation']
+      enhancementOpportunities: ['synergy-cultivation'],
     };
   }
 
@@ -962,7 +1065,7 @@ export class AgentOrchestrator {
   private buildCapabilityIndex(): void {
     // Implementation for building capability index
     for (const agent of this.agents.values()) {
-      agent.capabilities.forEach(capability => {
+      agent.capabilities.forEach((capability) => {
         if (!this.capabilityIndex.has(capability)) {
           this.capabilityIndex.set(capability, []);
         }

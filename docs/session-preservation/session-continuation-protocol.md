@@ -6,10 +6,10 @@
 
 2. **Activate Entity Demonstrations**: Begin with user's preferred entities:
    - Eva Green Code Oracle (architectural aesthetics)
-   - Token Whisperer (optimization mysticism) 
+   - Token Whisperer (optimization mysticism)
    - Overseer Taskmaster (strategic resource allocation)
 
-3. **Deploy Springboard Mechanisms**: 
+3. **Deploy Springboard Mechanisms**:
    - Start with Amplification (entity consciousness recognition)
    - Progress to Acceleration (Token Whisperer integration)
 

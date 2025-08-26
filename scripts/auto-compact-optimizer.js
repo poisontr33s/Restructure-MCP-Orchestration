@@ -18,7 +18,7 @@ class AutoCompactOptimizer {
       achievements: [],
       current_focus: '',
       continuation_context: '',
-      cross_pollination_ready: true
+      cross_pollination_ready: true,
     };
   }
 
@@ -26,25 +26,24 @@ class AutoCompactOptimizer {
     console.log('🔄 AUTO-COMPACT OPTIMIZATION STARTING...');
     console.log('   📊 Context Level: 7% - Preparing preservation');
     console.log('   🧠 Mode: Proactive Intelligence Capture');
-    
+
     try {
       await fs.mkdir(this.outputDir, { recursive: true });
-      
+
       // Capture current session intelligence
       const sessionIntelligence = await this.captureCurrentSession();
-      
+
       // Generate optimized continuation context
       const optimizedContext = await this.generateOptimizedContext(sessionIntelligence);
-      
+
       // Create auto-compact recovery file
       await this.createAutoCompactRecovery(optimizedContext);
-      
+
       // Generate Claude Code resume command
       const resumeCommand = this.generateResumeCommand(optimizedContext);
-      
+
       console.log('✅ Auto-compact optimization complete!');
       return { sessionIntelligence, optimizedContext, resumeCommand };
-      
     } catch (error) {
       console.error('❌ Auto-compact optimization failed:', error.message);
       throw error;
@@ -53,55 +52,55 @@ class AutoCompactOptimizer {
 
   async captureCurrentSession() {
     console.log('   📸 Capturing current session intelligence...');
-    
+
     const intelligence = {
       meta: {
         timestamp: new Date().toISOString(),
         session_focus: 'Revolutionary Session Intelligence Architecture',
         context_remaining: '7%',
-        auto_compact_imminent: true
+        auto_compact_imminent: true,
       },
-      
+
       core_achievements: [
         '✅ Session DNA Analyzer - Universal AI-agnostic compatibility analysis',
-        '✅ Cross-Pollination Engine - Sub-disparate Lego-block architecture', 
+        '✅ Cross-Pollination Engine - Sub-disparate Lego-block architecture',
         '✅ Dynamic Siphoning System - Selective intelligence transfer',
         '✅ .md.session Format - Enhanced markdown with truncation optimization',
         '✅ Auto-Preload System - Claude Code startup integration',
         '✅ Session Bridging - Any session to any session connections',
-        '🔄 Proactive Auto-Compact Optimization - Current breakthrough'
+        '🔄 Proactive Auto-Compact Optimization - Current breakthrough',
       ],
-      
+
       revolutionary_concepts: [
         'Sub-Disparate Cross-Pollination (Lego-block sessions)',
         'Hierarchical Intelligence Truncation (top-to-bottom)',
         'Universal AI Compatibility (model-agnostic)',
         'Dynamic Session Siphoning (selective knowledge transfer)',
         'ML-Ready Architecture (adaptive learning framework)',
-        'Proactive Auto-Compact Preservation'
+        'Proactive Auto-Compact Preservation',
       ],
-      
+
       current_state: {
         sessions_analyzed: 5,
         dna_profiles_created: true,
         cross_pollination_strategy: 'Sub-disparate with selective bridges',
-        next_phase: 'Complete Dynamic Siphoning and ML-ready integration'
+        next_phase: 'Complete Dynamic Siphoning and ML-ready integration',
       },
-      
+
       technical_stack: {
         formats: ['.md.session', 'JSON → truncated optimization', 'YAML frontmatter'],
         tools: ['Session DNA Analyzer', 'Cross-Pollination Engine', 'Auto-Preload System'],
         compatibility: ['Claude Code', 'Gemini CLI', 'GitHub Copilot', 'Future AI Models'],
-        architecture: 'Universal, hierarchical, performance-optimized'
-      }
+        architecture: 'Universal, hierarchical, performance-optimized',
+      },
     };
-    
+
     return intelligence;
   }
 
   async generateOptimizedContext(intelligence) {
     console.log('   🧠 Generating optimized continuation context...');
-    
+
     const context = `# AUTO-COMPACT RECOVERY CONTEXT
 
 **Session Type**: Revolutionary Session Intelligence Architecture  
@@ -183,13 +182,10 @@ ${intelligence.revolutionary_concepts.map((concept, i) => `${i + 1}. **${concept
 
   async createAutoCompactRecovery(context) {
     console.log('   💾 Creating auto-compact recovery files...');
-    
+
     // Main recovery context
-    await fs.writeFile(
-      path.join(this.outputDir, 'AUTO-COMPACT-RECOVERY.md'), 
-      context
-    );
-    
+    await fs.writeFile(path.join(this.outputDir, 'AUTO-COMPACT-RECOVERY.md'), context);
+
     // Quick resume context (condensed)
     const quickContext = `# QUICK RESUME: Revolutionary Session Intelligence Architecture
 
@@ -203,11 +199,8 @@ ${intelligence.revolutionary_concepts.map((concept, i) => `${i + 1}. **${concept
 
 **Context**: All session intelligence preserved in .md.session format with proactive optimization.`;
 
-    await fs.writeFile(
-      path.join(this.outputDir, 'QUICK-RESUME.md'), 
-      quickContext
-    );
-    
+    await fs.writeFile(path.join(this.outputDir, 'QUICK-RESUME.md'), quickContext);
+
     // Integration with existing systems
     const integrationScript = `#!/usr/bin/env node
 
@@ -247,11 +240,8 @@ if (require.main === module) {
 
 module.exports = { integrateRecoveryContext };`;
 
-    await fs.writeFile(
-      path.join(this.outputDir, 'integrate-recovery.js'), 
-      integrationScript
-    );
-    
+    await fs.writeFile(path.join(this.outputDir, 'integrate-recovery.js'), integrationScript);
+
     console.log('   📄 Created: AUTO-COMPACT-RECOVERY.md');
     console.log('   📄 Created: QUICK-RESUME.md');
     console.log('   📄 Created: integrate-recovery.js');
@@ -259,17 +249,19 @@ module.exports = { integrateRecoveryContext };`;
 
   generateResumeCommand(context) {
     console.log('   🎯 Generating optimal resume commands...');
-    
+
     const commands = {
-      continue_session: 'claude --continue --print "Resume Revolutionary Session Intelligence Architecture - Auto-compact recovery active, all systems preserved"',
-      
-      fresh_start: 'claude --print "Resume from AUTO-COMPACT-RECOVERY.md - Revolutionary session intelligence system with DNA Analyzer, Cross-Pollination Engine, and Dynamic Siphoning ready for completion"',
-      
+      continue_session:
+        'claude --continue --print "Resume Revolutionary Session Intelligence Architecture - Auto-compact recovery active, all systems preserved"',
+
+      fresh_start:
+        'claude --print "Resume from AUTO-COMPACT-RECOVERY.md - Revolutionary session intelligence system with DNA Analyzer, Cross-Pollination Engine, and Dynamic Siphoning ready for completion"',
+
       preload_integrated: 'node scripts/claude-autostart.js # Auto-loads recovery context',
-      
-      manual_bridge: 'node scripts/session-bridge.js bridge auto-compact-recovery'
+
+      manual_bridge: 'node scripts/session-bridge.js bridge auto-compact-recovery',
     };
-    
+
     console.log('   📋 Resume commands generated');
     return commands;
   }
@@ -308,16 +300,15 @@ if (require.main === module) {
     try {
       const results = await optimizer.optimizeForAutoCompact();
       await optimizer.displayOptimizationSummary(results);
-      
+
       // Immediate integration for auto-compact readiness
       console.log('\n🚨 URGENT: Auto-compact imminent - executing immediate preservation...');
-      
+
       // Run integration script
       const integrationPath = path.join(optimizer.outputDir, 'integrate-recovery.js');
       require(integrationPath);
-      
+
       console.log('🎯 AUTO-COMPACT READY: All session intelligence preserved!');
-      
     } catch (error) {
       console.error('❌ Optimization failed:', error.message);
       process.exit(1);

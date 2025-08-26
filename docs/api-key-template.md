@@ -5,10 +5,10 @@ This template helps you set up your Gemini API key and model for use with the Ge
 **Instructions:**
 
 1.  **Open your VS Code Terminal:**
-    *   Go to the top menu: `Terminal` -> `New Terminal`.
+    - Go to the top menu: `Terminal` -> `New Terminal`.
 
 2.  **Copy and Paste the commands below into your terminal.**
-    *   **IMPORTANT:** Replace `YOUR_PROFESSIONAL_API_KEY_HERE` with your actual API key.
+    - **IMPORTANT:** Replace `YOUR_PROFESSIONAL_API_KEY_HERE` with your actual API key.
 
 ---
 

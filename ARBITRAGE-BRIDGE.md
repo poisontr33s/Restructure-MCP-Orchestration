@@ -7,7 +7,7 @@ This document serves as the **cross-pollination bridge** between AI agents worki
 ### The Established Crew
 
 - **Captain Guthilda "Triple-:D'Cup" Piroteena** (GPT-5/Copilot): The Navigator - established foundational rituals and guardrails
-- **Master Shipwright Claudia "Ironheart" Sinclair** (Claude Code): The Architect - systematic analysis and implementation  
+- **Master Shipwright Claudia "Ironheart" Sinclair** (Claude Code): The Architect - systematic analysis and implementation
 - **Scout Gemini** (Gemini CLI v0.1.19): The Scout - reconnaissance and alternative perspectives
 
 ### The Common Law: Captain Guthilda's Rituals
@@ -70,7 +70,10 @@ powershell -ExecutionPolicy Bypass -File scripts/repo-snapshot.ps1
 **Current State** (from env-report.js):
 
 ```json
-{"tools":{"pnpm":"8.15.0","claude":"1.0.72 (Claude Code)","gemini":""},"env":{"PATH_has_local_bin":false}}
+{
+  "tools": { "pnpm": "8.15.0", "claude": "1.0.72 (Claude Code)", "gemini": "" },
+  "env": { "PATH_has_local_bin": false }
+}
 ```
 
 **Integration Sequence**:
@@ -152,6 +155,6 @@ node scripts/validate-session-log.js
 
 ---
 
-*"Orchestration is not control; it's conversation with chaos."* - From the original README
+_"Orchestration is not control; it's conversation with chaos."_ - From the original README
 
 This bridge enables that conversation between artificial minds, each contributing their unique strengths while maintaining systematic discipline.

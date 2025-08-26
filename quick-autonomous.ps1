@@ -71,7 +71,7 @@ Write-Host "🤖 Starting Gemini CLI in autonomous mode..." -ForegroundColor Yel
 Start-Process -FilePath "pwsh" -ArgumentList @(
     "-NoProfile", 
     "-Command", 
-    "gemini --ide-mode-feature --include-directories packages,scripts,docs,.vscode,agent --auto-accept"
+    "gemini --yolo --include-directories packages,scripts,docs,.vscode,agent --all-files"
 ) -NoNewWindow -PassThru
 
 Write-Host "✅ Gemini CLI started in background" -ForegroundColor Green

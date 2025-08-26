@@ -20,7 +20,8 @@
     "start": "node packages/cli/dist/index.js start",
     "clean": "pnpm clean:all",
     "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml",
-    "mcp:status": "pnpm exec mcp status"
+    "mcp:status": "pnpm exec mcp status",
+    "start:autonomous": "pnpm exec mcp autonomous"
   },
   "keywords": [
     "mcp",

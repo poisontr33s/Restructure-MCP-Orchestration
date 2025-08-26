@@ -299,5 +299,13 @@ function formatUptime(seconds: number): string {
   }
 }
 
+program
+  .command('autonomous')
+  .description('Start the Autonomous Operation')
+  .action(async () => {
+    const { autonomousCommandHandler } = await import('./commands/autonomous.js');
+    autonomousCommandHandler();
+  });
+
 // Parse command line arguments
 program.parse(process.argv);

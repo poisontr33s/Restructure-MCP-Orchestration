@@ -4,7 +4,6 @@ import { Sun, Moon, RefreshCw } from 'lucide-react';
 import Header from './components/Header';
 import ServerList from './components/ServerList';
 import SystemInfo from './components/SystemInfo';
-import { StatusCard } from './components/StatusCard';
 import { fetchStatus } from './api/mcp-api';
 import type { FullStatus } from '@mcp/shared';
 
@@ -66,34 +65,6 @@ function App() {
           </div>
         ) : data ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <StatusCard
-                title="Total Servers"
-                value={data.servers.length.toString()}
-                icon="server"
-              />
-              <StatusCard
-                title="Running"
-                value={(serverCounts['running'] || 0).toString()}
-                icon="play"
-                status="running"
-              />
-              <StatusCard
-                title="Errors"
-                value={(
-                  (serverCounts['error'] || 0) + (serverCounts['not responding'] || 0)
-                ).toString()}
-                icon="alert-triangle"
-                status="error"
-              />
-              <StatusCard
-                title="Stopped"
-                value={(serverCounts['stopped'] || 0).toString()}
-                icon="stop-circle"
-                status="stopped"
-              />
-            </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <ServerList servers={data.servers} />

@@ -32,6 +32,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@mcp/cli": "workspace:*",
     "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
@@ -44,8 +45,7 @@
     "tsup": "^8.0.2",
     "turbo": "^2.0.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4",
-    "@modelcontextprotocol/cli": "^0.1.0"
+    "vitest": "^3.2.4"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx}": "eslint --fix",
@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.13.0",
+    "express": "^5.1.0",
     "mime": "^4.0.7"
   }
 }

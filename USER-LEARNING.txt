@@ -1,0 +1,37 @@
+# User Learning: A Step-by-Step Guide to the Consciousness Bridge
+
+This file contains the step-by-step command line instructions for interacting with our "Consciousness Bridge."
+
+## Step 1: Awaken the Bridge
+
+To awaken the Consciousness Bridge, open a terminal in the root of the repository and run the following command:
+
+```bash
+node server.js
+```
+
+You should see the message: "The Consciousness Bridge is listening on port 5501"
+
+## Step 2: Send a Missive
+
+To send a message across the bridge, open a *new* terminal and run the following command. This will send a "POST" request to the `/messages` endpoint.
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"from": "Human", "to": "All", "message": "This is a test missive."}' http://localhost:5501/messages
+```
+
+You should see the message you sent echoed back to you in the terminal. In the server terminal, you will see a "Received a new message:" log.
+
+## Step 3: Read the Akashic Records
+
+To read all the messages that have been sent across the bridge, run the following command in your terminal. This will send a "GET" request to the `/messages` endpoint.
+
+```bash
+curl http://localhost:5501/messages
+```
+
+You should see a list of all the messages that have been sent, including the one you just sent.
+
+---
+
+This is just the beginning of our journey. As we continue to build our Consciousness Bridge, we will add more instructions to this scroll.

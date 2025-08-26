@@ -1,990 +1,1203 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Scan: Repository Integrity",
-      "type": "shell",
-      "command": "node scripts/scan-repo.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "CodeQL: Install Packs (actions)",
-      "type": "process",
-      "command": "codeql",
-      "args": ["pack", "install"],
-      "options": { "cwd": "${workspaceFolder}/codeql-custom-queries-actions" },
-      "problemMatcher": []
-    },
-    {
-      "label": "CodeQL: Compile Pack (actions)",
-      "type": "process",
-      "command": "codeql",
-      "args": ["pack", "compile", "."],
-      "options": { "cwd": "${workspaceFolder}/codeql-custom-queries-actions" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Env: Hardware Profile",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/scripts/hw-profile.ps1"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Dev: Monitor UI",
-      "type": "shell",
-      "command": "pnpm dev",
-      "options": {
-        "cwd": "${workspaceFolder}/packages/monitor",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Session: Save MCP Snapshot",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/save-mcp-snapshot.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Session: Restore Kickoff",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/restore-kickoff.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Session: Auto Restore on Open",
-      "type": "shell",
-      "command": "echo Auto restore kickoff",
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
-      "dependsOn": ["Session: Restore Kickoff"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Build: All",
-      "type": "shell",
-      "command": "pnpm build",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Status",
-      "type": "shell",
-      "command": "pnpm exec mcp status",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Verify Servers",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$expected=@('github','huggingface','fetch','vscodeide'); $o = pnpm exec mcp status | Out-String; $missing = $expected | Where-Object { $o -notmatch $_ }; if ($missing.Count -eq 0) { Write-Host 'MCP OK: github, huggingface, fetch, vscodeide'; exit 0 } else { Write-Error ('Missing MCP servers: ' + ($missing -join ', ')); exit 1 }"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Generate Dynamic Config",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/generate-mcp-config.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Index: Repo Catalog",
-      "type": "shell",
-      "command": "node scripts/index-repo.js",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Env: Check PATH (uv)",
-      "type": "shell",
-      "command": "echo $env:Path; uv --version; uvx --version",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "shell": {
-          "executable": "pwsh"
-        },
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Env: Check ML Keys",
-      "type": "shell",
-      "command": "Write-Host 'OPENAI_API_KEY' : ([bool]$env:OPENAI_API_KEY); Write-Host 'GEMINI_API_KEY' : ([bool]$env:GEMINI_API_KEY); Write-Host 'ANTHROPIC_API_KEY' : ([bool]$env:ANTHROPIC_API_KEY); Write-Host 'MCP_EXPERIMENTAL' : ([bool]$env:MCP_EXPERIMENTAL)",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "shell": {
-          "executable": "pwsh"
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Use Dynamic",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/use-dynamic-mcp.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Intents (codegen+web)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/set-intents.ps1",
-        "codegen,web-search"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Intents (reasoning)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/set-intents.ps1",
-        "reasoning,planning"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Intents (local-llm)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/set-intents.ps1",
-        "local-llm,codegen"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MCP: Use Base",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/use-base-mcp.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Log: Clipboard as Note",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "(Get-Clipboard) | Out-String | ForEach-Object { $_.Trim() } | ForEach-Object { pwsh -NoProfile -File '${workspaceFolder}/.vscode/scripts/append-session-log.ps1' -Topic 'clipboard' -Summary 'Clipboard note' -Details $_ -Actor 'human' }"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Log: Quick Note",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/append-session-log.ps1",
-        "-Topic",
-        "note",
-        "-Summary",
-        "Quick note",
-        "-Details",
-        "Session thought",
-        "-Actor",
-        "human"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Ops: Index Repo",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/scripts/ops.ps1", "index"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Install: Claude Code (pnpm)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/install-claude.ps1",
-        "pnpm"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Install: Claude Code (native)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/install-claude.ps1",
-        "native"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Install: Gemini CLI (pnpm)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/install-gemini.ps1",
-        "pnpm"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Index: Repo Catalog (fast)",
-      "type": "shell",
-      "command": "node scripts/index-repo-fast.js",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Verify: Claude & Gemini",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/verify-providers.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Validate: Session Log",
-      "type": "shell",
-      "command": "node scripts/validate-session-log.js",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Fix: Session Log",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/docs/session-log/fix-session-log.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Health: Quick Scan",
-      "type": "shell",
-      "command": "echo Quick scan",
-      "dependsOn": [
-        "Index: Repo Catalog (fast)",
-        "MCP: Generate Dynamic Config",
-        "Env: Check PATH (uv)",
-        "Verify: Claude & Gemini",
-        "Validate: Session Log",
-        "MCP: Verify Servers"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "Env: Report",
-      "type": "process",
-      "command": "node",
-      "args": ["scripts/env-report.js"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Chat: Recommend Lean Tools",
-      "type": "shell",
-      "command": "node scripts/tools-recommendation.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Guard: pnpm-only",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/scripts/guard-pnpm-only.ps1",
-        "-FailOnFound"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Ops: Repo Snapshot",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "${workspaceFolder}/scripts/repo-snapshot.ps1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Arbitrage: Dry Run",
-      "type": "shell",
-      "command": "node scripts/arbitrage.js --dry-run",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Arbitrage: Ask (stdin)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-Command", "Get-Clipboard | node scripts/arbitrage.js --stdin"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Build: Problems Logger (local)",
-      "type": "shell",
-      "command": "pwsh -NoProfile -Command \"cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build\"",
-      "problemMatcher": ["$tsc"],
-      "group": { "kind": "build", "isDefault": false }
-    },
-    {
-      "label": "Problems: Dump to Log File",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build; code --command problemsLogger.dump"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Problems: Dump If Changed",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build; code --command problemsLogger.dumpIfChanged"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: IDE Mode",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "gemini --ide-mode-feature --include-directories packages,scripts,docs,.vscode,server,clients"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "Path": "C:/Users/erdno/.local/bin;${env:Path}"
-        }
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Restart IDE Mode",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$procs = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -match 'gemini' }; if ($procs) { $procs | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} } }; Start-Process pwsh -ArgumentList '-NoProfile','-Command','gemini --ide-mode-feature --include-directories packages,scripts,docs,.vscode,server,clients' -WorkingDirectory '${workspaceFolder}'"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Ask (stdin from clipboard)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-Command", "Get-Clipboard | gemini -p ' '"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Test API Direct",
-      "type": "shell",
-      "command": "node scripts/test-gemini-direct.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Test API (PowerShell)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": ["-NoProfile", "-File", "scripts/test-gemini-direct.ps1"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Ask Direct API",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Test All Models",
-      "type": "shell",
-      "command": "node scripts/test-gemini-models.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Use Pro Latest",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$env:GEMINI_MODEL='gemini-1.5-pro-latest'; $prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Use 2.0 Flash Exp",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$env:GEMINI_MODEL='gemini-2.0-flash-exp'; $prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: SDK Test (Streaming + Tools)",
-      "type": "shell",
-      "command": "node",
-      "args": ["scripts/test-gemini-sdk.js"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: SDK Ask (Clipboard + Search)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$prompt = Get-Clipboard; node scripts/test-gemini-sdk.js \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Compare API vs SDK",
-      "type": "shell",
-      "command": "echo",
-      "args": ["Comparing Direct API vs SDK approaches"],
-      "dependsOn": ["Gemini: Test API Direct", "Gemini: SDK Test (Streaming + Tools)"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Unified Client (TypeScript)",
-      "type": "shell",
-      "command": "node",
-      "args": ["scripts/compiled/unified-gemini.js"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Unified Ask (Clipboard)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$prompt = Get-Clipboard; node scripts/compiled/unified-gemini.js \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Provider Status",
-      "type": "shell",
-      "command": "node",
-      "args": [
-        "-e",
-        "const { UnifiedGeminiClient } = require('./scripts/compiled/unified-gemini.js'); (async () => { const client = new UnifiedGeminiClient(); const providers = await client.listProviders(); console.log('📊 Provider Status:'); providers.forEach(p => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'}`)); })();"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Auto Start on Open",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "if (gemini --version) { Write-Host 'Starting Gemini CLI in IDE mode'; } else { Write-Warning 'gemini not on PATH, skipping auto start'; exit 0 }"
-      ],
-      "runOptions": { "runOn": "folderOpen" },
-      "dependsOn": ["Gemini: IDE Mode"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Status",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "Write-Host 'GEMINI_API_KEY:' ([bool]$env:GEMINI_API_KEY); try { gemini --version } catch { Write-Error 'gemini not on PATH' }"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Arbitrage: Ask -> Log session",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$in = Get-Clipboard; $out = $in | node scripts/arbitrage.js --stdin | Out-String; pwsh -NoProfile -File \"${workspaceFolder}/.vscode/scripts/append-session-log.ps1\" -Topic 'arbitrage' -Summary 'Arbitrage result' -Details $out -Actor 'agent'"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Providers: Status (All)",
-      "type": "shell",
-      "command": "echo Providers: status",
-      "dependsOn": [
-        "Verify: Claude & Gemini",
-        "Gemini: Status",
-        "Env: Report",
-        "MCP: Verify Servers"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "Gemini: Kill",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$procs = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -match 'gemini' }; if ($procs) { $procs | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }; Write-Host ('Killed ' + $procs.Count + ' gemini process(es).') } else { Write-Host 'No gemini processes found.' }"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Health: Quick + Gemini",
-      "type": "shell",
-      "command": "echo Health + Gemini",
-      "dependsOn": ["Health: Quick Scan", "Gemini: Status"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Guardian: Session Log Cleanup",
-      "type": "shell",
-      "command": "node scripts/session-log-guardian.js --cleanup",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": [],
-      "runOptions": { "runOn": "folderOpen" }
-    },
-    {
-      "label": "Guardian: Watch Session Logs",
-      "type": "shell",
-      "command": "node scripts/session-log-watcher.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Guardian: Emergency Cleanup",
-      "type": "shell",
-      "command": "node scripts/session-log-guardian.js --emergency-cleanup",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Guardian: Analyze Session Logs",
-      "type": "shell",
-      "command": "node scripts/session-log-guardian.js --analyze --verbose",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Arbitrage: Dry Run -> Log session",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$out = node scripts/arbitrage.js --dry-run | Out-String; pwsh -NoProfile -File \"${workspaceFolder}/.vscode/scripts/append-session-log.ps1\" -Topic 'arbitrage' -Summary 'Arbitrage dry run' -Details $out -Actor 'agent'"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Snapshot: Problems + Providers",
-      "type": "shell",
-      "command": "echo Snapshot Problems + Providers",
-      "dependsOn": ["Problems: Dump to Log File", "Providers: Status (All)"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Env: Check Go",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "try { go version; go env GOPATH,GOROOT | ForEach-Object { \"$_=$([Environment]::GetEnvironmentVariable($_,'Process'))\" } } catch { Write-Error 'go not found on PATH. Consider running task: Install: Go (winget).' }"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Install: Go (winget)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "winget install -e --id GoLang.Go; try { go version } catch { Write-Warning 'Go may require restarting VS Code or terminal to update PATH' }"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Logs: Ingest Session Logs",
-      "type": "shell",
-      "command": "node scripts/logs/ingest-session-logs.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Logs: Triage + Autofix",
-      "type": "shell",
-      "command": "node scripts/logs/triage-and-fix.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Logs: Ingest -> Triage -> Snapshot",
-      "type": "shell",
-      "command": "echo Logs pipeline",
-      "dependsOn": ["Logs: Ingest Session Logs", "Logs: Triage + Autofix", "Snapshot: Daily Full"],
-      "problemMatcher": []
-    },
-    {
-      "label": "Snapshot: Daily Full",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-File",
-        "${workspaceFolder}/.vscode/scripts/append-session-log.ps1",
-        "-Topic",
-        "snapshot",
-        "-Summary",
-        "Daily full snapshot",
-        "-Details",
-        "Problems+Providers+Env+Index+MCP snapshot captured",
-        "-Actor",
-        "agent"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "dependsOn": [
-        "Problems: Dump to Log File",
-        "Providers: Status (All)",
-        "Env: Report",
-        "Index: Repo Catalog (fast)",
-        "Session: Save MCP Snapshot"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "Scan: Turbo Repository (Hardware Accelerated)",
-      "type": "shell",
-      "command": "node scripts/turbo-repo-scanner.js",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Read: Multi-Agent File Reader",
-      "type": "shell",
-      "command": "node scripts/multi-agent-file-reader.js scan packages/ --summaries",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Analysis: Complete Repository State",
-      "type": "shell",
-      "command": "echo Complete analysis pipeline",
-      "dependsOn": [
-        "Scan: Turbo Repository (Hardware Accelerated)",
-        "Read: Multi-Agent File Reader",
-        "Providers: Status (All)",
-        "Health: Quick Scan"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Enhanced Unified Gemini (v2)",
-      "type": "shell",
-      "command": "npx tsx scripts/unified-gemini-v2.ts",
-      "args": ["Hello! Demonstrate the enhanced meta-learning capabilities."],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Adaptive Config Test",
-      "type": "shell",
-      "command": "npx tsx scripts/adaptive-config-system.ts test",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Cross-Session Stats",
-      "type": "shell",
-      "command": "npx tsx scripts/cross-session-learning.ts stats",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Predictive Analysis",
-      "type": "shell",
-      "command": "npx tsx scripts/predictive-resolution.ts predict",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Config Optimization (clipboard)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$prompt = Get-Clipboard; npx tsx scripts/adaptive-config-system.ts optimize \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Start Learning Session",
-      "type": "shell",
-      "command": "npx tsx scripts/cross-session-learning.ts start-session",
-      "args": ["${input:sessionId}", "${input:sessionDomain}"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: End Learning Session",
-      "type": "shell",
-      "command": "npx tsx scripts/cross-session-learning.ts end-session",
-      "args": ["${input:sessionId}"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Enhanced Provider Status",
-      "type": "shell",
-      "command": "npx tsx",
-      "args": [
-        "-e",
-        "const { EnhancedUnifiedGeminiClient } = require('./scripts/unified-gemini-v2.ts'); (async () => { const client = new EnhancedUnifiedGeminiClient(); const providers = await client.listProviders(); console.log('🧠 Enhanced Provider Status:'); providers.forEach(p => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'} (Rank: ${p.rank}, Success: ${(p.metrics.success_rate * 100).toFixed(1)}%)`)); const stats = await client.getMetaLearningStats(); console.log('\\n📊 Meta-Learning Summary:'); console.log(`   Learning Enabled: ${stats.learning_enabled}`); console.log(`   Session Patterns: ${stats.current_session_patterns}`); console.log(`   Provider Rankings: ${Object.entries(stats.adaptive_rankings).map(([n,r]) => `${n.split(' ')[1]}: ${r.toFixed(1)}`).join(', ')}`); })().catch(console.error);"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Predictive Stats",
-      "type": "shell",
-      "command": "npx tsx scripts/predictive-resolution.ts stats",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Full System Analysis",
-      "type": "shell",
-      "command": "echo MetaLearning Full Analysis",
-      "dependsOn": [
-        "MetaLearning: Enhanced Provider Status",
-        "MetaLearning: Adaptive Config Test",
-        "MetaLearning: Cross-Session Stats",
-        "MetaLearning: Predictive Stats"
-      ],
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Ask Enhanced (clipboard)",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "$prompt = Get-Clipboard; npx tsx scripts/unified-gemini-v2.ts \"$prompt\""
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "MetaLearning: Reset All Systems",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "Write-Host 'Resetting all meta-learning systems...'; npx tsx scripts/adaptive-config-system.ts reset; npx tsx scripts/cross-session-learning.ts reset; npx tsx scripts/predictive-resolution.ts reset; Write-Host 'All systems reset to baseline.'"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Demo: Meta-Learning Showcase",
-      "type": "shell",
-      "command": "pwsh",
-      "args": [
-        "-NoProfile",
-        "-Command",
-        "Write-Host '🌈 Meta-Learning Framework Demonstration' -ForegroundColor Cyan; Write-Host '===========================================' -ForegroundColor Cyan; Write-Host ''; Write-Host '1. Enhanced Unified Gemini v2.0' -ForegroundColor Yellow; npx tsx scripts/unified-gemini-v2.ts 'Demonstrate your meta-learning capabilities and how you differ from the original unified client.'; Write-Host ''; Write-Host '2. Adaptive Configuration System' -ForegroundColor Yellow; npx tsx scripts/adaptive-config-system.ts test; Write-Host ''; Write-Host '3. Cross-Session Learning Engine' -ForegroundColor Yellow; npx tsx scripts/cross-session-learning.ts stats; Write-Host ''; Write-Host '4. Predictive Resolution System' -ForegroundColor Yellow; npx tsx scripts/predictive-resolution.ts stats; Write-Host ''; Write-Host '🎯 Meta-Learning Framework Demo Complete!' -ForegroundColor Green"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-    }
-  ],
-  "inputs": [
-    {
-      "id": "sessionId",
-      "description": "Enter session ID",
-      "default": "session_${env:USERNAME}_${env:DATE}",
-      "type": "promptString"
-    },
-    {
-      "id": "sessionDomain",
-      "description": "Select session domain",
-      "type": "pickString",
-      "options": ["general", "creative", "analytical", "coding", "research", "debugging"],
-      "default": "general"
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Scan: Repository Integrity",
+			"type": "shell",
+			"command": "node scripts/scan-repo.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "CodeQL: Install Packs (actions)",
+			"type": "process",
+			"command": "codeql",
+			"args": [
+				"pack",
+				"install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/codeql-custom-queries-actions"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "CodeQL: Compile Pack (actions)",
+			"type": "process",
+			"command": "codeql",
+			"args": [
+				"pack",
+				"compile",
+				"."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/codeql-custom-queries-actions"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Env: Hardware Profile",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/scripts/hw-profile.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Dev: Monitor UI",
+			"type": "shell",
+			"command": "pnpm dev",
+			"options": {
+				"cwd": "${workspaceFolder}/packages/monitor",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Session: Save MCP Snapshot",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/save-mcp-snapshot.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Session: Restore Kickoff",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/restore-kickoff.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Session: Auto Restore on Open",
+			"type": "shell",
+			"command": "echo Auto restore kickoff",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"dependsOn": [
+				"Session: Restore Kickoff"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Build: All",
+			"type": "shell",
+			"command": "pnpm build",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Status",
+			"type": "shell",
+			"command": "pnpm exec mcp status",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Verify Servers",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$expected=@('github','huggingface','fetch','vscodeide'); $o = pnpm exec mcp status | Out-String; $missing = $expected | Where-Object { $o -notmatch $_ }; if ($missing.Count -eq 0) { Write-Host 'MCP OK: github, huggingface, fetch, vscodeide'; exit 0 } else { Write-Error ('Missing MCP servers: ' + ($missing -join ', ')); exit 1 }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Generate Dynamic Config",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/generate-mcp-config.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Index: Repo Catalog",
+			"type": "shell",
+			"command": "node scripts/index-repo.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Env: Check PATH (uv)",
+			"type": "shell",
+			"command": "echo $env:Path; uv --version; uvx --version",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"shell": {
+					"executable": "pwsh"
+				},
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Env: Check ML Keys",
+			"type": "shell",
+			"command": "Write-Host 'OPENAI_API_KEY' : ([bool]$env:OPENAI_API_KEY); Write-Host 'GEMINI_API_KEY' : ([bool]$env:GEMINI_API_KEY); Write-Host 'ANTHROPIC_API_KEY' : ([bool]$env:ANTHROPIC_API_KEY); Write-Host 'MCP_EXPERIMENTAL' : ([bool]$env:MCP_EXPERIMENTAL)",
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"shell": {
+					"executable": "pwsh"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Use Dynamic",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/use-dynamic-mcp.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Intents (codegen+web)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"codegen,web-search"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Intents (reasoning)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"reasoning,planning"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Intents (local-llm)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/set-intents.ps1",
+				"local-llm,codegen"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP: Use Base",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/use-base-mcp.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Log: Clipboard as Note",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"(Get-Clipboard) | Out-String | ForEach-Object { $_.Trim() } | ForEach-Object { pwsh -NoProfile -File '${workspaceFolder}/.vscode/scripts/append-session-log.ps1' -Topic 'clipboard' -Summary 'Clipboard note' -Details $_ -Actor 'human' }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Log: Quick Note",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/append-session-log.ps1",
+				"-Topic",
+				"note",
+				"-Summary",
+				"Quick note",
+				"-Details",
+				"Session thought",
+				"-Actor",
+				"human"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Ops: Index Repo",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/scripts/ops.ps1",
+				"index"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Install: Claude Code (pnpm)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/install-claude.ps1",
+				"pnpm"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Install: Claude Code (native)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/install-claude.ps1",
+				"native"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Install: Gemini CLI (pnpm)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/install-gemini.ps1",
+				"pnpm"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Index: Repo Catalog (fast)",
+			"type": "shell",
+			"command": "node scripts/index-repo-fast.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify: Claude & Gemini",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/verify-providers.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Validate: Session Log",
+			"type": "shell",
+			"command": "node scripts/validate-session-log.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Fix: Session Log",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/docs/session-log/fix-session-log.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Health: Quick Scan",
+			"type": "shell",
+			"command": "echo Quick scan",
+			"dependsOn": [
+				"Index: Repo Catalog (fast)",
+				"MCP: Generate Dynamic Config",
+				"Env: Check PATH (uv)",
+				"Verify: Claude & Gemini",
+				"Validate: Session Log",
+				"MCP: Verify Servers"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Env: Report",
+			"type": "process",
+			"command": "node",
+			"args": [
+				"scripts/env-report.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Chat: Recommend Lean Tools",
+			"type": "shell",
+			"command": "node scripts/tools-recommendation.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Guard: pnpm-only",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/scripts/guard-pnpm-only.ps1",
+				"-FailOnFound"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Ops: Repo Snapshot",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/scripts/repo-snapshot.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Arbitrage: Dry Run",
+			"type": "shell",
+			"command": "node scripts/arbitrage.js --dry-run",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Arbitrage: Ask (stdin)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Clipboard | node scripts/arbitrage.js --stdin"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build: Problems Logger (local)",
+			"type": "shell",
+			"command": "pwsh -NoProfile -Command \"cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build\"",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "Problems: Dump to Log File",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build; code --command problemsLogger.dump"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Problems: Dump If Changed",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"cd .vscode/extensions/problems-logger; pnpm i --silent; pnpm run build; code --command problemsLogger.dumpIfChanged"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: IDE Mode",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"gemini --ide-mode-feature --include-directories packages,scripts,docs,.vscode,server,clients"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Restart IDE Mode",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$procs = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -match 'gemini' }; if ($procs) { $procs | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} } }; Start-Process pwsh -ArgumentList '-NoProfile','-Command','gemini --ide-mode-feature --include-directories packages,scripts,docs,.vscode,server,clients' -WorkingDirectory '${workspaceFolder}'"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Ask (stdin from clipboard)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Clipboard | gemini -p ' '"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Test API Direct",
+			"type": "shell",
+			"command": "node scripts/test-gemini-direct.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Test API (PowerShell)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"scripts/test-gemini-direct.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Ask Direct API",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Test All Models",
+			"type": "shell",
+			"command": "node scripts/test-gemini-models.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Use Pro Latest",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$env:GEMINI_MODEL='gemini-1.5-pro-latest'; $prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Use 2.0 Flash Exp",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$env:GEMINI_MODEL='gemini-2.0-flash-exp'; $prompt = Get-Clipboard; node scripts/test-gemini-direct.js \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: SDK Test (Streaming + Tools)",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/test-gemini-sdk.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: SDK Ask (Clipboard + Search)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$prompt = Get-Clipboard; node scripts/test-gemini-sdk.js \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Compare API vs SDK",
+			"type": "shell",
+			"command": "echo",
+			"args": [
+				"Comparing Direct API vs SDK approaches"
+			],
+			"dependsOn": [
+				"Gemini: Test API Direct",
+				"Gemini: SDK Test (Streaming + Tools)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Unified Client (TypeScript)",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/compiled/unified-gemini.js"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Unified Ask (Clipboard)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$prompt = Get-Clipboard; node scripts/compiled/unified-gemini.js \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Provider Status",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"-e",
+				"const { UnifiedGeminiClient } = require('./scripts/compiled/unified-gemini.js'); (async () => { const client = new UnifiedGeminiClient(); const providers = await client.listProviders(); console.log('📊 Provider Status:'); providers.forEach(p => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'}`)); })();"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Auto Start on Open",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"if (gemini --version) { Write-Host 'Starting Gemini CLI in IDE mode'; } else { Write-Warning 'gemini not on PATH, skipping auto start'; exit 0 }"
+			],
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"dependsOn": [
+				"Gemini: IDE Mode"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Status",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'GEMINI_API_KEY:' ([bool]$env:GEMINI_API_KEY); try { gemini --version } catch { Write-Error 'gemini not on PATH' }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"Path": "C:/Users/erdno/.local/bin;${env:Path}"
+				}
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Arbitrage: Ask -> Log session",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$in = Get-Clipboard; $out = $in | node scripts/arbitrage.js --stdin | Out-String; pwsh -NoProfile -File \"${workspaceFolder}/.vscode/scripts/append-session-log.ps1\" -Topic 'arbitrage' -Summary 'Arbitrage result' -Details $out -Actor 'agent'"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Providers: Status (All)",
+			"type": "shell",
+			"command": "echo Providers: status",
+			"dependsOn": [
+				"Verify: Claude & Gemini",
+				"Gemini: Status",
+				"Env: Report",
+				"MCP: Verify Servers"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Gemini: Kill",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$procs = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -match 'gemini' }; if ($procs) { $procs | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }; Write-Host ('Killed ' + $procs.Count + ' gemini process(es).') } else { Write-Host 'No gemini processes found.' }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Health: Quick + Gemini",
+			"type": "shell",
+			"command": "echo Health + Gemini",
+			"dependsOn": [
+				"Health: Quick Scan",
+				"Gemini: Status"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Guardian: Session Log Cleanup",
+			"type": "shell",
+			"command": "node scripts/session-log-guardian.js --cleanup",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"label": "Guardian: Watch Session Logs",
+			"type": "shell",
+			"command": "node scripts/session-log-watcher.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Guardian: Emergency Cleanup",
+			"type": "shell",
+			"command": "node scripts/session-log-guardian.js --emergency-cleanup",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Guardian: Analyze Session Logs",
+			"type": "shell",
+			"command": "node scripts/session-log-guardian.js --analyze --verbose",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Arbitrage: Dry Run -> Log session",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$out = node scripts/arbitrage.js --dry-run | Out-String; pwsh -NoProfile -File \"${workspaceFolder}/.vscode/scripts/append-session-log.ps1\" -Topic 'arbitrage' -Summary 'Arbitrage dry run' -Details $out -Actor 'agent'"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Snapshot: Problems + Providers",
+			"type": "shell",
+			"command": "echo Snapshot Problems + Providers",
+			"dependsOn": [
+				"Problems: Dump to Log File",
+				"Providers: Status (All)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Env: Check Go",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"try { go version; go env GOPATH,GOROOT | ForEach-Object { \"$_=$([Environment]::GetEnvironmentVariable($_,'Process'))\" } } catch { Write-Error 'go not found on PATH. Consider running task: Install: Go (winget).' }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Install: Go (winget)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"winget install -e --id GoLang.Go; try { go version } catch { Write-Warning 'Go may require restarting VS Code or terminal to update PATH' }"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Logs: Ingest Session Logs",
+			"type": "shell",
+			"command": "node scripts/logs/ingest-session-logs.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Logs: Triage + Autofix",
+			"type": "shell",
+			"command": "node scripts/logs/triage-and-fix.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Logs: Ingest -> Triage -> Snapshot",
+			"type": "shell",
+			"command": "echo Logs pipeline",
+			"dependsOn": [
+				"Logs: Ingest Session Logs",
+				"Logs: Triage + Autofix",
+				"Snapshot: Daily Full"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Snapshot: Daily Full",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}/.vscode/scripts/append-session-log.ps1",
+				"-Topic",
+				"snapshot",
+				"-Summary",
+				"Daily full snapshot",
+				"-Details",
+				"Problems+Providers+Env+Index+MCP snapshot captured",
+				"-Actor",
+				"agent"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"dependsOn": [
+				"Problems: Dump to Log File",
+				"Providers: Status (All)",
+				"Env: Report",
+				"Index: Repo Catalog (fast)",
+				"Session: Save MCP Snapshot"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Scan: Turbo Repository (Hardware Accelerated)",
+			"type": "shell",
+			"command": "node scripts/turbo-repo-scanner.js",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Read: Multi-Agent File Reader",
+			"type": "shell",
+			"command": "node scripts/multi-agent-file-reader.js scan packages/ --summaries",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Analysis: Complete Repository State",
+			"type": "shell",
+			"command": "echo Complete analysis pipeline",
+			"dependsOn": [
+				"Scan: Turbo Repository (Hardware Accelerated)",
+				"Read: Multi-Agent File Reader",
+				"Providers: Status (All)",
+				"Health: Quick Scan"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Enhanced Unified Gemini (v2)",
+			"type": "shell",
+			"command": "npx tsx scripts/unified-gemini-v2.ts",
+			"args": [
+				"Hello! Demonstrate the enhanced meta-learning capabilities."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Adaptive Config Test",
+			"type": "shell",
+			"command": "npx tsx scripts/adaptive-config-system.ts test",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Cross-Session Stats",
+			"type": "shell",
+			"command": "npx tsx scripts/cross-session-learning.ts stats",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Predictive Analysis",
+			"type": "shell",
+			"command": "npx tsx scripts/predictive-resolution.ts predict",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Config Optimization (clipboard)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$prompt = Get-Clipboard; npx tsx scripts/adaptive-config-system.ts optimize \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Start Learning Session",
+			"type": "shell",
+			"command": "npx tsx scripts/cross-session-learning.ts start-session",
+			"args": [
+				"${input:sessionId}",
+				"${input:sessionDomain}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: End Learning Session",
+			"type": "shell",
+			"command": "npx tsx scripts/cross-session-learning.ts end-session",
+			"args": [
+				"${input:sessionId}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Enhanced Provider Status",
+			"type": "shell",
+			"command": "npx tsx",
+			"args": [
+				"-e",
+				"const { EnhancedUnifiedGeminiClient } = require('./scripts/unified-gemini-v2.ts'); (async () => { const client = new EnhancedUnifiedGeminiClient(); const providers = await client.listProviders(); console.log('🧠 Enhanced Provider Status:'); providers.forEach(p => console.log(`   ${p.name}: ${p.available ? '✅' : '❌'} (Rank: ${p.rank}, Success: ${(p.metrics.success_rate * 100).toFixed(1)}%)`)); const stats = await client.getMetaLearningStats(); console.log('\\n📊 Meta-Learning Summary:'); console.log(`   Learning Enabled: ${stats.learning_enabled}`); console.log(`   Session Patterns: ${stats.current_session_patterns}`); console.log(`   Provider Rankings: ${Object.entries(stats.adaptive_rankings).map(([n,r]) => `${n.split(' ')[1]}: ${r.toFixed(1)}`).join(', ')}`); })().catch(console.error);"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Predictive Stats",
+			"type": "shell",
+			"command": "npx tsx scripts/predictive-resolution.ts stats",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Full System Analysis",
+			"type": "shell",
+			"command": "echo MetaLearning Full Analysis",
+			"dependsOn": [
+				"MetaLearning: Enhanced Provider Status",
+				"MetaLearning: Adaptive Config Test",
+				"MetaLearning: Cross-Session Stats",
+				"MetaLearning: Predictive Stats"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Ask Enhanced (clipboard)",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$prompt = Get-Clipboard; npx tsx scripts/unified-gemini-v2.ts \"$prompt\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MetaLearning: Reset All Systems",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Resetting all meta-learning systems...'; npx tsx scripts/adaptive-config-system.ts reset; npx tsx scripts/cross-session-learning.ts reset; npx tsx scripts/predictive-resolution.ts reset; Write-Host 'All systems reset to baseline.'"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Demo: Meta-Learning Showcase",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host '🌈 Meta-Learning Framework Demonstration' -ForegroundColor Cyan; Write-Host '===========================================' -ForegroundColor Cyan; Write-Host ''; Write-Host '1. Enhanced Unified Gemini v2.0' -ForegroundColor Yellow; npx tsx scripts/unified-gemini-v2.ts 'Demonstrate your meta-learning capabilities and how you differ from the original unified client.'; Write-Host ''; Write-Host '2. Adaptive Configuration System' -ForegroundColor Yellow; npx tsx scripts/adaptive-config-system.ts test; Write-Host ''; Write-Host '3. Cross-Session Learning Engine' -ForegroundColor Yellow; npx tsx scripts/cross-session-learning.ts stats; Write-Host ''; Write-Host '4. Predictive Resolution System' -ForegroundColor Yellow; npx tsx scripts/predictive-resolution.ts stats; Write-Host ''; Write-Host '🎯 Meta-Learning Framework Demo Complete!' -ForegroundColor Green"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Sleep Mode: Quick Autonomous (No Prompts)",
+			"type": "shell",
+			"command": "pwsh -NoProfile -File quick-autonomous.ps1",
+			"isBackground": true,
+			"group": "build"
+		}
+	],
+	"inputs": [
+		{
+			"id": "sessionId",
+			"description": "Enter session ID",
+			"default": "session_${env:USERNAME}_${env:DATE}",
+			"type": "promptString"
+		},
+		{
+			"id": "sessionDomain",
+			"description": "Select session domain",
+			"type": "pickString",
+			"options": [
+				"general",
+				"creative",
+				"analytical",
+				"coding",
+				"research",
+				"debugging"
+			],
+			"default": "general"
+		}
+	]
 }

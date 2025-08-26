@@ -1,14 +1,55 @@
-from locust import HttpUser, task, between, events
+"""
+🌑🔥 MCP Orchestration Autonomous Load Testing Framework
+
+This locustfile.py simulates the autonomous AI agents (Claude Sonnet 4, Gemini CLI, etc.)
+working together during 8-hour sleep cycles, testing the system's ability to handle
+continuous autonomous operation without user intervention.
+
+Key features:
+- Simulates multiple AI agent types with realistic behavior patterns
+- Tests MCP endpoints, session management, and auto-save functionality  
+- Validates no-prompt operation and continuous session persistence
+- Monitors system performance during extended autonomous periods
+- Tests inter-agent communication and task coordination
+"""
+
+from locust import HttpUser, task, between, events, LoadTestShape
 import json
 import random
 import time
 import uuid
 from datetime import datetime, timedelta
 import logging
+import requests
+import os
+from typing import Dict, List, Optional
 
 # Configure logging for autonomous operation monitoring
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+class AutonomousLoadTestShape(LoadTestShape):
+    """
+    Custom load test shape that simulates 8-hour autonomous operation
+    with realistic user activity patterns during sleep cycles
+    """
+    
+    def tick(self):
+        run_time = self.get_run_time()
+        
+        # 8-hour cycle (28800 seconds)
+        if run_time < 3600:  # First hour: ramp up
+            return (10, 2)
+        elif run_time < 7200:  # Hours 1-2: normal load
+            return (25, 3)
+        elif run_time < 21600:  # Hours 2-6: heavy autonomous load
+            return (50, 5)
+        elif run_time < 25200:  # Hours 6-7: maintenance mode
+            return (20, 2)
+        elif run_time < 28800:  # Final hour: wind down
+            return (10, 1)
+        else:
+            return None  # Stop after 8 hours
 
 class AutonomousAIAgent(HttpUser):
     """

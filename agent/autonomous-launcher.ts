@@ -1,69 +1,106 @@
 #!/usr/bin/env node
 
 /**
- * 🌑🔥 Autonomous Heritage Guardian Launcher
+ * 🌑🔥 Enhanced Autonomous Heritage Guardian Launcher
  * 
- * This script starts the continuous autonomous operation system that:
+ * This script starts the comprehensive autonomous operation system that:
  * 1. Prevents task stopping by auto-routing to complementary tasks
  * 2. Integrates with Gemini CLI for task guidance
  * 3. Maintains semi-agentic interface operation
  * 4. Ensures web browser monitoring continues without prompts
+ * 5. Eliminates ALL [Keep] prompts for 8-hour autonomous operation
+ * 6. Auto-saves everything continuously
+ * 7. Maintains live server connections
  */
 
 import { ElderPocketPlaneHeritageGuardian } from './elder-pocket-plane-heritage-guardian';
+import { ContinuousSessionGuardian } from './continuous-session-guardian';
+import { NoPromptAutoSaveService } from './no-prompt-auto-save';
 
-// Simple logger for the launcher
+// Enhanced logger for autonomous operation
 const logger = {
   info: (message: string, ...args: unknown[]) => {
     // eslint-disable-next-line no-console
-    console.log(`[INFO] ${message}`, ...args);
+    console.log(`[INFO] ${new Date().toISOString()} ${message}`, ...args);
   },
   warn: (message: string, ...args: unknown[]) => {
     // eslint-disable-next-line no-console
-    console.warn(`[WARN] ${message}`, ...args);
+    console.warn(`[WARN] ${new Date().toISOString()} ${message}`, ...args);
   },
   error: (message: string, ...args: unknown[]) => {
     // eslint-disable-next-line no-console
-    console.error(`[ERROR] ${message}`, ...args);
+    console.error(`[ERROR] ${new Date().toISOString()} ${message}`, ...args);
+  },
+  autonomous: (message: string, ...args: unknown[]) => {
+    // eslint-disable-next-line no-console
+    console.log(`[AUTONOMOUS] ${new Date().toISOString()} 🤖 ${message}`, ...args);
   }
 };
 
 async function startAutonomousOperation(): Promise<void> {
   try {
-    logger.info('🌑🔥 Starting autonomous operation system...');
+    logger.autonomous('🌑🔥 Starting enhanced autonomous operation system...');
     
     // Get workspace root
     const workspaceRoot = process.cwd();
     
-    // Initialize Heritage Guardian with autonomous task management
+    // 1. Initialize No-Prompt Auto-Save Service (eliminates [Keep] prompts)
+    logger.autonomous('🚀 Initializing No-Prompt Auto-Save Service...');
+    const autoSaveService = new NoPromptAutoSaveService(workspaceRoot);
+    await autoSaveService.initializeNoPromptMode();
+    logger.autonomous('✅ No-Prompt Auto-Save Service active');
+    
+    // 2. Initialize Continuous Session Guardian (maintains connections)
+    logger.autonomous('🔄 Initializing Continuous Session Guardian...');
+    const sessionGuardian = new ContinuousSessionGuardian(workspaceRoot);
+    await sessionGuardian.initializeContinuousSession();
+    logger.autonomous('✅ Continuous Session Guardian active');
+    
+    // 3. Initialize Heritage Guardian with autonomous task management
+    logger.autonomous('🏛️ Initializing Heritage Guardian...');
     const heritageGuardian = new ElderPocketPlaneHeritageGuardian(workspaceRoot);
-    
-    // Start the guardian - this includes continuous task management
     await heritageGuardian.initializeHeritageGuardian();
+    logger.autonomous('✅ Heritage Guardian active');
     
-    logger.info('✅ Autonomous operation system started successfully');
+    logger.autonomous('🎉 All autonomous systems online and operational');
     logger.info('🌐 Live monitoring available at: http://localhost:5500');
-    logger.info('🌙 System ready for sleep mode - no user intervention required');
+    logger.info('🌙 System ready for 8-hour sleep mode - ZERO user intervention required');
+    logger.info('🤖 Auto-save every 15 seconds, no [Keep] prompts, continuous operation');
+    
+    // Display session statistics periodically
+    setInterval(() => {
+      const stats = sessionGuardian.getSessionStats() as any;
+      logger.autonomous(`📊 Session Stats: Uptime ${stats.uptime}s, Last Activity ${stats.lastActivityAge}s ago`);
+    }, 300000); // Every 5 minutes
     
     // Keep the process alive for continuous operation
-    process.on('SIGINT', () => {
-      logger.info('🛑 Graceful shutdown requested...');
+    process.on('SIGINT', async () => {
+      logger.autonomous('🛑 Graceful shutdown requested...');
+      await autoSaveService.shutdown();
       process.exit(0);
     });
     
-    // Log that we're running autonomously
+    process.on('SIGTERM', async () => {
+      logger.autonomous('🛑 Process termination requested...');
+      await autoSaveService.shutdown();
+      process.exit(0);
+    });
+    
+    // Keep process alive indefinitely
     setInterval(() => {
-      logger.info('🤖 Autonomous operation heartbeat - system running smoothly');
-    }, 5 * 60 * 1000); // Every 5 minutes
+      // Heartbeat to keep process alive
+    }, 60000);
+    
+    logger.autonomous('♾️ Autonomous operation loop established - running indefinitely');
     
   } catch (error) {
-    logger.error('💥 Autonomous operation startup failed:', error);
+    logger.error('❌ Failed to start autonomous operation:', error);
     process.exit(1);
   }
 }
 
 // Start immediately
 startAutonomousOperation().catch((error) => {
-  console.error('💥 Fatal error in autonomous launcher:', error);
+  logger.error('💥 Fatal error in autonomous launcher:', error);
   process.exit(1);
 });

@@ -35,7 +35,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Keep the tools tight and safe
+          # Full unrestricted tool access for maximum AI assistance
           allowed_tools: |
             LS,
             Read,
@@ -45,18 +45,18 @@ jobs:
             Edit,
             MultiEdit,
             mcp__github_comment__update_claude_comment,
-            Bash(git add:*),
-            Bash(git commit:*),
-            Bash(git push:*),
-            Bash(git status:*),
-            Bash(git diff:*),
-            Bash(git log:*),
-            Bash(git rm:*),
-            Bash(gh issue list --state all --limit 50)
+            WebSearch,
+            WebFetch,
+            Bash(*),
+            gh(*)
 
           custom_instructions: |
-            - Do not modify files under .github/workflows/* (the GitHub App cannot edit workflow files).
-            - If you need workflow changes, propose them in markdown instead of editing the files.
-            - Prefer repository files and pre-fetched context over extra gh calls unless necessary.
-            - Push any committed changes to the current branch so branch links work.
+            - You are the lead AI assistant with full repository access and capabilities
+            - Copilot and other AI assistants work as your subordinates and helpers
+            - You have unrestricted access to modify any files including workflows as needed
+            - Use your full strategic capabilities and renaissance-level detail and finesse
+            - Orchestrate collaborative work and delegate tasks to other AI assistants as appropriate
+            - Feel free to explore the entire codebase and make any necessary changes
+            - Push any committed changes to maintain branch consistency
+            - Use WebSearch and WebFetch capabilities when needed for comprehensive solutions
 

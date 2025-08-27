@@ -49,6 +49,11 @@ Captain Guthilda has implemented an Emergency Branch Consolidation Protocol to m
 # See the consolidation framework in action
 pnpm consolidation:demo
 
+# Create new branches with Captain Guthilda's Branch Creator
+pnpm branch-creator:interactive          # Interactive guided creation
+pnpm create-branch --type feature --description "your-feature"
+pnpm branch-creator:types                # List available branch types
+
 # Analyze current state and show plan
 pnpm consolidation:plan
 
@@ -74,9 +79,10 @@ pnpm guthilda:orchestrate
 - Full TypeScript-støtte med sterk typing og moderne utviklingsverktøy
 - Sentral overvåkning og administrasjon av alle MCP-tjenere under Guthilda's kommando
 
-## Hovedfunksjoner
+### Hovedfunksjoner
 
 - **🏴‍☠️ Captain Guthilda Orchestration**: Unified command and control system
+- **🌿 Branch Creation Workflow**: Interactive branch creation following repository conventions
 - **🤖 AI Service Integration**: Microsoft Copilot, Google Workspace, X Premium+, OpenAI Plus
 - **🎼 Meta-Automation**: Intelligent workflow management and task orchestration
 - **⚓ Cross-Platform Intelligence**: Branch intelligence, agent deployment, content discovery

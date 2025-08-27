@@ -1,0 +1,127 @@
+{
+  "name": "gemini-vscode-bridge",
+  "displayName": "Gemini CLI Bridge for Restructure-MCP-Orchestration",
+  "description": "Custom VS Code extension that bridges with the active Gemini CLI for this specific repository",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other",
+    "AI",
+    "Machine Learning"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "geminibridge.sendToGemini",
+        "title": "Send to Gemini CLI",
+        "category": "Gemini Bridge"
+      },
+      {
+        "command": "geminibridge.showGeminiPanel",
+        "title": "Show Gemini Panel",
+        "category": "Gemini Bridge"
+      },
+      {
+        "command": "geminibridge.listGeminiCommands",
+        "title": "List Gemini Slash Commands",
+        "category": "Gemini Bridge"
+      },
+      {
+        "command": "geminibridge.switchProAccount",
+        "title": "Switch Gemini Pro Account",
+        "category": "Gemini Bridge"
+      },
+      {
+        "command": "geminibridge.sendFileToGemini",
+        "title": "Send Current File to Gemini",
+        "category": "Gemini Bridge"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "geminibridge.sendFileToGemini",
+          "group": "gemini@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "geminibridge.sendToGemini"
+        },
+        {
+          "command": "geminibridge.showGeminiPanel"
+        },
+        {
+          "command": "geminibridge.listGeminiCommands"
+        },
+        {
+          "command": "geminibridge.switchProAccount"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "geminibridge.chatView",
+          "name": "Gemini CLI Bridge",
+          "when": "true"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "geminibridge",
+          "title": "Gemini CLI Bridge",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Gemini CLI Bridge",
+      "properties": {
+        "geminibridge.cliPath": {
+          "type": "string",
+          "default": "C:\\Users\\erdno\\AppData\\Roaming\\npm\\gemini.cmd",
+          "description": "Path to Gemini CLI executable"
+        },
+        "geminibridge.autoDetectSession": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically detect running Gemini CLI sessions"
+        },
+        "geminibridge.enableSlashCommands": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable slash command suggestions"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "tree-kill": "^1.2.2",
+    "node-pty": "^0.10.1"
+  }
+}

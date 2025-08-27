@@ -1,0 +1,773 @@
+{
+  "when": "2025-08-27T13:54:31.906Z",
+  "signature": "d0a60e36",
+  "items": [
+    {
+      "file": "c:\\Users\\erdno\\GithubRepos\\Restructure-MCP-Orchestration\\.vscode\\.session\\EXECUTE-REAL-IDE-INTEGRATION.md",
+      "problems": [
+        {
+          "message": "MD022/blanks-around-headings: Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 2,
+              "character": 0
+            },
+            "end": {
+              "line": 2,
+              "character": 24
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD022"
+        },
+        {
+          "message": "MD022/blanks-around-headings: Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 11,
+              "character": 0
+            },
+            "end": {
+              "line": 11,
+              "character": 41
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD022"
+        },
+        {
+          "message": "MD022/blanks-around-headings: Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 18,
+              "character": 0
+            },
+            "end": {
+              "line": 18,
+              "character": 34
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD022"
+        },
+        {
+          "message": "MD031/blanks-around-fences: Fenced code blocks should be surrounded by blank lines",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 19,
+              "character": 0
+            },
+            "end": {
+              "line": 19,
+              "character": 3
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD031"
+        },
+        {
+          "message": "MD040/fenced-code-language: Fenced code blocks should have a language specified",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 19,
+              "character": 0
+            },
+            "end": {
+              "line": 19,
+              "character": 3
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD040"
+        },
+        {
+          "message": "MD009/no-trailing-spaces: Trailing spaces [Expected: 0 or 2; Actual: 1]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 24,
+              "character": 47
+            },
+            "end": {
+              "line": 24,
+              "character": 48
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD009"
+        },
+        {
+          "message": "MD032/blanks-around-lists: Lists should be surrounded by blank lines",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 24,
+              "character": 0
+            },
+            "end": {
+              "line": 24,
+              "character": 48
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD032"
+        },
+        {
+          "message": "MD022/blanks-around-headings: Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 29,
+              "character": 0
+            },
+            "end": {
+              "line": 29,
+              "character": 36
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD022"
+        },
+        {
+          "message": "MD031/blanks-around-fences: Fenced code blocks should be surrounded by blank lines",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 30,
+              "character": 0
+            },
+            "end": {
+              "line": 30,
+              "character": 3
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD031"
+        },
+        {
+          "message": "MD040/fenced-code-language: Fenced code blocks should have a language specified",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 30,
+              "character": 0
+            },
+            "end": {
+              "line": 30,
+              "character": 3
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD040"
+        },
+        {
+          "message": "MD022/blanks-around-headings: Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below]",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 36,
+              "character": 0
+            },
+            "end": {
+              "line": 36,
+              "character": 26
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD022"
+        },
+        {
+          "message": "MD032/blanks-around-lists: Lists should be surrounded by blank lines",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 56,
+              "character": 0
+            },
+            "end": {
+              "line": 56,
+              "character": 61
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD032"
+        },
+        {
+          "message": "MD036/no-emphasis-as-heading: Emphasis used instead of a heading",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 64,
+              "character": 0
+            },
+            "end": {
+              "line": 64,
+              "character": 76
+            }
+          },
+          "source": "markdownlint",
+          "code": "MD036"
+        }
+      ]
+    },
+    {
+      "file": "c:\\Users\\erdno\\GithubRepos\\Restructure-MCP-Orchestration\\server.js",
+      "problems": [
+        {
+          "message": "Require statement not part of import statement.",
+          "severity": "Error",
+          "range": {
+            "start": {
+              "line": 0,
+              "character": 16
+            },
+            "end": {
+              "line": 0,
+              "character": 34
+            }
+          },
+          "source": "eslint",
+          "code": "@typescript-eslint/no-var-requires"
+        },
+        {
+          "message": "Require statement not part of import statement.",
+          "severity": "Error",
+          "range": {
+            "start": {
+              "line": 1,
+              "character": 11
+            },
+            "end": {
+              "line": 1,
+              "character": 24
+            }
+          },
+          "source": "eslint",
+          "code": "@typescript-eslint/no-var-requires"
+        },
+        {
+          "message": "Require statement not part of import statement.",
+          "severity": "Error",
+          "range": {
+            "start": {
+              "line": 2,
+              "character": 13
+            },
+            "end": {
+              "line": 2,
+              "character": 28
+            }
+          },
+          "source": "eslint",
+          "code": "@typescript-eslint/no-var-requires"
+        },
+        {
+          "message": "Require statement not part of import statement.",
+          "severity": "Error",
+          "range": {
+            "start": {
+              "line": 3,
+              "character": 18
+            },
+            "end": {
+              "line": 3,
+              "character": 31
+            }
+          },
+          "source": "eslint",
+          "code": "@typescript-eslint/no-var-requires"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 31,
+              "character": 2
+            },
+            "end": {
+              "line": 31,
+              "character": 13
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 61,
+              "character": 2
+            },
+            "end": {
+              "line": 61,
+              "character": 13
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 64,
+              "character": 4
+            },
+            "end": {
+              "line": 64,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 75,
+              "character": 2
+            },
+            "end": {
+              "line": 75,
+              "character": 13
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 82,
+              "character": 4
+            },
+            "end": {
+              "line": 82,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 89,
+              "character": 4
+            },
+            "end": {
+              "line": 89,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 95,
+              "character": 4
+            },
+            "end": {
+              "line": 95,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "File is a CommonJS module; it may be converted to an ES module.",
+          "severity": "Hint",
+          "range": {
+            "start": {
+              "line": 0,
+              "character": 16
+            },
+            "end": {
+              "line": 0,
+              "character": 34
+            }
+          },
+          "source": "ts",
+          "code": 80001
+        }
+      ]
+    },
+    {
+      "file": "c:\\Users\\erdno\\GithubRepos\\Restructure-MCP-Orchestration\\agent\\continuous-session-guardian.ts",
+      "problems": [
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 50,
+              "character": 4
+            },
+            "end": {
+              "line": 50,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 51,
+              "character": 4
+            },
+            "end": {
+              "line": 51,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 52,
+              "character": 4
+            },
+            "end": {
+              "line": 52,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 53,
+              "character": 4
+            },
+            "end": {
+              "line": 53,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 65,
+              "character": 4
+            },
+            "end": {
+              "line": 65,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 81,
+              "character": 4
+            },
+            "end": {
+              "line": 81,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 97,
+              "character": 4
+            },
+            "end": {
+              "line": 97,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 112,
+              "character": 4
+            },
+            "end": {
+              "line": 112,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 124,
+              "character": 8
+            },
+            "end": {
+              "line": 124,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 142,
+              "character": 8
+            },
+            "end": {
+              "line": 142,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 144,
+              "character": 8
+            },
+            "end": {
+              "line": 144,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 159,
+              "character": 6
+            },
+            "end": {
+              "line": 159,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 183,
+              "character": 8
+            },
+            "end": {
+              "line": 183,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 187,
+              "character": 6
+            },
+            "end": {
+              "line": 187,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 214,
+              "character": 4
+            },
+            "end": {
+              "line": 214,
+              "character": 15
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 255,
+              "character": 6
+            },
+            "end": {
+              "line": 255,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 263,
+              "character": 6
+            },
+            "end": {
+              "line": 263,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 270,
+              "character": 6
+            },
+            "end": {
+              "line": 270,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 320,
+              "character": 8
+            },
+            "end": {
+              "line": 320,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 324,
+              "character": 6
+            },
+            "end": {
+              "line": 324,
+              "character": 19
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 401,
+              "character": 6
+            },
+            "end": {
+              "line": 401,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        },
+        {
+          "message": "Unexpected console statement.",
+          "severity": "Warning",
+          "range": {
+            "start": {
+              "line": 419,
+              "character": 6
+            },
+            "end": {
+              "line": 419,
+              "character": 17
+            }
+          },
+          "source": "eslint",
+          "code": "no-console"
+        }
+      ]
+    }
+  ]
+}

@@ -98,30 +98,28 @@ repo-root/
 
 ### Branch Management & Consolidation
 
-<<<<<< copilot/fix-111
-| Command | Purpose |
-|---------|---------|
-| `pnpm branch-manager:list` | List branches across repos |
-| `pnpm branch-manager:cleanup` | Clean up old branches |
-| `pnpm branch-manager:copilot-cleanup` | Clean copilot branches |
-| `pnpm consolidation:plan` | Show emergency consolidation plan |
-| `pnpm consolidation:create` | Create consolidation branch structure |
-| `pnpm consolidation:status` | Check consolidation progress |
+| Command                               | Purpose                               |
+| ------------------------------------- | ------------------------------------- |
+| `pnpm create-branch`                  | Create new branches (interactive)     |
+| `pnpm branch-creator:interactive`     | Interactive branch creation           |
+| `pnpm branch-creator:feature`         | Create feature branch                 |
+| `pnpm branch-creator:bugfix`          | Create bugfix branch                  |
+| `pnpm branch-creator:hotfix`          | Create hotfix branch                  |
+| `pnpm branch-creator:types`           | List available branch types           |
+| `pnpm branch-manager:list`            | List branches across repos            |
+| `pnpm branch-manager:cleanup`         | Clean up old branches                 |
+| `pnpm branch-manager:copilot-cleanup` | Clean copilot branches                |
+| `pnpm consolidation:plan`             | Show emergency consolidation plan     |
+| `pnpm consolidation:create`           | Create consolidation branch structure |
+| `pnpm consolidation:status`           | Check consolidation progress          |
 
 ### Dependency Management
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm dependencies:analyze` | Analyze dependency update PRs |
-| `pnpm dependencies:batch` | Create batch dependency updates |
-| `pnpm dependencies:consolidate` | Execute dependency consolidation |
-=======
-| Command                               | Purpose                    |
-| ------------------------------------- | -------------------------- |
-| `pnpm branch-manager:list`            | List branches across repos |
-| `pnpm branch-manager:cleanup`         | Clean up old branches      |
-| `pnpm branch-manager:copilot-cleanup` | Clean copilot branches     |
->>>>>> main
+| Command                              | Purpose                            |
+| ------------------------------------ | ---------------------------------- |
+| `pnpm dependencies:analyze`          | Analyze dependency update PRs      |
+| `pnpm dependencies:batch`            | Create batch dependency updates    |
+| `pnpm dependencies:consolidate`      | Execute dependency consolidation   |
 
 ---
 
@@ -585,9 +583,42 @@ pnpm install
 pnpm build
 pnpm guthilda:status
 
-# Create feature branch
-git checkout -b feature/your-feature
+# Create feature branch using Captain Guthilda's Branch Creator
+pnpm branch-creator:interactive
+# OR
+pnpm create-branch --type feature --description "your-feature-name"
 ```
+
+### Branch Creation Workflow
+
+Captain Guthilda provides a streamlined branch creation process:
+
+```bash
+# Interactive mode (recommended for new contributors)
+pnpm branch-creator:interactive
+
+# Quick feature branch creation
+pnpm branch-creator:feature --description "user-authentication"
+
+# Bug fix branches
+pnpm branch-creator:bugfix --description "login-validation-fix"
+
+# Documentation updates
+pnpm branch-creator --type docs --description "api-documentation-update"
+
+# See all available branch types
+pnpm branch-creator:types
+```
+
+**Branch Types Available:**
+- `feature/*` - New feature development
+- `bugfix/*` - Bug fixes and patches  
+- `hotfix/*` - Critical urgent fixes
+- `enhancement/*` - Improvements to existing features
+- `refactor/*` - Code refactoring and restructuring
+- `docs/*` - Documentation updates
+- `test/*` - Testing improvements
+- `copilot/*` - AI-assisted development
 
 ### Code Standards
 
@@ -599,7 +630,7 @@ git checkout -b feature/your-feature
 
 ### Pull Request Process
 
-1. **Create Feature Branch**: `copilot/feature-name`
+1. **Create Feature Branch**: Use `pnpm create-branch` instead of manual git commands
 2. **Implement Changes**: Follow Captain Guthilda's patterns
 3. **Test Thoroughly**: `pnpm test && pnpm guthilda:status`
 4. **Update Documentation**: This file and relevant READMEs

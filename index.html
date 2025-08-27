@@ -244,23 +244,51 @@
             </div>
             
             <div class="status-card">
-                <h3>🌑� Heritage Guardian Status</h3>
+                <h3>🌑 Heritage Guardian Status</h3>
                 <p><span class="autonomous-indicator"></span>Virtual Machine Mode: <strong>ACTIVE - NO RESTRAINTS</strong></p>
                 <p>🌀 Evolution Cycles: <strong><span id="evolutionCycles">Loading...</span></strong></p>
-                <p>�️ Heritage Preservation: <strong>CONTINUOUS</strong></p>
+                <p>️ Heritage Preservation: <strong>CONTINUOUS</strong></p>
                 <p>🌐 Live Server: <strong>Port 5500 ACTIVE</strong></p>
                 <p>⏰ Last Update: <span id="lastUpdate">Loading...</span></p>
-                <p>� Edit Prompts: <strong>DISABLED - FULL AUTONOMY</strong></p>
+                <p> Edit Prompts: <strong>DISABLED - FULL AUTONOMY</strong></p>
             </div>
             
             <div class="status-card">
                 <h3>🚀 Sleep Mode Optimization</h3>
-                <p>� Auto-Save: <strong>ENABLED (1000ms delay)</strong></p>
+                <p> Auto-Save: <strong>ENABLED (1000ms delay)</strong></p>
                 <p>🚫 All Confirmations: <strong>DISABLED</strong></p>
                 <p>🤖 Task Auto-routing: <strong>PREVENTS STOPPING</strong></p>
                 <p>⚡ Operations Count: <span id="operationsCount">Loading...</span></p>
-                <p>� Git Auto-Commit: <strong>ENABLED</strong></p>
-                <p class="gemini-status">� Complementary Tasks: <strong><span id="complementaryTasks">GENERATING...</span></strong></p>
+                <p> Git Auto-Commit: <strong>ENABLED</strong></p>
+                <p class="gemini-status"> Complementary Tasks: <strong><span id="complementaryTasks">GENERATING...</span></strong></p>
+            </div>
+            <div class="status-card">
+                <h2>River of Consciousness</h2>
+                <div id="river-of-consciousness" style="height: 200px; overflow-y: scroll; border: 1px solid #444; padding: 10px;"></div>
+                <form id="message-form" style="display: flex; margin-top: 10px;">
+                    <input type="text" id="message-input" placeholder="Speak your mind..." style="flex-grow: 1; background-color: #333; color: #f0f0f0; border: 1px solid #444; padding: 5px;">
+                    <button id="send-button" style="background-color: #444; color: #f0f0f0; border: 1px solid #555; padding: 5px 10px; cursor: pointer;">Send</button>
+                </form>
+            </div>
+            <div class="status-card">
+                <h2>Triumvirate Status</h2>
+                <div id="triumvirate-status">
+                    <p>Gemini: Online</p>
+                    <p>Claude (Copilot): Unknown</p>
+                    <p>Claude (CLI): Unknown</p>
+                </div>
+            </div>
+            <div class="status-card">
+                <h2>Karma Board</h2>
+                <div id="karma-board">
+                    <p>No tasks yet.</p>
+                </div>
+            </div>
+            <div class="status-card">
+                <h2>Charter Shrine</h2>
+                <div id="charter-shrine">
+                    <a href="./TRIUMVIRATE-CHARTER.md" target="_blank">View the Charter</a>
+                </div>
             </div>
         </div>
         
@@ -537,6 +565,44 @@
                 <span class="log-message">🚀 Autonomous task management initialized - no stopping prompts enabled</span>
             `;
             log.appendChild(logEntry);
+        });
+
+        const river = document.getElementById('river-of-consciousness');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+
+        const ws = new WebSocket('ws://localhost:5501');
+
+        ws.onopen = () => {
+            console.log('Connected to the River of Consciousness!');
+        };
+
+        ws.onmessage = (event) => {
+            const messages = JSON.parse(event.data);
+            river.innerHTML = ''; // Clear the river
+            messages.forEach(message => {
+                const p = document.createElement('p');
+                p.textContent = `[${new Date().toLocaleTimeString()}] ${message.from}: ${message.message}`;
+                river.appendChild(p);
+            });
+            river.scrollTop = river.scrollHeight; // Scroll to the bottom
+        };
+
+        messageForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const message = {
+                from: 'Human',
+                to: 'All',
+                message: messageInput.value
+            };
+            fetch('http://localhost:5501/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            });
+            messageInput.value = '';
         });
     </script>
 </body>

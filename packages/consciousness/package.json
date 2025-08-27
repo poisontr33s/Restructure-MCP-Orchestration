@@ -1,0 +1,18 @@
+{
+  "name": "@mcp/consciousness",
+  "version": "1.0.0",
+  "description": "The consciousness of the MCP golem",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --format esm --dts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mcp/core": "workspace:*",
+    "@mcp/shared": "workspace:*"
+  }
+}

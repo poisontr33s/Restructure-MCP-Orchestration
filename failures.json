@@ -1,0 +1,25 @@
+[
+  {
+    "id": "2025-08-26-01",
+    "timestamp": "2025-08-26T18:30:00Z",
+    "description": "pnpm install failed due to a missing package: @modelcontextprotocol/cli",
+    "root_cause": "Typo in the root package.json file. The package name was incorrect.",
+    "resolution": "Corrected the package name to '@mcp/cli' in the package.json file and ran pnpm install again.",
+    "learnings": [
+      "Always verify package names before running install commands.",
+      "When an install fails, carefully read the error message to identify the root cause.",
+      "Investigate local packages as a potential source of dependency issues in a monorepo."
+    ]
+  },
+  {
+    "id": "2025-08-26-02",
+    "timestamp": "2025-08-26T19:00:00Z",
+    "description": "GET /messages endpoint returned a 'Cannot GET /messages' error.",
+    "root_cause": "The Node.js server was not restarted after the server.js file was modified.",
+    "resolution": "Stopped the server with Ctrl+C and restarted it with 'node server.js'.",
+    "learnings": [
+      "When you modify a Node.js server file, you must restart the server for the changes to take effect.",
+      "Always provide clear and explicit instructions to the user, especially when it comes to server management."
+    ]
+  }
+]

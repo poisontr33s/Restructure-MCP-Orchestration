@@ -5,6 +5,7 @@ import com.mcporchestration.guthilda.ai.GuthildaAiOrchestrator.WorkflowPlan;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -18,10 +19,10 @@ import java.util.concurrent.ScheduledExecutorService;
 @Component
 public class AiDecisionEngine {
 
-    private final ScheduledExecutorService virtualScheduler;
+    private final ExecutorService virtualExecutor;
 
     public AiDecisionEngine() {
-        this.virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+        this.virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     /**

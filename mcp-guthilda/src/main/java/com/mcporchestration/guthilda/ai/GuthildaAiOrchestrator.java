@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -23,11 +24,11 @@ import java.util.concurrent.ScheduledExecutorService;
 @Service
 public class GuthildaAiOrchestrator {
 
-    private final ScheduledExecutorService virtualScheduler;
+    private final ExecutorService virtualExecutor;
     private final AiDecisionEngine decisionEngine;
 
     public GuthildaAiOrchestrator(AiDecisionEngine decisionEngine) {
-        this.virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+        this.virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
         this.decisionEngine = decisionEngine;
     }
 

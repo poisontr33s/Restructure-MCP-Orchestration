@@ -1,6 +1,7 @@
 package com.mcporchestration.monitor.service;
 
 import com.mcporchestration.shared.model.ServerInfo;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -9,6 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -23,13 +25,13 @@ import java.util.concurrent.ScheduledExecutorService;
 public class MonitoringService {
 
     private final WebClient webClient;
-    private final ScheduledExecutorService virtualScheduler;
+    private final ExecutorService virtualExecutor;
 
     public MonitoringService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
                 .baseUrl("http://localhost:8080") // MCP Core URL
                 .build();
-        this.virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+        this.virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     /**
@@ -89,7 +91,7 @@ public class MonitoringService {
                     "platform", Thread.getAllStackTraces().size()
                 )
             );
-        }).subscribeOn(reactor.core.scheduler.Schedulers.fromExecutor(virtualScheduler));
+        }).subscribeOn(reactor.core.scheduler.Schedulers.fromExecutor(virtualExecutor));
     }
 
     /**
@@ -99,7 +101,7 @@ public class MonitoringService {
         return webClient.get()
                 .uri("/api/orchestration/health")
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .defaultIfEmpty(Map.of("status", "unknown"));
     }
 

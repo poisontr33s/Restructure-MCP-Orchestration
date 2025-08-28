@@ -2,6 +2,7 @@ package com.mcporchestration.cli.service;
 
 import com.mcporchestration.shared.config.ServerConfig;
 import com.mcporchestration.shared.types.ServerType;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -71,7 +72,7 @@ public class McpApiService {
         return webClient.get()
             .uri("/guthilda/status")
             .retrieve()
-            .bodyToMono(Map.class);
+            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }
 
     /**

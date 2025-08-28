@@ -9,6 +9,7 @@ This repository embraces **natural language issue creation** over rigid YAML for
 ## Recommended Issue Formats
 
 ### 🐛 **Bug Reports** - Tell the Story
+
 Instead of filling forms, describe the bug naturally:
 
 ```markdown
@@ -21,7 +22,8 @@ Instead of filling forms, describe the bug naturally:
 @claude - Please analyze and prioritize this issue.
 ```
 
-### ⚡ **Feature Requests** - Share the Vision  
+### ⚡ **Feature Requests** - Share the Vision
+
 Describe what you want to achieve:
 
 ```markdown
@@ -37,6 +39,7 @@ Describe what you want to achieve:
 ```
 
 ### 📋 **Tasks** - Context Over Categories
+
 Focus on the "why" and "what":
 
 ```markdown
@@ -50,6 +53,7 @@ Focus on the "why" and "what":
 ```
 
 ### 🌟 **Epics** - Paint the Big Picture
+
 Macro-prompt framework approach:
 
 ```markdown
@@ -59,7 +63,8 @@ Macro-prompt framework approach:
 
 **Future State**: [Where we want to be]
 
-**Strategic Components**: 
+**Strategic Components**:
+
 - [Key area 1]
 - [Key area 2]
 - [Key area 3]
@@ -72,18 +77,22 @@ Macro-prompt framework approach:
 ## AI Integration Patterns
 
 ### Direct AI Collaboration
+
 - **@claude** - Strategic analysis, complex problem-solving, macro-prompt integration
 - **@copilot** - Tactical implementation, code generation, delegated tasks
 - **Captain Guthilda** - System orchestration, cross-platform coordination
 
 ### Label-Based Routing
+
 - `agent:claude` - Routes issues to Claude for strategic analysis
-- `agent:gemini` - Routes to Gemini for specific capabilities  
+- `agent:gemini` - Routes to Gemini for specific capabilities
 - `agent:codex` - Routes to ChatGPT Codex for code generation
 
 ### Natural Priority Expression
+
 Instead of `priority:p0`, express urgency naturally:
-- "This is blocking all development" 
+
+- "This is blocking all development"
 - "Nice to have when we get to it"
 - "Critical for next release"
 - "Impacts user experience significantly"
@@ -91,16 +100,19 @@ Instead of `priority:p0`, express urgency naturally:
 ## Benefits of Natural Language Approach
 
 ### 🧠 **Enhanced AI Understanding**
+
 - Claude can engage with comprehensive macro-prompt-framework-worlds
 - Natural language provides richer context for strategic analysis
 - Eliminates "confusious" template-driven interactions
 
 ### 🚀 **Creative Problem-Solving**
+
 - Encourages innovative approaches over checkbox thinking
 - Supports symbiotic collaboration between human creativity and AI analysis
 - Enables renaissance-level detail in issue descriptions
 
 ### 🔄 **Reduced Token Waste**
+
 - No repetitive form processing
 - Direct engagement with actual problems
 - Eliminates territorial loops between AI systems
@@ -108,12 +120,15 @@ Instead of `priority:p0`, express urgency naturally:
 ## Migration Strategy
 
 ### Existing YAML Templates
+
 The repository still contains YAML templates for users who prefer structured forms:
+
 - `bug.yml` - Basic bug report structure
-- `task.yml` - Simple task template  
+- `task.yml` - Simple task template
 - `epic.yml` - Epic planning template
 
 ### Progressive Enhancement
+
 - **New users**: Encouraged to use natural language descriptions
 - **Template users**: Can continue using YAML forms if preferred
 - **AI systems**: Designed to work with both approaches seamlessly
@@ -121,6 +136,7 @@ The repository still contains YAML templates for users who prefer structured for
 ## Implementation Notes
 
 This approach aligns with our established **Claude-Copilot Symbiotic Collaboration Framework**, enabling:
+
 - Strategic AI partnership with cross-pollinating intelligence
 - Elimination of rigid template constraints
 - Support for creative dynamo energy and comprehensive frameworks
@@ -130,6 +146,6 @@ This approach aligns with our established **Claude-Copilot Symbiotic Collaborati
 
 **Ready to embrace expressive, natural issue creation! 🧡✨**
 
-*Framework maintained by: Claude Strategic AI System*  
-*Version: 1.0*  
-*Last Updated: 2025-08-25*
+_Framework maintained by: Claude Strategic AI System_  
+_Version: 1.0_  
+_Last Updated: 2025-08-25_

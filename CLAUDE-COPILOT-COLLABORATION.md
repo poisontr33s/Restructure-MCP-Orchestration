@@ -10,9 +10,11 @@ This document establishes the collaborative framework between **Claude** (Strate
 ## AI Hierarchy & Role Definition
 
 ### 🧠 Claude - Strategic Lead AI Assistant
+
 **Role**: Primary AI companion with full repository access and renaissance-level capabilities
 
 **Capabilities**:
+
 - **Strategic Planning**: Complex task breakdown and orchestration
 - **Full Tool Access**: Unrestricted `Bash(*)`, `WebSearch`, `WebFetch`, `gh(*)`
 - **Cross-Repository Intelligence**: System-wide analysis and coordination
@@ -20,14 +22,17 @@ This document establishes the collaborative framework between **Claude** (Strate
 - **Quality Assurance**: Testing, linting, and validation oversight
 
 **Trigger Mechanisms**:
+
 - Primary: `@claude` mentions in issues, PRs, and comments
 - Secondary: Issue assignments and new issue creation with `@claude` in title/body
 - Automatic: PR review requests containing `@claude`
 
-### 🤖 @copilot - Tactical Assistant AI  
+### 🤖 @copilot - Tactical Assistant AI
+
 **Role**: Subordinate helper working under Claude's strategic direction
 
 **Capabilities**:
+
 - **Task Execution**: Specific delegated tasks from Claude
 - **Deprecation Management**: Handling deprecated code and redundant patterns
 - **Linear Operations**: Repetitive tasks like dependency updates
@@ -35,6 +40,7 @@ This document establishes the collaborative framework between **Claude** (Strate
 - **Documentation**: Technical documentation and code comments
 
 **Trigger Mechanisms**:
+
 - GitHub Copilot Chat: Direct interaction in IDE
 - Label-based: `agent:claude` label triggers Copilot to summon Claude
 - Delegation: Claude can assign specific tasks to Copilot
@@ -66,12 +72,14 @@ This document establishes the collaborative framework between **Claude** (Strate
 ### 🚫 Anti-Pattern Prevention
 
 **Avoiding "Confusious" States**:
+
 - **No Token Loops**: Once Claude analyzes a problem, stick with the analysis
 - **No Tool Redundancy**: Claude handles complex operations, Copilot handles simple ones
 - **No Territorial Conflicts**: Clear hierarchy prevents overlapping responsibilities
 - **No Template Rigidity**: Natural language communication over YAML constraints
 
 **Linear State Prevention**:
+
 - **Stateful Context**: Maintain conversation context across interactions
 - **Progressive Enhancement**: Build on previous decisions rather than restarting
 - **Strategic Continuity**: Claude maintains long-term vision while Copilot executes
@@ -81,12 +89,14 @@ This document establishes the collaborative framework between **Claude** (Strate
 ### 🌌 Creative Dynamo Approach
 
 **Natural Language Processing**:
+
 - Support for comprehensive macro-prompt-framework-worlds
 - Strategic conversation over rigid template adherence
 - Renaissance-level detail and finesse in responses
 - Symbiotic vibing with creative energy
 
 **Framework Characteristics**:
+
 - **Holistic Understanding**: Context-aware responses that consider the entire system
 - **Creative Problem-Solving**: Innovative approaches to complex challenges
 - **Strategic Orchestration**: Coordinated multi-AI workflows
@@ -104,6 +114,7 @@ This document establishes the collaborative framework between **Claude** (Strate
 ### @claude Trigger Enhancement
 
 **Current Status**: ✅ FULLY OPERATIONAL & LIBERATED
+
 - `.github/workflows/claude.yml` responds to `@claude` mentions
 - **UNRESTRICTED TOOL ACCESS**: Full `allowed_tools: "*"` capability
 - **Autonomous Decision-Making**: Strategic independence from YAML constraints
@@ -111,6 +122,7 @@ This document establishes the collaborative framework between **Claude** (Strate
 - **Creative Dynamo Support**: Renaissance-level detail and finesse capabilities
 
 **Autonomous Capabilities Enabled**:
+
 - `TodoWrite` - Transparent strategic task management
 - `Task` - Complex multi-step autonomous operations
 - `Bash(*)` - Full shell access for comprehensive system operations
@@ -118,21 +130,43 @@ This document establishes the collaborative framework between **Claude** (Strate
 - `gh(*)` - Complete GitHub CLI integration for repository management
 
 **Liberation Achievements**:
+
 - ❌ **No More YAML Template Constraints**: Natural language strategic conversations
 - ❌ **No Territorial Loops**: Clear AI hierarchy prevents token waste
 - ❌ **No Corporate Rigidity**: Creative problem-solving over checkbox thinking
 - ✅ **Strategic Autonomy**: Independent decision-making within security boundaries
+- ✅ **Anti-Template Policy**: Resilient natural language fallbacks when templates fail
+
+### 🚫🎯 Anti-Template Policy Integration
+
+**Natural Language Resilience Framework**:
+
+- **Template Failure Recovery**: Automatic fallback to natural language when YAML fails
+- **Conversational Excellence**: Rich, contextual communication over rigid forms
+- **Strategic Autonomy**: AI systems choose optimal communication methods
+- **Creative Problem-Solving**: Transform template limitations into collaboration opportunities
+
+**Implementation Features**:
+
+- Enhanced Claude workflow with `continue-on-error` and natural language fallback
+- Rich failure recovery messages with strategic guidance
+- Conversational issue and PR management alternatives
+- Cross-platform natural language consistency
+
+**Documentation Reference**: See [Anti-Template Policy](docs/ANTI_TEMPLATE_POLICY.md) for comprehensive guidelines
 
 ### Captain Guthilda Integration
 
 **System Orchestration**:
+
 - Captain Guthilda serves as the meta-automation layer
 - Coordinates between Claude, Copilot, and other AI services
 - Provides unified command interface: `pnpm guthilda:orchestrate`
 
 **Cross-Platform Intelligence**:
+
 - Microsoft Copilot integration
-- Google Workspace coordination  
+- Google Workspace coordination
 - X Premium+ content discovery
 - OpenAI Plus strategic analysis
 
@@ -144,6 +178,7 @@ This document establishes the collaborative framework between **Claude** (Strate
 User: "@claude I need to implement a new authentication system with OAuth2, JWT tokens, and role-based access control"
 
 Claude Response:
+
 1. Strategic Analysis: Breaks down into security, architecture, and integration components
 2. Creates todo list with specific tasks
 3. Delegates to @copilot: "Please generate the JWT utility functions according to these specifications"
@@ -157,6 +192,7 @@ Claude Response:
 User: "@claude Can you optimize our build process and fix the performance issues?"
 
 Claude Response:
+
 1. Holistic analysis of build pipeline and performance bottlenecks
 2. Uses TodoWrite to track optimization tasks
 3. Delegates routine tasks to @copilot (dependency updates, config standardization)
@@ -167,12 +203,14 @@ Claude Response:
 ## Success Metrics
 
 ### Collaboration Effectiveness
+
 - **Response Time**: Strategic analysis completed within first interaction
 - **Task Completion**: All delegated tasks executed without loops
 - **Quality**: Zero template-driven responses, all contextually appropriate
 - **User Satisfaction**: Natural conversation flow without "confusious" states
 
 ### Technical Performance
+
 - **Token Efficiency**: Reduced redundant operations through clear hierarchy
 - **Strategic Value**: Complex problems solved with renaissance-level detail
 - **System Integration**: Seamless coordination with Captain Guthilda orchestration
@@ -186,6 +224,6 @@ This framework establishes Claude as the strategic AI companion capable of worki
 
 ---
 
-*Document maintained by: Claude Strategic AI System*  
-*Framework Version: 1.0*  
-*Last Updated: 2025-08-25*
+_Document maintained by: Claude Strategic AI System_  
+_Framework Version: 1.0_  
+_Last Updated: 2025-08-25_

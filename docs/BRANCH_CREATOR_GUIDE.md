@@ -61,16 +61,16 @@ pnpm create-branch --help
 
 ## Branch Types
 
-| Type | Purpose | Example |
-|------|---------|---------|
-| `feature` | New feature development | `feature/user-authentication` |
-| `bugfix` | Bug fixes and patches | `bugfix/login-validation-fix` |
-| `hotfix` | Critical urgent fixes | `hotfix/security-patch` |
-| `enhancement` | Improvements to existing features | `enhancement/dashboard-performance` |
-| `refactor` | Code refactoring and restructuring | `refactor/api-client-cleanup` |
-| `docs` | Documentation updates | `docs/api-reference-update` |
-| `test` | Testing improvements | `test/integration-test-suite` |
-| `copilot` | AI-assisted development | `copilot/feature-implementation` |
+| Type          | Purpose                            | Example                             |
+| ------------- | ---------------------------------- | ----------------------------------- |
+| `feature`     | New feature development            | `feature/user-authentication`       |
+| `bugfix`      | Bug fixes and patches              | `bugfix/login-validation-fix`       |
+| `hotfix`      | Critical urgent fixes              | `hotfix/security-patch`             |
+| `enhancement` | Improvements to existing features  | `enhancement/dashboard-performance` |
+| `refactor`    | Code refactoring and restructuring | `refactor/api-client-cleanup`       |
+| `docs`        | Documentation updates              | `docs/api-reference-update`         |
+| `test`        | Testing improvements               | `test/integration-test-suite`       |
+| `copilot`     | AI-assisted development            | `copilot/feature-implementation`    |
 
 ## Interactive Mode Example
 
@@ -94,7 +94,7 @@ Enter choice (1-8): 1
 Selected: feature
 
 Enter branch description (e.g., 'user-authentication', 'fix-login-bug'): user-dashboard
-Base branch (default: main): 
+Base branch (default: main):
 
 Branch to create: feature/user-dashboard
 Base branch: main
@@ -122,18 +122,21 @@ OPTIONS:
 ## Integration with Existing Systems
 
 ### Captain Guthilda Framework
+
 - Follows all established naming conventions
 - Respects monorepo structure
 - Integrates with existing pnpm scripts
 - Maintains compatibility with consolidation tools
 
 ### Branch Management Ecosystem
+
 - Works alongside `scripts/branch-consolidation.sh`
 - Compatible with `scripts/universal-branch-manager.sh`
 - Follows the same patterns as `scripts/dependency-batch.sh`
 - Integrates with GitHub Actions workflows
 
 ### Documentation Generation
+
 - Automatically creates `.branch-info.md` for feature branches
 - Tracks branch purpose and status
 - Provides template for implementation tracking
@@ -142,6 +145,7 @@ OPTIONS:
 ## Examples
 
 ### Feature Development
+
 ```bash
 # Create a new feature branch for user authentication
 pnpm branch-creator:feature --description "user-authentication-system"
@@ -151,6 +155,7 @@ pnpm branch-creator:feature --description "user-authentication-system"
 ```
 
 ### Bug Fixes
+
 ```bash
 # Create a bugfix branch for a specific issue
 ./scripts/branch-creator.sh --type bugfix login-timeout-issue
@@ -159,6 +164,7 @@ pnpm branch-creator:feature --description "user-authentication-system"
 ```
 
 ### Emergency Hotfixes
+
 ```bash
 # Create a hotfix branch for urgent security fix
 pnpm branch-creator:hotfix --description "xss-vulnerability-patch"
@@ -168,6 +174,7 @@ pnpm branch-creator:hotfix --description "xss-vulnerability-patch"
 ```
 
 ### Documentation Updates
+
 ```bash
 # Create a docs branch for API documentation
 ./scripts/branch-creator.sh --type docs --description "api-reference-v2"
@@ -181,32 +188,39 @@ For feature branches, the script automatically creates a `.branch-info.md` file:
 # Branch: feature/user-authentication
 
 ## Description
+
 user-authentication
 
 ## Base Branch
+
 main
 
 ## Branch Information
+
 - **Created**: Mon Aug 27 17:30:00 UTC 2025
 - **Purpose**: Implementation branch for user-authentication
 - **Type**: feature
 
 ## Status
+
 - [ ] Implementation started
 - [ ] Tests written
 - [ ] Documentation updated
 - [ ] Ready for review
 
 ## Notes
+
 <!-- Add any relevant notes about this branch -->
 
 ---
-*Created by Captain Guthilda's Branch Creator*
+
+_Created by Captain Guthilda's Branch Creator_
 ```
 
 ## Workflow Integration
 
 ### With Existing Scripts
+
 ```bash
 # Create branch
 pnpm create-branch --type feature --description "new-feature"
@@ -221,7 +235,9 @@ pnpm branch-manager:cleanup
 ```
 
 ### With GitHub Actions
+
 The created branches automatically integrate with existing GitHub Actions workflows:
+
 - CI/CD pipelines trigger on branch creation
 - Pull request templates are available
 - Branch protection rules apply
@@ -230,6 +246,7 @@ The created branches automatically integrate with existing GitHub Actions workfl
 ## Error Handling
 
 The script includes comprehensive error handling:
+
 - Validates branch names for invalid characters
 - Prevents creation of reserved branch names
 - Checks for existing branches (local and remote)
@@ -251,6 +268,7 @@ Following the established repository principles:
 ### Common Issues
 
 **Branch already exists**
+
 ```bash
 # The script will detect this and offer to switch to existing branch
 Branch feature/user-auth already exists locally
@@ -258,18 +276,21 @@ Switch to existing branch? (y/N): y
 ```
 
 **No GitHub CLI access**
+
 ```bash
 # Use local-only mode
 ./scripts/branch-creator.sh --type feature --description "my-feature" --local-only
 ```
 
 **Permission issues**
+
 ```bash
 # Ensure GitHub CLI is authenticated
 gh auth login
 ```
 
 ### Debug Mode
+
 ```bash
 # Use dry-run to see what would happen
 ./scripts/branch-creator.sh --type feature --description "test" --dry-run
@@ -278,6 +299,7 @@ gh auth login
 ## Future Enhancements
 
 Planned improvements:
+
 - Integration with issue tracking
 - Template-based branch creation
 - Branch lifecycle management
@@ -286,5 +308,5 @@ Planned improvements:
 
 ---
 
-*Part of Captain Guthilda's MCP Orchestration System*  
-*Integrates with the Emergency Branch Consolidation Protocol and Universal Branch Management System*
+_Part of Captain Guthilda's MCP Orchestration System_  
+_Integrates with the Emergency Branch Consolidation Protocol and Universal Branch Management System_

@@ -1,0 +1,461 @@
+openapi: 3.0.3
+info:
+  title: MCP v2 HTTP JSON-RPC Transport
+  description: HTTP transport layer for MCP v2 protocol using JSON-RPC 2.0
+  version: 2.0.0
+  contact:
+    name: MCP v2 Protocol Team
+    url: https://mcp-v2.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/mcp
+    description: Local development server
+  - url: https://api.mcp-v2.org/v2
+    description: Production server
+
+paths:
+  /rpc:
+    post:
+      summary: Execute MCP v2 RPC call
+      description: Execute a JSON-RPC 2.0 call over HTTP
+      operationId: executeRpc
+      tags:
+        - RPC
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/SingleRequest'
+                - $ref: '#/components/schemas/BatchRequest'
+            examples:
+              tool_call:
+                summary: Tool execution call
+                value:
+                  id: "req-001"
+                  jsonrpc: "2.0"
+                  method: "tools/call"
+                  params:
+                    name: "file_manager"
+                    action: "create"
+                    arguments:
+                      path: "/tmp/test.txt"
+                      content: "Hello World"
+                  context:
+                    sessionId: "session-123"
+                    taskType: "java-development"
+                  metadata:
+                    timestamp: "2025-01-27T10:00:00Z"
+                    source:
+                      language: "java"
+                      framework: "spring-boot"
+                      version: "1.0.0"
+              context_store:
+                summary: Context storage call
+                value:
+                  id: "req-002"
+                  jsonrpc: "2.0"
+                  method: "context/store"
+                  params:
+                    key: "user-preferences"
+                    data:
+                      verbosity: "detailed"
+                      codeStyle: "functional"
+                  context:
+                    sessionId: "session-123"
+                    userId: "user-456"
+                    taskType: "system-architecture"
+              batch_request:
+                summary: Batch request
+                value:
+                  - id: "req-003"
+                    jsonrpc: "2.0"
+                    method: "tools/list"
+                    params: {}
+                  - id: "req-004"
+                    jsonrpc: "2.0"
+                    method: "server/health"
+                    params: {}
+      responses:
+        '200':
+          description: Successful RPC response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SingleResponse'
+                  - $ref: '#/components/schemas/BatchResponse'
+              examples:
+                tool_success:
+                  summary: Successful tool execution
+                  value:
+                    id: "req-001"
+                    jsonrpc: "2.0"
+                    result:
+                      output: "File created successfully"
+                      exitCode: 0
+                      artifacts:
+                        - type: "file"
+                          name: "test.txt"
+                          content: "Hello World"
+                          mimeType: "text/plain"
+                    metadata:
+                      timestamp: "2025-01-27T10:00:01Z"
+                      processingTime: 150
+                      serverId: "file-manager-01"
+                      serverVersion: "1.2.3"
+                context_success:
+                  summary: Successful context storage
+                  value:
+                    id: "req-002"
+                    jsonrpc: "2.0"
+                    result:
+                      operation: "store"
+                      data:
+                        stored: true
+                        key: "user-preferences"
+                tool_error:
+                  summary: Tool execution error
+                  value:
+                    id: "req-001"
+                    jsonrpc: "2.0"
+                    error:
+                      code: -32602
+                      message: "Invalid parameters"
+                      data:
+                        type: "validation-error"
+                        details: "Path parameter is required"
+                        suggestions:
+                          - "Provide a valid file path"
+                          - "Check file system permissions"
+        '400':
+          description: Bad request - Invalid JSON-RPC format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                id: null
+                jsonrpc: "2.0"
+                error:
+                  code: -32700
+                  message: "Parse error"
+                  data:
+                    type: "parse-error"
+                    details: "Invalid JSON format"
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                id: null
+                jsonrpc: "2.0"
+                error:
+                  code: -32001
+                  message: "Authentication required"
+                  data:
+                    type: "permission-error"
+                    details: "Valid API key required"
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests - Rate limit exceeded
+          headers:
+            X-RateLimit-Remaining:
+              description: Requests remaining in current window
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Time when rate limit resets
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                id: null
+                jsonrpc: "2.0"
+                error:
+                  code: -32003
+                  message: "Rate limit exceeded"
+                  data:
+                    type: "rate-limit-error"
+                    details: "Maximum 60 requests per minute exceeded"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                id: "req-001"
+                jsonrpc: "2.0"
+                error:
+                  code: -32603
+                  message: "Internal error"
+                  data:
+                    type: "server-error"
+                    details: "Unexpected server error occurred"
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Check server health and status
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "healthy"
+                timestamp: "2025-01-27T10:00:00Z"
+                version: "2.0.0"
+                uptime: 3600
+                checks:
+                  - name: "database"
+                    status: "healthy"
+                    message: "Connection successful"
+                    duration: 5
+                    timestamp: "2025-01-27T10:00:00Z"
+                  - name: "cache"
+                    status: "healthy"
+                    message: "Redis available"
+                    duration: 2
+                    timestamp: "2025-01-27T10:00:00Z"
+        '503':
+          description: Server is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /capabilities:
+    get:
+      summary: Get server capabilities
+      description: Retrieve server capabilities and supported methods
+      operationId: getCapabilities
+      tags:
+        - Capabilities
+      responses:
+        '200':
+          description: Server capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesResponse'
+              example:
+                capabilities:
+                  - name: "tool-execution"
+                    version: "1.0"
+                    description: "Execute tools and commands"
+                    methods:
+                      - "tools/call"
+                      - "tools/list"
+                      - "tools/describe"
+                  - name: "context-management" 
+                    version: "1.0"
+                    description: "Manage contextual information"
+                    methods:
+                      - "context/store"
+                      - "context/retrieve"
+                      - "context/search"
+                protocol:
+                  version: "2.0"
+                  transport: "http-jsonrpc"
+                  features:
+                    - "batching"
+                    - "authentication"
+                    - "compression"
+
+components:
+  schemas:
+    SingleRequest:
+      type: object
+      required: [id, jsonrpc, method, params]
+      properties:
+        id:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          example: "req-001"
+        jsonrpc:
+          type: string
+          const: "2.0"
+        method:
+          type: string
+          example: "tools/call"
+        params:
+          type: object
+          additionalProperties: true
+        context:
+          $ref: 'https://mcp-v2.org/schemas/request.json#/$defs/ContextualSession'
+        metadata:
+          $ref: 'https://mcp-v2.org/schemas/request.json#/$defs/RequestMetadata'
+
+    BatchRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/SingleRequest'
+      minItems: 1
+      maxItems: 100
+
+    SingleResponse:
+      type: object
+      required: [id, jsonrpc]
+      properties:
+        id:
+          type: string
+          example: "req-001"
+        jsonrpc:
+          type: string
+          const: "2.0"
+        result:
+          type: object
+          additionalProperties: true
+        error:
+          $ref: '#/components/schemas/ErrorObject'
+        metadata:
+          $ref: 'https://mcp-v2.org/schemas/response.json#/$defs/ResponseMetadata'
+        intelligence:
+          $ref: 'https://mcp-v2.org/schemas/response.json#/$defs/IntelligenceMetadata'
+      oneOf:
+        - required: [result]
+        - required: [error]
+
+    BatchResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/SingleResponse'
+
+    ErrorResponse:
+      type: object
+      required: [id, jsonrpc, error]
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: "null"
+        jsonrpc:
+          type: string
+          const: "2.0"
+        error:
+          $ref: '#/components/schemas/ErrorObject'
+
+    ErrorObject:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: integer
+          description: Error code (JSON-RPC standard codes and custom codes)
+        message:
+          type: string
+          description: Human-readable error message
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - validation-error
+                - timeout-error
+                - server-error
+                - not-found-error
+                - permission-error
+                - rate-limit-error
+            details:
+              type: string
+            stackTrace:
+              type: string
+            suggestions:
+              type: array
+              items:
+                type: string
+
+    HealthResponse:
+      type: object
+      required: [status, timestamp, version]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        uptime:
+          type: number
+          description: Uptime in seconds
+        checks:
+          type: array
+          items:
+            $ref: 'https://mcp-v2.org/schemas/metadata.json#/$defs/HealthCheck'
+
+    CapabilitiesResponse:
+      type: object
+      required: [capabilities, protocol]
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: 'https://mcp-v2.org/schemas/metadata.json#/$defs/ServerCapability'
+        protocol:
+          $ref: 'https://mcp-v2.org/schemas/metadata.json#/$defs/ProtocolMetadata'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication
+    
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.mcp-v2.org/oauth/authorize
+          tokenUrl: https://auth.mcp-v2.org/oauth/token
+          scopes:
+            read: Read access to resources
+            write: Write access to resources
+            admin: Administrative access
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+  - OAuth2: [read]
+
+tags:
+  - name: RPC
+    description: JSON-RPC 2.0 operations
+  - name: Health
+    description: Health and status monitoring
+  - name: Capabilities
+    description: Server capability discovery
+
+externalDocs:
+  description: MCP v2 Protocol Documentation
+  url: https://mcp-v2.org/docs

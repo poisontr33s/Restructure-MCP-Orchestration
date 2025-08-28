@@ -50,6 +50,9 @@
         <micrometer.version>1.12.1</micrometer.version>
         <prometheus.version>1.12.1</prometheus.version>
         
+        <!-- CLI & Utility Dependencies -->
+        <picocli.version>4.7.5</picocli.version>
+        
         <!-- Build Tool Versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.2.3</maven.surefire.plugin.version>
@@ -57,16 +60,6 @@
         <jacoco.maven.plugin.version>0.8.11</jacoco.maven.plugin.version>
         <spotbugs.maven.plugin.version>4.8.2.0</spotbugs.maven.plugin.version>
     </properties>
-
-    <modules>
-        <module>mcp-core</module>
-        <module>mcp-cli</module>
-        <module>mcp-monitor</module>
-        <module>mcp-guthilda</module>
-        <module>mcp-servers</module>
-        <module>mcp-shared</module>
-        <module>mcp-ai-integration</module>
-    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -115,6 +108,13 @@
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+            
+            <!-- CLI -->
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${picocli.version}</version>
             </dependency>
             
             <!-- Internal Modules -->

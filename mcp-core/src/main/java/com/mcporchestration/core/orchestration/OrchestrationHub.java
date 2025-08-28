@@ -34,7 +34,7 @@ public class OrchestrationHub {
     private final Map<String, ServerInfo> servers = new ConcurrentHashMap<>();
     private final Map<String, Process> processes = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-    private final ScheduledExecutorService virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
     
     private boolean initialized = false;
 
@@ -55,7 +55,7 @@ public class OrchestrationHub {
             
             initialized = true;
             logger.info("✅ MCP Orchestration Hub initialized successfully");
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -101,7 +101,7 @@ public class OrchestrationHub {
                 servers.put(config.getServerId(), errorInfo);
                 throw new RuntimeException("Failed to start server: " + config.name(), e);
             }
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -138,7 +138,7 @@ public class OrchestrationHub {
             servers.put(serverId, stoppedInfo);
             
             logger.info("✅ Server {} stopped successfully", serverInfo.config().name());
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -182,7 +182,7 @@ public class OrchestrationHub {
             // Use virtual threads for concurrent health checks
             var healthCheckTasks = servers.entrySet().stream()
                 .map(entry -> CompletableFuture.runAsync(() -> 
-                    performHealthCheck(entry.getKey(), entry.getValue()), virtualScheduler))
+                    performHealthCheck(entry.getKey(), entry.getValue()), virtualExecutor))
                 .toList();
             
             // Wait for all health checks to complete

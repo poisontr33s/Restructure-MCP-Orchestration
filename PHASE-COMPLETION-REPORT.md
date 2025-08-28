@@ -67,9 +67,9 @@
 
 ### **🌊 Maritime Decision Matrix**
 
-```
+`
 Decision = f(Celestial_Influence, Consciousness_Depth, Tidal_Synchronization)
-```
+`
 
 - **Celestial**: 52%-95% precision (system accuracy)
 - **Consciousness**: 1-5 levels (exploration depth)
@@ -111,7 +111,7 @@ Decision = f(Celestial_Influence, Consciousness_Depth, Tidal_Synchronization)
 
 #### **2. Polyglot Plugin System**
 
-```
+`
 UniversalOrchestrator {
   └── MaritimeDecisionEngine (proven)
   └── LanguageManagers {
@@ -123,7 +123,7 @@ UniversalOrchestrator {
   └── MetaCognitiveEngine (proven)
   └── SystemHealthNavigator (proven)
 }
-```
+`
 
 #### **3. Production-Ready Autonomous Operation**
 

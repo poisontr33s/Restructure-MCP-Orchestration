@@ -25,7 +25,7 @@ public class SequentialThinkingServer extends AbstractMcpServer {
 
     public SequentialThinkingServer() {
         super("sequential-thinking", ServerType.SEQUENTIAL_THINKING);
-        this.virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+        this.virtualScheduler = Executors.newScheduledThreadPool(4, Thread.ofVirtual().factory());
         this.chainProcessor = new ThoughtChainProcessor();
     }
 

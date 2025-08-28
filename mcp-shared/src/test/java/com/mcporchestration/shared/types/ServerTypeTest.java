@@ -19,13 +19,15 @@ class ServerTypeTest {
         var expectedTypes = java.util.Set.of(
             ServerType.SEQUENTIAL_THINKING,
             ServerType.DUCKDUCKGO,
+            ServerType.PUPPETEER,
+            ServerType.MEMORY_BANK,
+            ServerType.GITHUB,
+            ServerType.KNOWLEDGE_GRAPH_MEMORY,
+            ServerType.COMPASS,
+            ServerType.PLAYWRIGHT,
             ServerType.GUTHILDA_AI,
             ServerType.CLAUDE_INTEGRATION,
-            ServerType.OPENAI_INTEGRATION,
-            ServerType.GEMINI_INTEGRATION,
-            ServerType.MONITORING,
-            ServerType.AUTOMATION,
-            ServerType.CUSTOM
+            ServerType.COPILOT_BRIDGE
         );
         
         var actualTypes = java.util.Set.of(ServerType.values());
@@ -35,9 +37,10 @@ class ServerTypeTest {
     @Test
     @DisplayName("Should provide meaningful string representation")
     void shouldProvideMeaningfulStringRepresentation() {
-        assertEquals("SEQUENTIAL_THINKING", ServerType.SEQUENTIAL_THINKING.toString());
-        assertEquals("GUTHILDA_AI", ServerType.GUTHILDA_AI.toString());
-        assertEquals("CLAUDE_INTEGRATION", ServerType.CLAUDE_INTEGRATION.toString());
+        assertEquals("sequential-thinking", ServerType.SEQUENTIAL_THINKING.toString());
+        assertEquals("guthilda-ai", ServerType.GUTHILDA_AI.toString());
+        assertEquals("claude-integration", ServerType.CLAUDE_INTEGRATION.toString());
+        assertEquals("duckduckgo", ServerType.DUCKDUCKGO.toString());
     }
 
     @Test

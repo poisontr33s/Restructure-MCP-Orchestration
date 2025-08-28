@@ -13,6 +13,7 @@ public enum ServerStatus {
     RUNNING("running"),
     ERROR("error"),
     STOPPED("stopped"),
+    STOPPING("stopping"),
     NOT_RESPONDING("not responding"),
     TIMEOUT("timeout"),
     INITIALIZING("initializing"),
@@ -37,6 +38,7 @@ public enum ServerStatus {
             case "running" -> RUNNING;
             case "error" -> ERROR;
             case "stopped" -> STOPPED;
+            case "stopping" -> STOPPING;
             case "not responding" -> NOT_RESPONDING;
             case "timeout" -> TIMEOUT;
             case "initializing" -> INITIALIZING;
@@ -54,7 +56,7 @@ public enum ServerStatus {
         return switch (this) {
             case RUNNING -> true;
             case STARTING, INITIALIZING -> true; // Transitional states are considered healthy
-            case ERROR, STOPPED, NOT_RESPONDING, TIMEOUT -> false;
+            case ERROR, STOPPED, STOPPING, NOT_RESPONDING, TIMEOUT -> false;
             case DEGRADED -> false; // Degraded is unhealthy but recoverable
             case MAINTENANCE -> true; // Maintenance is a planned state
         };
@@ -66,7 +68,7 @@ public enum ServerStatus {
     public boolean isActive() {
         return switch (this) {
             case RUNNING, STARTING, INITIALIZING, DEGRADED, MAINTENANCE -> true;
-            case ERROR, STOPPED, NOT_RESPONDING, TIMEOUT -> false;
+            case ERROR, STOPPED, STOPPING, NOT_RESPONDING, TIMEOUT -> false;
         };
     }
 

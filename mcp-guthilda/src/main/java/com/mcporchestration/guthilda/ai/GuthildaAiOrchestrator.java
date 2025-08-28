@@ -44,7 +44,7 @@ public class GuthildaAiOrchestrator {
                     .map(this::analyzeServerOptimization)
                     .filter(recommendation -> recommendation.confidence() > 0.7)
                     .toList();
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -64,7 +64,7 @@ public class GuthildaAiOrchestrator {
             };
             
             return enhanceWorkflowWithAi(plan);
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -85,7 +85,7 @@ public class GuthildaAiOrchestrator {
                 recommendations,
                 System.currentTimeMillis()
             );
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     /**
@@ -111,7 +111,7 @@ public class GuthildaAiOrchestrator {
                 metaStrategies,
                 System.currentTimeMillis()
             );
-        }, virtualScheduler);
+        }, virtualExecutor);
     }
 
     // Private helper methods using Java 21 pattern matching
@@ -126,25 +126,25 @@ public class GuthildaAiOrchestrator {
                 default -> createGenericOptimization(server);
             };
             case STOPPED -> new OptimizationRecommendation(
-                server.config().id(),
+                server.config().getServerId(),
                 "RESTART",
                 "Server should be restarted for optimal performance",
                 0.9
             );
             case ERROR -> new OptimizationRecommendation(
-                server.config().id(),
+                server.config().getServerId(),
                 "DIAGNOSE_AND_FIX",
                 "Server needs diagnosis and repair",
                 0.95
             );
-            case STARTING, STOPPING -> new OptimizationRecommendation(
-                server.config().id(),
+            case STARTING -> new OptimizationRecommendation(
+                server.config().getServerId(),
                 "WAIT",
                 "Server is transitioning, wait for completion",
                 0.5
             );
             default -> new OptimizationRecommendation(
-                server.config().id(),
+                server.config().getServerId(),
                 "MONITOR",
                 "Monitor server status",
                 0.3
@@ -160,7 +160,7 @@ public class GuthildaAiOrchestrator {
         
         return new WorkflowPlan(
             "AI_PROCESSING_WORKFLOW",
-            aiServers.stream().map(s -> s.config().id()).toList(),
+            aiServers.stream().map(s -> s.config().getServerId()).collect(java.util.stream.Collectors.toList()),
             Map.of("priority", "high", "parallel", true),
             goal
         );
@@ -174,7 +174,7 @@ public class GuthildaAiOrchestrator {
         
         return new WorkflowPlan(
             "DATA_ANALYSIS_WORKFLOW",
-            analysisServers.stream().map(s -> s.config().id()).toList(),
+            analysisServers.stream().map(s -> s.config().getServerId()).collect(java.util.stream.Collectors.toList()),
             Map.of("priority", "medium", "sequential", true),
             goal
         );
@@ -183,7 +183,7 @@ public class GuthildaAiOrchestrator {
     private WorkflowPlan createMonitoringWorkflow(List<ServerInfo> servers, WorkflowGoal goal) {
         return new WorkflowPlan(
             "MONITORING_WORKFLOW",
-            servers.stream().map(s -> s.config().id()).toList(),
+            servers.stream().map(s -> s.config().getServerId()).collect(java.util.stream.Collectors.toList()),
             Map.of("priority", "low", "continuous", true),
             goal
         );
@@ -192,7 +192,7 @@ public class GuthildaAiOrchestrator {
     private WorkflowPlan createAutomationWorkflow(List<ServerInfo> servers, WorkflowGoal goal) {
         return new WorkflowPlan(
             "AUTOMATION_WORKFLOW",
-            servers.stream().map(s -> s.config().id()).toList(),
+            servers.stream().map(s -> s.config().getServerId()).collect(java.util.stream.Collectors.toList()),
             Map.of("priority", "high", "autonomous", true),
             goal
         );
@@ -201,7 +201,7 @@ public class GuthildaAiOrchestrator {
     private WorkflowPlan createGenericWorkflow(List<ServerInfo> servers, WorkflowGoal goal) {
         return new WorkflowPlan(
             "GENERIC_WORKFLOW",
-            servers.stream().map(s -> s.config().id()).toList(),
+            servers.stream().map(s -> s.config().getServerId()).collect(java.util.stream.Collectors.toList()),
             Map.of("priority", "medium"),
             goal
         );
@@ -263,7 +263,7 @@ public class GuthildaAiOrchestrator {
     // Optimization methods for specific server types
     private OptimizationRecommendation optimizeSequentialThinking(ServerInfo server) {
         return new OptimizationRecommendation(
-            server.config().id(),
+            server.config().getServerId(),
             "OPTIMIZE_THINKING_CHAINS",
             "Optimize sequential thinking chains for better performance",
             0.85
@@ -272,7 +272,7 @@ public class GuthildaAiOrchestrator {
 
     private OptimizationRecommendation optimizeDuckDuckGo(ServerInfo server) {
         return new OptimizationRecommendation(
-            server.config().id(),
+            server.config().getServerId(),
             "OPTIMIZE_SEARCH_CACHE",
             "Optimize search result caching",
             0.8
@@ -281,7 +281,7 @@ public class GuthildaAiOrchestrator {
 
     private OptimizationRecommendation optimizeGuthildaAi(ServerInfo server) {
         return new OptimizationRecommendation(
-            server.config().id(),
+            server.config().getServerId(),
             "ENHANCE_AI_ALGORITHMS",
             "Enhance AI algorithms with latest improvements",
             0.95
@@ -290,7 +290,7 @@ public class GuthildaAiOrchestrator {
 
     private OptimizationRecommendation optimizeClaudeIntegration(ServerInfo server) {
         return new OptimizationRecommendation(
-            server.config().id(),
+            server.config().getServerId(),
             "OPTIMIZE_CLAUDE_API",
             "Optimize Claude API integration and rate limiting",
             0.87
@@ -299,7 +299,7 @@ public class GuthildaAiOrchestrator {
 
     private OptimizationRecommendation createGenericOptimization(ServerInfo server) {
         return new OptimizationRecommendation(
-            server.config().id(),
+            server.config().getServerId(),
             "GENERIC_OPTIMIZATION",
             "Apply generic optimization patterns",
             0.6
@@ -327,11 +327,9 @@ public class GuthildaAiOrchestrator {
         WorkflowGoal goal
     ) {
         public WorkflowPlan withEnhancements(Map<String, Object> enhancements) {
-            var newConfig = Map.<String, Object>builder()
-                    .putAll(configuration)
-                    .putAll(enhancements)
-                    .build();
-            return new WorkflowPlan(name, serverIds, newConfig, goal);
+            var newConfig = new java.util.HashMap<>(configuration);
+            newConfig.putAll(enhancements);
+            return new WorkflowPlan(name, serverIds, Map.copyOf(newConfig), goal);
         }
     }
 

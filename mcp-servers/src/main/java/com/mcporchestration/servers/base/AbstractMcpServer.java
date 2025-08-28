@@ -88,7 +88,7 @@ public abstract class AbstractMcpServer {
                 getUptime(),
                 getMetrics()
             );
-            case STARTING, STOPPING -> new ServerHealth(
+            case STARTING, STOPPING, INITIALIZING -> new ServerHealth(
                 serverId,
                 ServerHealth.HealthStatus.TRANSITIONING,
                 "Server is transitioning state",
@@ -107,6 +107,27 @@ public abstract class AbstractMcpServer {
                 ServerHealth.HealthStatus.STOPPED,
                 "Server is stopped",
                 0,
+                getMetrics()
+            );
+            case NOT_RESPONDING, TIMEOUT -> new ServerHealth(
+                serverId,
+                ServerHealth.HealthStatus.UNHEALTHY,
+                "Server is not responding or timed out",
+                getUptime(),
+                getMetrics()
+            );
+            case DEGRADED -> new ServerHealth(
+                serverId,
+                ServerHealth.HealthStatus.DEGRADED,
+                "Server is running but with reduced performance",
+                getUptime(),
+                getMetrics()
+            );
+            case MAINTENANCE -> new ServerHealth(
+                serverId,
+                ServerHealth.HealthStatus.MAINTENANCE,
+                "Server is under maintenance",
+                getUptime(),
                 getMetrics()
             );
         };
@@ -147,7 +168,7 @@ public abstract class AbstractMcpServer {
         java.util.Map<String, Object> metrics
     ) {
         public enum HealthStatus {
-            HEALTHY, UNHEALTHY, TRANSITIONING, STOPPED
+            HEALTHY, UNHEALTHY, TRANSITIONING, STOPPED, DEGRADED, MAINTENANCE
         }
     }
 }

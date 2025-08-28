@@ -6,6 +6,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,7 +31,7 @@ public class MachineLearningEngine {
     private final ScheduledExecutorService virtualScheduler;
 
     public MachineLearningEngine() {
-        this.virtualScheduler = Executors.newVirtualThreadPerTaskExecutor();
+        this.virtualScheduler = Executors.newScheduledThreadPool(4, Thread.ofVirtual().factory());
     }
 
     /**
@@ -107,7 +108,7 @@ public class MachineLearningEngine {
             System.out.println("⚡ Captain Guthilda optimizing system parameters...");
             
             // Simplified gradient descent optimization
-            var optimizedParameters = Map.<String, Double>builder();
+            var optimizedParameters = new HashMap<String, Double>();
             
             currentParameters.forEach((param, value) -> {
                 var optimizedValue = switch (param) {
@@ -120,12 +121,12 @@ public class MachineLearningEngine {
                 optimizedParameters.put(param, optimizedValue);
             });
             
-            var improvement = calculateImprovement(currentParameters, optimizedParameters.build());
+            var improvement = calculateImprovement(currentParameters, Map.copyOf(optimizedParameters));
             
             return new OptimizationResult(
-                optimizedParameters.build(),
+                Map.copyOf(optimizedParameters),
                 improvement,
-                generateOptimizationInsights(currentParameters, optimizedParameters.build()),
+                generateOptimizationInsights(currentParameters, Map.copyOf(optimizedParameters)),
                 System.currentTimeMillis()
             );
         }, virtualScheduler);

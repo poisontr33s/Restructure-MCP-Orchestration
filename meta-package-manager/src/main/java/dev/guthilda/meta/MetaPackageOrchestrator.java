@@ -91,501 +91,166 @@ public class MetaPackageOrchestrator implements Callable<Integer> {
             """);
     }
     
+    // 📄 Create default manifest
+    private void createDefaultManifest(Path manifestPath) throws IOException {
+        String defaultManifest = """
+# 🏴‍☠️ Captain Guthilda's Meta-Package Manifest
+# Universal dependency declaration for polyglot repositories
+
+metadata:
+  name: "polyglot-paradise"
+  version: "1.0.0"
+  description: "Captain Guthilda's Universal Multi-Language Project"
+  authors: ["Captain Guthilda"]
+
+# Package manager configurations
+package-managers:
+  maven:
+    enabled: true
+    root: "."
+    files: ["pom.xml"]
+    commands:
+      install: "mvn clean install"
+      build: "mvn compile"
+      test: "mvn test"
+      
+  npm:
+    enabled: true
+    root: "./frontend"
+    files: ["package.json"]
+    commands:
+      install: "npm install"
+      build: "npm run build"
+      test: "npm test"
+      
+  bun:
+    enabled: true
+    root: "./modern-frontend"
+    files: ["package.json"]
+    commands:
+      install: "bun install"
+      build: "bun run build"
+      test: "bun test"
+      
+  go:
+    enabled: true
+    root: "./services/go-service"
+    files: ["go.mod"]
+    commands:
+      install: "go mod download"
+      build: "go build"
+      test: "go test ./..."
+      
+  poetry:
+    enabled: true
+    root: "./ml-pipeline"
+    files: ["pyproject.toml"]
+    commands:
+      install: "poetry install"
+      build: "poetry build"
+      test: "poetry run pytest"
+      
+  cargo:
+    enabled: true
+    root: "./wasm-modules"
+    files: ["Cargo.toml"]
+    commands:
+      install: "cargo fetch"
+      build: "cargo build"
+      test: "cargo test"
+      
+  dotnet:
+    enabled: true
+    root: "./enterprise-api"
+    files: ["*.csproj", "*.sln"]
+    commands:
+      install: "dotnet restore"
+      build: "dotnet build"
+      test: "dotnet test"
+
+# Cross-language dependency mapping
+dependencies:
+  shared-types:
+    - maven: "com.guthilda:shared-types:1.0.0"
+    - npm: "@guthilda/shared-types@^1.0.0"
+    - nuget: "Guthilda.SharedTypes@1.0.0"
+    
+  logging:
+    - maven: "org.slf4j:slf4j-api:2.0.9"
+    - npm: "winston@^3.8.0"
+    - go: "github.com/sirupsen/logrus@v1.9.0"
+    - poetry: "loguru@^0.7.0"
+    - cargo: "log@0.4.20"
+    - nuget: "Serilog@3.0.1"
+
+# Build pipeline configuration
+pipeline:
+  phases:
+    - name: "setup"
+      parallel: false
+      commands:
+        - "maven: clean"
+        - "npm: install"
+        - "poetry: install"
+        
+    - name: "build"
+      parallel: true
+      commands:
+        - "maven: compile"
+        - "npm: build"
+        - "go: build"
+        - "poetry: build"
+        - "cargo: build"
+        - "dotnet: build"
+        
+    - name: "test"
+      parallel: true
+      commands:
+        - "maven: test"
+        - "npm: test"
+        - "go: test"
+        - "poetry: test"
+        - "cargo: test"
+        - "dotnet: test"
+
+# Environment configuration
+environment:
+  variables:
+    JAVA_OPTS: "-Xmx2g"
+    NODE_ENV: "development"
+    GO111MODULE: "on"
+    CARGO_TARGET_DIR: "target"
+    
+  paths:
+    - "./dev-tools/java21/bin"
+    - "./dev-tools/maven/bin"
+    - "./dev-tools/node"
+    - "./dev-tools/bun"
+    - "./dev-tools/go/bin"
+    - "./dev-tools/python"
+    - "./dev-tools/rust/bin"
+    - "./dev-tools/dotnet"
+""";
+        
+        Files.writeString(manifestPath, defaultManifest);
+        log("📄 Created default meta-package.yaml");
+    }
+    
+    // 📋 Load manifest from file
     private void loadManifest() throws IOException {
         Path manifestPath = repoRoot.resolve("meta-package.yaml");
         
         if (!Files.exists(manifestPath)) {
-            log("📄 Creating default meta-package.yaml...");
             createDefaultManifest(manifestPath);
         }
         
-        log("📄 Loading manifest from: " + manifestPath);
-        
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        this.manifest = mapper.readValue(manifestPath.toFile(), MetaPackageManifest.class);
+        manifest = mapper.readValue(manifestPath.toFile(), MetaPackageManifest.class);
         
-        log("✅ Manifest loaded: " + manifest.getMetadata().getName() + " v" + manifest.getMetadata().getVersion());
+        log("📋 Loaded manifest: " + (manifest.metadata != null ? manifest.metadata.name : "unknown"));
     }
     
-    private void createDefaultManifest(Path manifestPath) throws IOException {
-        String defaultManifest = """
-            # Captain Guthilda's Meta-Package Manifest
-            apiVersion: "meta.guthilda.dev/v1"
-            kind: "MetaPackageManifest"
-            
-            metadata:
-              name: "my-polyglot-project"
-              version: "1.0.0"
-            
-            ecosystems:
-              java:
-                package-manager: "maven"
-                version: "3.9.9"
-                dependencies:
-                  - "org.springframework.boot:spring-boot-starter:3.2.0"
-                  - "com.fasterxml.jackson.core:jackson-core:2.16.1"
-              
-              javascript:
-                package-manager: "bun"
-                version: "latest"
-                dependencies:
-                  - "express@^4.18.0"
-                  - "@types/node@^20.0.0"
-            
-            tools:
-              formatters:
-                java: "google-java-format"
-                javascript: "prettier"
-              linters:
-                java: "spotbugs"
-                javascript: "eslint"
-            """;
-        
-        Files.writeString(manifestPath, defaultManifest);
-        log("✅ Created default manifest: " + manifestPath);
-    }
-    
-    // 🎯 Package Manager Interface
-    public interface PackageManager {
-        String getName();
-        boolean isAvailable(Path projectRoot);
-        boolean hasManifest(Path projectRoot);
-        List<String> getManifestFiles();
-        ProcessResult executeCommand(Path projectRoot, String command, String... args);
-        Map<String, String> getEnvironmentVariables(Path devToolsDir);
-        String getVersion(Path projectRoot);
-        List<String> listDependencies(Path projectRoot);
-    }
-    
-    // 📦 Abstract Package Manager Base
-    public abstract static class AbstractPackageManager implements PackageManager {
-        protected final String name;
-        protected final List<String> manifestFiles;
-        protected final Map<String, String> commands;
-        
-        public AbstractPackageManager(String name, List<String> manifestFiles, Map<String, String> commands) {
-            this.name = name;
-            this.manifestFiles = manifestFiles;
-            this.commands = commands;
-        }
-        
-        @Override
-        public String getName() {
-            return name;
-        }
-        
-        @Override
-        public List<String> getManifestFiles() {
-            return manifestFiles;
-        }
-        
-        @Override
-        public boolean hasManifest(Path projectRoot) {
-            return manifestFiles.stream()
-                .anyMatch(file -> Files.exists(projectRoot.resolve(file)));
-        }
-        
-        @Override
-        public ProcessResult executeCommand(Path projectRoot, String command, String... args) {
-            try {
-                String fullCommand = commands.getOrDefault(command, command);
-                List<String> commandList = new ArrayList<>();
-                commandList.addAll(Arrays.asList(fullCommand.split("\\s+")));
-                commandList.addAll(Arrays.asList(args));
-                
-                ProcessBuilder pb = new ProcessBuilder(commandList)
-                    .directory(projectRoot.toFile())
-                    .redirectErrorStream(true);
-                
-                // Add environment variables
-                pb.environment().putAll(getEnvironmentVariables(projectRoot.getParent().resolve("dev-tools")));
-                
-                Process process = pb.start();
-                
-                try (Scanner scanner = new Scanner(process.getInputStream())) {
-                    StringBuilder output = new StringBuilder();
-                    while (scanner.hasNextLine()) {
-                        output.append(scanner.nextLine()).append("\n");
-                    }
-                    
-                    int exitCode = process.waitFor();
-                    return new ProcessResult(exitCode, output.toString());
-                }
-            } catch (Exception e) {
-                return new ProcessResult(1, "Error executing command: " + e.getMessage());
-            }
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            return new HashMap<>();
-        }
-    }
-    
-    // ☕ Maven Package Manager
-    public static class MavenPackageManager extends AbstractPackageManager {
-        public MavenPackageManager() {
-            super("maven", 
-                  List.of("pom.xml"), 
-                  Map.of(
-                      "install", "mvn clean install",
-                      "build", "mvn compile",
-                      "test", "mvn test",
-                      "clean", "mvn clean"
-                  ));
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            Path mavenBin = devToolsDir.resolve("maven").resolve("bin").resolve("mvn");
-            Path mavenBinCmd = devToolsDir.resolve("maven").resolve("bin").resolve("mvn.cmd");
-            return Files.exists(mavenBin) || Files.exists(mavenBinCmd);
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            Path javaHome = devToolsDir.resolve("java21");
-            Path mavenHome = devToolsDir.resolve("maven");
-            
-            if (Files.exists(javaHome)) {
-                env.put("JAVA_HOME", javaHome.toString());
-            }
-            if (Files.exists(mavenHome)) {
-                env.put("MAVEN_HOME", mavenHome.toString());
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "mvn", "--version");
-            return result.exitCode == 0 ? result.output.split("\n")[0] : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "mvn", "dependency:list");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 🟢 Node.js Package Manager (npm/bun)
-    public static class NodePackageManager extends AbstractPackageManager {
-        private final String packageManager;
-        
-        public NodePackageManager(String packageManager) {
-            super(packageManager, 
-                  List.of("package.json"), 
-                  Map.of(
-                      "install", packageManager + " install",
-                      "build", packageManager + " run build",
-                      "test", packageManager + " test",
-                      "clean", packageManager + " run clean"
-                  ));
-            this.packageManager = packageManager;
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            return switch (packageManager) {
-                case "npm" -> Files.exists(devToolsDir.resolve("node").resolve("npm.cmd"));
-                case "bun" -> Files.exists(devToolsDir.resolve("bun").resolve("bun.exe"));
-                default -> false;
-            };
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            
-            if (packageManager.equals("npm")) {
-                Path nodePath = devToolsDir.resolve("node");
-                if (Files.exists(nodePath)) {
-                    env.put("NODE_PATH", nodePath.toString());
-                }
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, packageManager, "--version");
-            return result.exitCode == 0 ? result.output.trim() : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, packageManager, "list");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 🐹 Go Package Manager
-    public static class GoPackageManager extends AbstractPackageManager {
-        public GoPackageManager() {
-            super("go", 
-                  List.of("go.mod"), 
-                  Map.of(
-                      "install", "go mod download",
-                      "build", "go build",
-                      "test", "go test ./...",
-                      "clean", "go clean"
-                  ));
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            Path goBin = devToolsDir.resolve("go").resolve("bin").resolve("go.exe");
-            return Files.exists(goBin);
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            Path goRoot = devToolsDir.resolve("go");
-            
-            if (Files.exists(goRoot)) {
-                env.put("GOROOT", goRoot.toString());
-                env.put("GO111MODULE", "on");
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "go", "version");
-            return result.exitCode == 0 ? result.output.trim() : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "go", "list", "-m", "all");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 🐍 Python Poetry Package Manager
-    public static class PoetryPackageManager extends AbstractPackageManager {
-        public PoetryPackageManager() {
-            super("poetry", 
-                  List.of("pyproject.toml"), 
-                  Map.of(
-                      "install", "poetry install",
-                      "build", "poetry build",
-                      "test", "poetry run pytest",
-                      "clean", "poetry env remove --all"
-                  ));
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            // For now, assume poetry is available if Python is installed
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            Path pythonDir = devToolsDir.resolve("python");
-            return Files.exists(pythonDir);
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            Path pythonPath = devToolsDir.resolve("python");
-            
-            if (Files.exists(pythonPath)) {
-                env.put("PYTHONPATH", pythonPath.toString());
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "poetry", "--version");
-            return result.exitCode == 0 ? result.output.trim() : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "poetry", "show");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 🦀 Rust Cargo Package Manager
-    public static class CargoPackageManager extends AbstractPackageManager {
-        public CargoPackageManager() {
-            super("cargo", 
-                  List.of("Cargo.toml"), 
-                  Map.of(
-                      "install", "cargo fetch",
-                      "build", "cargo build",
-                      "test", "cargo test",
-                      "clean", "cargo clean"
-                  ));
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            Path cargoBin = devToolsDir.resolve("rust").resolve("bin").resolve("cargo.exe");
-            return Files.exists(cargoBin);
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            Path cargoHome = devToolsDir.resolve("rust");
-            
-            if (Files.exists(cargoHome)) {
-                env.put("CARGO_HOME", cargoHome.toString());
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "cargo", "--version");
-            return result.exitCode == 0 ? result.output.trim() : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "cargo", "tree");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 🔵 .NET Package Manager
-    public static class DotNetPackageManager extends AbstractPackageManager {
-        public DotNetPackageManager() {
-            super("dotnet", 
-                  List.of("*.csproj", "*.sln", "*.fsproj", "*.vbproj"), 
-                  Map.of(
-                      "install", "dotnet restore",
-                      "build", "dotnet build",
-                      "test", "dotnet test",
-                      "clean", "dotnet clean"
-                  ));
-        }
-        
-        @Override
-        public boolean isAvailable(Path projectRoot) {
-            Path devToolsDir = projectRoot.getParent().resolve("dev-tools");
-            Path dotnetExe = devToolsDir.resolve("dotnet").resolve("dotnet.exe");
-            return Files.exists(dotnetExe);
-        }
-        
-        @Override
-        public boolean hasManifest(Path projectRoot) {
-            try {
-                return Files.walk(projectRoot, 1)
-                    .anyMatch(path -> {
-                        String fileName = path.getFileName().toString();
-                        return fileName.endsWith(".csproj") || 
-                               fileName.endsWith(".sln") || 
-                               fileName.endsWith(".fsproj") || 
-                               fileName.endsWith(".vbproj");
-                    });
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        
-        @Override
-        public Map<String, String> getEnvironmentVariables(Path devToolsDir) {
-            Map<String, String> env = new HashMap<>();
-            Path dotnetRoot = devToolsDir.resolve("dotnet");
-            
-            if (Files.exists(dotnetRoot)) {
-                env.put("DOTNET_ROOT", dotnetRoot.toString());
-            }
-            
-            return env;
-        }
-        
-        @Override
-        public String getVersion(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "dotnet", "--version");
-            return result.exitCode == 0 ? result.output.trim() : "Unknown";
-        }
-        
-        @Override
-        public List<String> listDependencies(Path projectRoot) {
-            ProcessResult result = executeCommand(projectRoot, "dotnet", "list", "package");
-            return result.exitCode == 0 ? 
-                Arrays.asList(result.output.split("\n")) : 
-                List.of();
-        }
-    }
-    
-    // 📦 Process Result Record
-    public record ProcessResult(int exitCode, String output) {
-        public boolean isSuccess() {
-            return exitCode == 0;
-        }
-    }
-    
-    // 📋 Meta Package Manifest Structure
-    public static class MetaPackageManifest {
-        public Metadata metadata;
-        public Map<String, PackageManagerConfig> packageManagers;
-        public Map<String, List<DependencyMapping>> dependencies;
-        public PipelineConfig pipeline;
-        public EnvironmentConfig environment;
-        
-        public static class Metadata {
-            public String name;
-            public String version;
-            public String description;
-            public List<String> authors;
-        }
-        
-        public static class PackageManagerConfig {
-            public boolean enabled;
-            public String root;
-            public List<String> files;
-            public Map<String, String> commands;
-        }
-        
-        public static class DependencyMapping {
-            public String name;
-            public Map<String, String> versions;
-        }
-        
-        public static class PipelineConfig {
-            public List<PipelinePhase> phases;
-            
-            public static class PipelinePhase {
-                public String name;
-                public boolean parallel;
-                public List<String> commands;
-            }
-        }
-        
-        public static class EnvironmentConfig {
-            public Map<String, String> variables;
-            public List<String> paths;
-        }
-    }
-    
-    // 🔧 Initialize package managers
+    // 🎩 Initialize package managers
     private void initializePackageManagers() {
         packageManagers.put("maven", new MavenPackageManager());
         packageManagers.put("npm", new NodePackageManager("npm"));
@@ -817,3 +482,97 @@ public class MetaPackageOrchestrator implements Callable<Integer> {
         }
         
         // Check each package manager
+        for (var entry : packageManagers.entrySet()) {
+            String name = entry.getKey();
+            PackageManager manager = entry.getValue();
+            
+            if (manager.isAvailable(repoRoot)) {
+                String version = manager.getVersion(repoRoot);
+                log("✅ " + name + " is available (version: " + version + ")");
+            } else {
+                log("❌ " + name + " is not available");
+                allValid = false;
+            }
+        }
+        
+        return allValid ? 0 : 1;
+    }
+    
+    // 🎯 Execute universal command across all managers
+    private int executeUniversalCommand(String command) {
+        try {
+            Map<String, List<Path>> projectsByManager = discoverProjects();
+            
+            for (var entry : projectsByManager.entrySet()) {
+                String managerName = entry.getKey();
+                List<Path> projects = entry.getValue();
+                PackageManager manager = packageManagers.get(managerName);
+                
+                for (Path project : projects) {
+                    log("🔨 " + command + " for " + managerName + " in " + project);
+                    ProcessResult result = manager.executeCommand(project, command);
+                    
+                    if (!result.isSuccess()) {
+                        log("❌ " + command + " failed for " + managerName);
+                        return 1;
+                    }
+                }
+            }
+            
+            return 0;
+        } catch (Exception e) {
+            System.err.println("❌ Command failed: " + e.getMessage());
+            return 1;
+        }
+    }
+    
+    // 📦 Process Result Record
+    public record ProcessResult(int exitCode, String output) {
+        public boolean isSuccess() {
+            return exitCode == 0;
+        }
+    }
+    
+    // 📋 Meta Package Manifest Structure
+    public static class MetaPackageManifest {
+        public Metadata metadata;
+        public Map<String, PackageManagerConfig> packageManagers;
+        public Map<String, List<DependencyMapping>> dependencies;
+        public PipelineConfig pipeline;
+        public EnvironmentConfig environment;
+        
+        public static class Metadata {
+            public String name;
+            public String version;
+            public String description;
+            public List<String> authors;
+        }
+        
+        public static class PackageManagerConfig {
+            public boolean enabled;
+            public String root;
+            public List<String> files;
+            public Map<String, String> commands;
+        }
+        
+        public static class DependencyMapping {
+            public String name;
+            public Map<String, String> versions;
+        }
+        
+        public static class PipelineConfig {
+            public List<PipelinePhase> phases;
+            
+            public static class PipelinePhase {
+                public String name;
+                public boolean parallel;
+                public List<String> commands;
+            }
+        }
+        
+        public static class EnvironmentConfig {
+            public Map<String, String> variables;
+            public List<String> paths;
+        }
+    }
+}

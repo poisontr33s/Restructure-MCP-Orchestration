@@ -1,0 +1,144 @@
+# 🏴‍☠️ Captain Guthilda's Meta-Package Manifest
+# Universal dependency declaration for polyglot repositories
+
+metadata:
+  name: "guthilda-polyglot-paradise"
+  version: "1.0.0"
+  description: "Captain Guthilda's Ultimate Polyglot Development Paradise"
+  authors: ["Captain Guthilda <guthilda@pirate.ship>"]
+
+# Package manager configurations
+package-managers:
+  maven:
+    enabled: true
+    root: "./sample-projects/java-service"
+    files: ["pom.xml"]
+    commands:
+      install: "mvn clean install"
+      build: "mvn compile"
+      test: "mvn test"
+      run: "mvn spring-boot:run"
+      
+  npm:
+    enabled: true
+    root: "./sample-projects/frontend"
+    files: ["package.json"]
+    commands:
+      install: "npm install"
+      build: "npm run build"
+      test: "npm test"
+      start: "npm start"
+      
+  go:
+    enabled: true
+    root: "./sample-projects/go-service"
+    files: ["go.mod"]
+    commands:
+      install: "go mod download"
+      build: "go build"
+      test: "go test ./..."
+      run: "go run main.go"
+      
+  poetry:
+    enabled: true
+    root: "./sample-projects/ml-pipeline"
+    files: ["pyproject.toml"]
+    commands:
+      install: "poetry install"
+      build: "poetry build"
+      test: "poetry run pytest"
+      run: "poetry run uvicorn main:app --reload"
+      
+  cargo:
+    enabled: true
+    root: "./sample-projects/wasm-modules"
+    files: ["Cargo.toml"]
+    commands:
+      install: "cargo fetch"
+      build: "cargo build"
+      test: "cargo test"
+      wasm: "wasm-pack build --target web"
+      
+  dotnet:
+    enabled: true
+    root: "./sample-projects/enterprise-api"
+    files: ["*.csproj"]
+    commands:
+      install: "dotnet restore"
+      build: "dotnet build"
+      test: "dotnet test"
+      run: "dotnet run"
+
+# Cross-language dependency mapping
+dependencies:
+  shared-types:
+    - maven: "dev.guthilda:shared-types:1.0.0"
+    - npm: "@guthilda/shared-types@^1.0.0"
+    - nuget: "Guthilda.SharedTypes@1.0.0"
+    
+  logging:
+    - maven: "org.slf4j:slf4j-api:2.0.9"
+    - npm: "winston@^3.8.0"
+    - go: "github.com/sirupsen/logrus@v1.9.0"
+    - poetry: "loguru@^0.7.0"
+    - cargo: "log@0.4.20"
+    - nuget: "Serilog@3.0.1"
+    
+  http-client:
+    - maven: "org.apache.httpcomponents.client5:httpclient5:5.3"
+    - npm: "axios@^1.6.0"
+    - go: "net/http (built-in)"
+    - poetry: "httpx@^0.25.0"
+    - cargo: "reqwest@0.11"
+    - nuget: "System.Net.Http (built-in)"
+
+# Build pipeline configuration
+pipeline:
+  phases:
+    - name: "setup"
+      parallel: false
+      commands:
+        - "maven: clean"
+        - "npm: install"
+        - "poetry: install"
+        - "cargo: fetch"
+        - "dotnet: restore"
+        
+    - name: "build"
+      parallel: true
+      commands:
+        - "maven: compile"
+        - "npm: build"
+        - "go: build"
+        - "poetry: build"
+        - "cargo: build"
+        - "dotnet: build"
+        
+    - name: "test"
+      parallel: true
+      commands:
+        - "maven: test"
+        - "npm: test"
+        - "go: test"
+        - "poetry: test"
+        - "cargo: test"
+        - "dotnet: test"
+
+# Environment configuration
+environment:
+  variables:
+    JAVA_OPTS: "-Xmx2g"
+    NODE_ENV: "development"
+    GO111MODULE: "on"
+    CARGO_TARGET_DIR: "target"
+    DOTNET_ENVIRONMENT: "Development"
+    
+  paths:
+    - "./dev-tools/java21/bin"
+    - "./dev-tools/maven/bin"
+    - "./dev-tools/node"
+    - "./dev-tools/bun"
+    - "./dev-tools/go/bin"
+    - "./dev-tools/python"
+    - "./dev-tools/rust/bin"
+    - "./dev-tools/dotnet"

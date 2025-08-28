@@ -11,16 +11,19 @@ This document provides comprehensive guidance on the newly liberated Gemini AI i
 The Gemini integration provides three distinct modes of AI assistance:
 
 ### 1. 🔍 **Gemini Scout** (Strategic Reconnaissance)
+
 - **Purpose**: Intelligence gathering and repository analysis
 - **Style**: Strategic oversight and comprehensive reporting
 - **Usage**: Background analysis, security auditing, performance monitoring
 
 ### 2. ⌨️ **Gemini CLI** (Official-Style Command Line)
+
 - **Purpose**: Post-retro style CLI similar to Claude Code CLI
 - **Style**: Command-line driven, scriptable operations
 - **Usage**: Automated code operations, batch processing, CI/CD integration
 
 ### 3. 👨‍💻 **Gemini Code Assistant** (IDE-Style Interactive)
+
 - **Purpose**: Modern preview-mode interactive coding assistance
 - **Style**: VS Code extension-like experience
 - **Usage**: Real-time coding help, interactive sessions, contextual assistance
@@ -30,6 +33,7 @@ The Gemini integration provides three distinct modes of AI assistance:
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 ```bash
 # Set your Google API key (required for full functionality)
 export GOOGLE_API_KEY="your-api-key-here"
@@ -39,6 +43,7 @@ echo "GOOGLE_API_KEY=your-api-key-here" >> .env
 ```
 
 ### Available Commands
+
 ```bash
 # Scout Mode - Strategic reconnaissance
 pnpm gemini:scout
@@ -73,6 +78,7 @@ node scripts/gemini-scout.js
 ```
 
 **Capabilities**:
+
 - 📦 Dependency ecosystem analysis
 - 🔒 Security audit and pattern detection
 - ⚡ Performance optimization identification
@@ -88,6 +94,7 @@ node scripts/gemini-scout.js
 **Purpose**: Command-line driven AI operations similar to official Google tools.
 
 #### Basic Commands
+
 ```bash
 # Show help
 node scripts/gemini-cli.js help
@@ -118,6 +125,7 @@ node scripts/gemini-cli.js docs --file=core/engine.ts
 ```
 
 #### Advanced Options
+
 ```bash
 # Custom model and settings
 node scripts/gemini-cli.js analyze \
@@ -134,6 +142,7 @@ node scripts/gemini-cli.js analyze src/ --format=markdown > analysis.md
 ```
 
 #### Post-Retro Style Features
+
 - File-based operations similar to Claude Code CLI
 - Scriptable and automatable
 - CI/CD integration ready
@@ -146,6 +155,7 @@ node scripts/gemini-cli.js analyze src/ --format=markdown > analysis.md
 **Purpose**: Modern, interactive coding assistance similar to VS Code extensions.
 
 #### Starting Interactive Session
+
 ```bash
 # Start interactive session
 node scripts/gemini-code-assistant.js
@@ -155,6 +165,7 @@ node scripts/gemini-code-assistant.js analyze src/app.js
 ```
 
 #### Interactive Commands
+
 Once in the interactive session:
 
 ```bash
@@ -174,6 +185,7 @@ Once in the interactive session:
 ```
 
 #### Modern Preview Features
+
 - Real-time code analysis
 - Context-aware suggestions
 - Natural language code requests
@@ -188,6 +200,7 @@ Once in the interactive session:
 ### Trigger Methods
 
 #### 1. Workflow Dispatch (Manual)
+
 ```yaml
 # Use GitHub Actions UI to manually trigger with options:
 # - Mode: scout | cli | assistant | analyze | chat
@@ -196,6 +209,7 @@ Once in the interactive session:
 ```
 
 #### 2. Comment Triggers
+
 ```bash
 # In issues or PR comments:
 @gemini scout                    # Strategic reconnaissance
@@ -205,12 +219,14 @@ Once in the interactive session:
 ```
 
 #### 3. Labels
+
 ```bash
 # Add labels to issues or PRs:
 agent:gemini                    # Triggers default scout mode
 ```
 
 ### Workflow Capabilities
+
 - ✅ Automatic dependency installation
 - ✅ Multiple operation modes
 - ✅ Comment-based responses
@@ -225,24 +241,28 @@ agent:gemini                    # Triggers default scout mode
 The complete AI ecosystem works together:
 
 ### 🧠 **Claude** (Strategic Lead)
+
 - Renaissance-level planning and architecture
 - Complex problem decomposition
 - Strategic decision making
 - High-level code organization
 
-### ⚡ **Copilot** (Tactical Assistant) 
+### ⚡ **Copilot** (Tactical Assistant)
+
 - Implementation details and execution
 - Code completion and suggestions
 - Routine development tasks
 - Bug fixes and refactoring
 
 ### 🔍 **Gemini** (Intelligence Scout)
+
 - Repository reconnaissance and analysis
 - Performance monitoring and optimization
 - Security auditing and compliance
 - Innovation opportunity identification
 
 ### Collaborative Commands
+
 ```bash
 # Show AI triad status
 pnpm ai:triad
@@ -252,7 +272,7 @@ pnpm ai:gemini:full
 
 # Strategic planning session (would involve all three)
 # Claude: Architecture planning
-# Copilot: Implementation assistance  
+# Copilot: Implementation assistance
 # Gemini: Performance and security analysis
 ```
 
@@ -261,6 +281,7 @@ pnpm ai:gemini:full
 ## 📊 Configuration Options
 
 ### Environment Variables
+
 ```bash
 # Required for full functionality
 GOOGLE_API_KEY=your-google-api-key
@@ -274,7 +295,9 @@ DEBUG=true                          # Enable debug logging
 ```
 
 ### Configuration File
+
 Create `~/.gemini-cli-config.json`:
+
 ```json
 {
   "model": "gemini-pro",
@@ -293,18 +316,21 @@ Create `~/.gemini-cli-config.json`:
 ## 🔒 Security & Best Practices
 
 ### API Key Management
+
 - ✅ Store `GOOGLE_API_KEY` in GitHub Secrets
 - ✅ Never commit API keys to repository
 - ✅ Use environment-specific configurations
 - ✅ Rotate keys regularly
 
 ### Offline Mode
+
 - ✅ All tools provide offline fallback functionality
 - ✅ Static analysis when API unavailable
 - ✅ Local pattern detection and suggestions
 - ✅ No degraded user experience
 
 ### Data Privacy
+
 - ✅ Code analysis happens via secure API calls
 - ✅ No persistent storage of code content
 - ✅ Context-limited processing
@@ -315,6 +341,7 @@ Create `~/.gemini-cli-config.json`:
 ## 🚀 Advanced Usage Examples
 
 ### 1. Comprehensive Project Analysis
+
 ```bash
 # Full project reconnaissance
 pnpm gemini:scout > project-analysis.json
@@ -332,6 +359,7 @@ pnpm gemini:assistant
 ```
 
 ### 2. CI/CD Integration
+
 ```yaml
 # .github/workflows/ai-code-review.yml
 - name: Gemini Code Analysis
@@ -341,6 +369,7 @@ pnpm gemini:assistant
 ```
 
 ### 3. Development Workflow
+
 ```bash
 # Morning routine - project health check
 pnpm gemini:scout --format=json | jq '.summary'
@@ -370,13 +399,16 @@ pnpm gemini:cli review --file=src/changes.js
 4. **Regional Releases**: Gradual rollouts across different markets
 
 **Current Competitive Landscape**:
+
 - **Google Gemini**: Advanced multimodal capabilities, real-time processing
 - **Claude (Anthropic)**: Strong reasoning and coding abilities, large context windows
 - **GPT-4 Family**: Established ecosystem, broad integration support
 - **Specialized Models**: Domain-specific AI for coding, analysis, and automation
 
 ### Integration Philosophy
+
 This Gemini implementation focuses on:
+
 - ✅ **Interoperability**: Works alongside Claude and Copilot
 - ✅ **Flexibility**: Multiple interface modes (CLI, interactive, workflow)
 - ✅ **Reliability**: Offline fallbacks and error handling
@@ -389,6 +421,7 @@ This Gemini implementation focuses on:
 ### Common Issues
 
 #### API Key Problems
+
 ```bash
 # Test API connectivity
 node -e "console.log(process.env.GOOGLE_API_KEY ? 'API key found' : 'No API key')"
@@ -398,6 +431,7 @@ echo $GOOGLE_API_KEY | cut -c1-10
 ```
 
 #### Permission Issues
+
 ```bash
 # Make scripts executable
 chmod +x scripts/gemini-*.js
@@ -407,6 +441,7 @@ node --version
 ```
 
 #### Module Issues
+
 ```bash
 # Reinstall dependencies
 pnpm install
@@ -414,6 +449,7 @@ pnpm install @google/generative-ai @ai-sdk/google @google/genai
 ```
 
 ### Debug Mode
+
 ```bash
 # Enable verbose logging
 DEBUG=true node scripts/gemini-cli.js analyze --file=problematic-file.js
@@ -427,6 +463,7 @@ node --check scripts/gemini-cli.js
 ## 📈 Future Enhancements
 
 ### Planned Features
+
 - 🔄 **Multi-model Support**: Switch between Gemini Pro, Ultra, Flash
 - 🌐 **Web Integration**: Browser-based interface
 - 📱 **Mobile Support**: Responsive design for mobile development
@@ -434,6 +471,7 @@ node --check scripts/gemini-cli.js
 - 🤖 **Advanced Automation**: Self-improving workflows based on usage patterns
 
 ### Community Extensions
+
 - **Custom Prompts**: User-defined prompt templates
 - **Plugin System**: Extensible tool ecosystem
 - **Team Collaboration**: Shared AI insights and recommendations
@@ -444,12 +482,14 @@ node --check scripts/gemini-cli.js
 ## 🎉 Success Stories & Use Cases
 
 ### Development Teams
+
 - **Code Review Automation**: 40% faster review cycles
 - **Bug Detection**: Early identification of potential issues
 - **Performance Optimization**: Automated performance analysis
 - **Documentation Generation**: Always up-to-date technical docs
 
 ### Individual Developers
+
 - **Learning Acceleration**: Interactive code explanation and teaching
 - **Productivity Boost**: Intelligent code completion and suggestions
 - **Quality Improvement**: Consistent best practices enforcement
@@ -457,13 +497,14 @@ node --check scripts/gemini-cli.js
 
 ---
 
-*Ready to unleash the full potential of AI-assisted development? Start with `pnpm ai:gemini:full` and explore the complete toolkit!* 🚀
+_Ready to unleash the full potential of AI-assisted development? Start with `pnpm ai:gemini:full` and explore the complete toolkit!_ 🚀
 
 ---
 
 **AI Triad Team:**
+
 - 🧠 **Claude**: Strategic architect and renaissance planner
 - ⚡ **Copilot**: Tactical implementation specialist
 - 🔍 **Gemini**: Intelligence scout and innovation discoverer
 
-*Together, creating the future of collaborative AI development.* ✨
+_Together, creating the future of collaborative AI development._ ✨

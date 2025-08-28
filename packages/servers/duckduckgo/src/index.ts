@@ -161,7 +161,7 @@ export class DuckDuckGoServer extends BaseServer {
     query: string,
     _limit: number,
     _safeSearch: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       // This is a simplified example and would need to be replaced with
       // the actual DuckDuckGo API integration in a production environment

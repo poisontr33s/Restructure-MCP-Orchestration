@@ -5,7 +5,7 @@ This directory contains archived workflow configurations and deprecated template
 ## Archive Organization
 
 - `workflows/` - Previous workflow configurations
-- `templates/` - Deprecated YAML templates  
+- `templates/` - Deprecated YAML templates
 - `proposals/` - Workflow improvement proposals
 - `iterations/` - Multiple versions for comparison and evolution
 
@@ -14,6 +14,6 @@ This directory contains archived workflow configurations and deprecated template
 Following @poisontr33s' guidance: Instead of deletion, we preserve, analyze, and iterate based on value assessment and structural integrity. Each archived item includes:
 
 - Original purpose and context
-- Reason for archival 
+- Reason for archival
 - Potential repurposing opportunities
 - ML-based insights for future iterations

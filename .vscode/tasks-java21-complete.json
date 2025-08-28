@@ -1,0 +1,255 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🏴‍☠️ Build All Java 21 Modules",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["clean", "compile"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$maven-compile-warn"]
+        },
+        {
+            "label": "🚀 Package Java 21 System",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["clean", "package", "-DskipTests"],
+            "group": "build",
+            "dependsOn": "🏴‍☠️ Build All Java 21 Modules",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "⚓ Start MCP Core",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar", 
+                "mcp-core/target/mcp-core-1.0.0-SNAPSHOT.jar",
+                "--spring.profiles.active=development"
+            ],
+            "group": "test",
+            "isBackground": true,
+            "dependsOn": "🚀 Package Java 21 System",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "📊 Start Monitor Dashboard",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar", 
+                "mcp-monitor/target/mcp-monitor-1.0.0-SNAPSHOT.jar",
+                "--server.port=8081"
+            ],
+            "group": "test",
+            "isBackground": true,
+            "dependsOn": "🚀 Package Java 21 System",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🤖 Start Captain Guthilda AI",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar", 
+                "mcp-guthilda/target/mcp-guthilda-1.0.0-SNAPSHOT.jar",
+                "--server.port=8082"
+            ],
+            "group": "test",
+            "isBackground": true,
+            "dependsOn": "🚀 Package Java 21 System",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🧠 Start AI Integration",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar", 
+                "mcp-ai-integration/target/mcp-ai-integration-1.0.0-SNAPSHOT.jar",
+                "--server.port=8083"
+            ],
+            "group": "test",
+            "isBackground": true,
+            "dependsOn": "🚀 Package Java 21 System",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🏴‍☠️ Start Complete Java 21 Fleet",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "⚓ Start MCP Core",
+                "📊 Start Monitor Dashboard", 
+                "🤖 Start Captain Guthilda AI",
+                "🧠 Start AI Integration"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "💻 Test CLI Commands",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar", 
+                "mcp-cli/target/mcp-cli-1.0.0-SNAPSHOT.jar",
+                "status"
+            ],
+            "group": "test",
+            "dependsOn": "🚀 Package Java 21 System",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🧪 Run Java 21 Tests",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["test"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$maven-test-warn"]
+        },
+        {
+            "label": "🔍 Run Integration Tests",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["verify", "-Pintegration-tests"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🎯 Java 21 Code Quality Check",
+            "type": "shell",
+            "command": "mvn",
+            "args": [
+                "clean", 
+                "compile", 
+                "spotbugs:check", 
+                "checkstyle:check"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "📈 Generate Test Coverage Report",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["clean", "test", "jacoco:report"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🐳 Build Docker Images",
+            "type": "shell",
+            "command": "mvn",
+            "args": [
+                "clean", 
+                "package", 
+                "docker:build",
+                "-DskipTests"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🧹 Clean Java 21 Build",
+            "type": "shell",
+            "command": "mvn",
+            "args": ["clean"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "🔧 GitHub Copilot Optimize",
+            "type": "shell",
+            "command": "mvn",
+            "args": [
+                "clean",
+                "compile",
+                "-Dmaven.compiler.showWarnings=true",
+                "-Dmaven.compiler.showDeprecation=true"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$maven-compile-warn"]
+        }
+    ]
+}

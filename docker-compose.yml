@@ -1,0 +1,246 @@
+# Captain Guthilda's Docker Compose Configuration
+# Java 21 MCP Orchestration System Renaissance Edition
+
+version: '3.8'
+
+services:
+  # Core Orchestration Service
+  mcp-core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: mcp-orchestration:java21-core
+    container_name: mcp-core
+    command: ["core"]
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,core
+      - MCP_ORCHESTRATION_VIRTUAL_THREADS_ENABLED=true
+      - MCP_ORCHESTRATION_AI_INTEGRATION_ENABLED=true
+      - MCP_GUTHILDA_MODE=autonomous
+      - JAVA_OPTS=-Xms2g -Xmx4g -XX:+UseZGC
+    volumes:
+      - mcp-core-data:/app/data
+      - mcp-core-logs:/app/logs
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "./health-check.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  # Guthilda AI Orchestration Service
+  mcp-guthilda:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: mcp-orchestration:java21-guthilda
+    container_name: mcp-guthilda
+    command: ["guthilda"]
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,guthilda
+      - MCP_GUTHILDA_AUTONOMOUS_MODE=true
+      - MCP_GUTHILDA_AI_VIRTUAL_THREADS_POOL_SIZE=500
+      - MCP_CORE_URL=http://mcp-core:8080
+      - JAVA_OPTS=-Xms1g -Xmx3g -XX:+UseZGC
+    volumes:
+      - mcp-guthilda-data:/app/data
+      - mcp-guthilda-logs:/app/logs
+    networks:
+      - mcp-network
+    depends_on:
+      - mcp-core
+    healthcheck:
+      test: ["CMD", "./health-check.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+
+  # Monitor Dashboard Service
+  mcp-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: mcp-orchestration:java21-monitor
+    container_name: mcp-monitor
+    command: ["monitor"]
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,monitor
+      - MCP_MONITOR_WEBSOCKET_VIRTUAL_THREADS=true
+      - MCP_CORE_URL=http://mcp-core:8080
+      - MCP_GUTHILDA_URL=http://mcp-guthilda:8082
+      - JAVA_OPTS=-Xms512m -Xmx2g -XX:+UseZGC
+    volumes:
+      - mcp-monitor-logs:/app/logs
+    networks:
+      - mcp-network
+    depends_on:
+      - mcp-core
+      - mcp-guthilda
+    healthcheck:
+      test: ["CMD", "./health-check.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 75s
+    restart: unless-stopped
+
+  # AI Integration Service
+  mcp-ai-integration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: mcp-orchestration:java21-ai
+    container_name: mcp-ai-integration
+    command: ["ai-integration"]
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,ai-integration
+      - MCP_AI_ML_VIRTUAL_THREADS_ENABLED=true
+      - MCP_CORE_URL=http://mcp-core:8080
+      - MCP_GUTHILDA_URL=http://mcp-guthilda:8082
+      - JAVA_OPTS=-Xms1g -Xmx4g -XX:+UseZGC -XX:+EnableDynamicAgentLoading
+    volumes:
+      - mcp-ai-data:/app/data
+      - mcp-ai-logs:/app/logs
+    networks:
+      - mcp-network
+    depends_on:
+      - mcp-core
+      - mcp-guthilda
+    healthcheck:
+      test: ["CMD", "./health-check.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7.2-alpine
+    container_name: mcp-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # PostgreSQL for persistent data storage
+  postgres:
+    image: postgres:16-alpine
+    container_name: mcp-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mcp_orchestration
+      - POSTGRES_USER=mcp_user
+      - POSTGRES_PASSWORD=guthilda_secure_password_2024
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mcp_user -d mcp_orchestration"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: mcp-prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - mcp-network
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: mcp-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=guthilda_admin_2024
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - mcp-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+# Network configuration
+networks:
+  mcp-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Volume configuration
+volumes:
+  mcp-core-data:
+    driver: local
+  mcp-core-logs:
+    driver: local
+  mcp-guthilda-data:
+    driver: local
+  mcp-guthilda-logs:
+    driver: local
+  mcp-monitor-logs:
+    driver: local
+  mcp-ai-data:
+    driver: local
+  mcp-ai-logs:
+    driver: local
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local

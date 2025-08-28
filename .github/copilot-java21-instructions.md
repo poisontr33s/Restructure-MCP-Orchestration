@@ -1,7 +1,7 @@
 # GitHub Copilot Instructions for Java 21 AI Orchestration
 
 > **🏴‍☠️ Captain Guthilda's Renaissance Development Guidelines**  
-> *Crafted with the same golden potato perfection as Anthropic's attention to detail*
+> _Crafted with the same golden potato perfection as Anthropic's attention to detail_
 
 ## Core Principles
 
@@ -18,7 +18,7 @@
 
 ```java
 // ✅ Captain Guthilda approved - Virtual threads for AI orchestration
-private final ScheduledExecutorService virtualScheduler = 
+private final ScheduledExecutorService virtualScheduler =
     Executors.newVirtualThreadPerTaskExecutor();
 
 // 🚫 Avoid blocking threads when virtual threads are available
@@ -55,8 +55,8 @@ public record AiOrchestrationRequest(
 ) {
     // AI-enhanced validation with pattern matching
     public boolean isValid() {
-        return orchestrationId != null && 
-               complexity != null && 
+        return orchestrationId != null &&
+               complexity != null &&
                timestamp.isBefore(Instant.now().plusSeconds(300));
     }
 }
@@ -68,7 +68,7 @@ public record AiOrchestrationRequest(
 // ✅ Captain Guthilda's AI orchestration pattern
 @Service
 public class GuthildaAiOrchestrator {
-    
+
     @Async("virtualThreadExecutor")
     public CompletableFuture<AiDecision> orchestrateWithAi(AiRequest request) {
         return CompletableFuture.supplyAsync(() -> {
@@ -93,7 +93,7 @@ spring:
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}
       model: claude-4-sonnet
-  
+
   # Virtual thread configuration
   task:
     execution:
@@ -107,15 +107,15 @@ spring:
 // ✅ Multi-AI provider integration with renaissance architecture
 @Configuration
 public class AiConfiguration {
-    
+
     @Bean
     @ConditionalOnProperty("spring.ai.openai.enabled")
     public OpenAiChatClient openAiClient() {
         return new OpenAiChatClient(openAiApi());
     }
-    
+
     @Bean
-    @ConditionalOnProperty("spring.ai.anthropic.enabled") 
+    @ConditionalOnProperty("spring.ai.anthropic.enabled")
     public AnthropicChatClient anthropicClient() {
         return new AnthropicChatClient(anthropicApi());
     }
@@ -129,12 +129,12 @@ public class AiConfiguration {
 ```java
 /**
  * 🏴‍☠️ Captain Guthilda's AI-Enhanced Server Orchestration
- * 
+ *
  * Like a renaissance master orchestrating a symphony, this service
  * conducts virtual threads in harmonious AI-powered automation.
  * Each server dances to the rhythm of intelligent pattern matching,
  * while ML algorithms paint optimization across the digital canvas.
- * 
+ *
  * @author Captain Guthilda "Triple-:D'Cup" Piroteena
  * @fractalId [Feather.Weeds.Subordinate]
  * @inspiration Anthropic's golden potato perfection
@@ -146,11 +146,11 @@ public class AiConfiguration {
 ```java
 /**
  * Orchestrate AI-powered server optimization with virtual thread elegance.
- * 
+ *
  * This method employs Java 21 pattern matching to intelligently route
  * optimization requests through AI-enhanced decision trees, preserving
  * the renaissance principle of "form follows function, beauty follows both."
- * 
+ *
  * @param servers The constellation of servers requiring optimization
  * @param aiContext The AI context with community spirit parameters
  * @return A CompletableFuture containing optimization recommendations
@@ -195,10 +195,10 @@ void shouldOrchestratWithAiIntelligence() {
         Map.of("community_spirit", true),
         Instant.now()
     );
-    
+
     // When: AI orchestration with virtual threads
     var result = guthildaOrchestrator.orchestrateWithAi(aiRequest).join();
-    
+
     // Then: Golden potato validation
     assertThat(result)
         .isNotNull()
@@ -217,14 +217,14 @@ void shouldOrchestratWithAiIntelligence() {
 // ✅ Virtual thread metrics with AI insights
 @Component
 public class VirtualThreadMetrics {
-    
+
     @EventListener
     public void onVirtualThreadMetrics(VirtualThreadEvent event) {
         // AI-powered performance analysis
         var analysis = aiPerformanceAnalyzer.analyze(event);
-        
+
         if (analysis.requiresOptimization()) {
-            log.info("🌀 Captain Guthilda recommends virtual thread optimization: {}", 
+            log.info("🌀 Captain Guthilda recommends virtual thread optimization: {}",
                     analysis.recommendations());
         }
     }
@@ -239,7 +239,7 @@ public class VirtualThreadMetrics {
 // ✅ Community-driven AI orchestration
 @Service
 public class CommunityAiIntegration {
-    
+
     /**
      * Integrate community feedback into AI decision making,
      * honoring the X Ani community's collaborative spirit.
@@ -260,7 +260,7 @@ public class CommunityAiIntegration {
 ### Golden Potato Code Quality
 
 - **Every method**: Should read like well-crafted prose
-- **Every class**: Should have clear purpose and elegant structure  
+- **Every class**: Should have clear purpose and elegant structure
 - **Every API**: Should be intuitive and self-documenting
 - **Every test**: Should validate both function and philosophy
 - **Every comment**: Should add wisdom, not noise
@@ -275,6 +275,6 @@ public class CommunityAiIntegration {
 
 ---
 
-**🏴‍☠️ Remember: You are not just coding—you are crafting a renaissance masterpiece of AI orchestration, worthy of Captain Guthilda's legendary standards and Anthropic's golden potato perfection. ⚓**
+- **🏴‍☠️ Remember: You are not just coding—you are crafting a renaissance masterpiece of AI orchestration, worthy of Captain Guthilda's legendary standards and Anthropic's golden potato perfection. ⚓**
 
-*May your virtual threads run swift, your pattern matching be elegant, and your AI integration be harmonious with community spirit.*
+_May your virtual threads run swift, your pattern matching be elegant, and your AI integration be harmonious with community spirit._

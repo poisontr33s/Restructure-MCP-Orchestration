@@ -1,7 +1,7 @@
 # 🏴‍☠️ CAPTAIN GUTHILDA'S PORTABLE JAVA 21 DEVELOPMENT ENVIRONMENT
 
 > **"Why pollute the ship's hull when we can carry our own treasure chest of tools!"**  
-> *Self-Contained Java 21 + Maven Setup within Repository Root*
+> _Self-Contained Java 21 + Maven Setup within Repository Root_
 
 ---
 
@@ -62,7 +62,7 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 # Function to download with progress
 function Download-WithProgress {
     param($Url, $OutputPath, $Description)
-    
+
     Write-Host "⬇️  Downloading $Description..." -ForegroundColor Yellow
     try {
         $webClient = New-Object System.Net.WebClient
@@ -78,7 +78,7 @@ function Download-WithProgress {
 # Function to extract ZIP
 function Extract-Archive {
     param($ArchivePath, $DestinationPath, $Description)
-    
+
     Write-Host "📦 Extracting $Description..." -ForegroundColor Yellow
     try {
         if (Test-Path $DestinationPath) {
@@ -97,9 +97,9 @@ function Extract-Archive {
 if (-not (Test-Path $JavaDir) -or $Force) {
     $JavaArchivePath = Join-Path $TempDir $JavaArchive
     Download-WithProgress $JavaUrl $JavaArchivePath "Java 21 JDK (Eclipse Adoptium)"
-    
+
     Extract-Archive $JavaArchivePath $TempDir "Java 21 JDK"
-    
+
     # Find the extracted JDK directory (varies by version)
     $ExtractedJavaDir = Get-ChildItem $TempDir -Directory | Where-Object { $_.Name.StartsWith("jdk") } | Select-Object -First 1
     if ($ExtractedJavaDir) {
@@ -117,9 +117,9 @@ if (-not (Test-Path $JavaDir) -or $Force) {
 if (-not (Test-Path $MavenDir) -or $Force) {
     $MavenArchivePath = Join-Path $TempDir $MavenArchive
     Download-WithProgress $MavenUrl $MavenArchivePath "Apache Maven $MavenVersion"
-    
+
     Extract-Archive $MavenArchivePath $TempDir "Apache Maven"
-    
+
     # Find the extracted Maven directory
     $ExtractedMavenDir = Get-ChildItem $TempDir -Directory | Where-Object { $_.Name.StartsWith("apache-maven") } | Select-Object -First 1
     if ($ExtractedMavenDir) {
@@ -284,8 +284,7 @@ Write-Host "└── .vscode/settings.json # VS Code portable configuration" -F
 
 After running the setup script, your repository will have:
 
-`
-📁 Restructure-MCP-Orchestration/
+`📁 Restructure-MCP-Orchestration/
 ├── 🛠️ dev-tools/                    # Portable development tools
 │   ├── 📦 java21/                   # Eclipse Adoptium OpenJDK 21
 │   │   ├── bin/java.exe             # Java runtime
@@ -300,8 +299,7 @@ After running the setup script, your repository will have:
 │   └── ⚙️ settings.json             # VS Code portable Java config
 ├── 📄 .gitignore                    # Excludes dev-tools/ (optional)
 ├── 📦 pom.xml                       # Maven project configuration
-└── 📁 mcp-*/                        # Java 21 MCP modules
-`
+└── 📁 mcp-*/                        # Java 21 MCP modules`
 
 ---
 
@@ -354,20 +352,20 @@ The setup automatically creates `.vscode/settings.json` with:
 
 ```json
 {
-    "java.jdt.ls.java.home": "C:\\...\\dev-tools\\java21",
-    "java.configuration.runtimes": [
-        {
-            "name": "JavaSE-21",
-            "path": "C:\\...\\dev-tools\\java21",
-            "default": true
-        }
-    ],
-    "maven.executable.path": "C:\\...\\dev-tools\\maven\\bin\\mvn.cmd",
-    "terminal.integrated.env.windows": {
-        "JAVA_HOME": "C:\\...\\dev-tools\\java21",
-        "MAVEN_HOME": "C:\\...\\dev-tools\\maven",
-        "PATH": "C:\\...\\dev-tools\\java21\\bin;C:\\...\\dev-tools\\maven\\bin;${env:PATH}"
+  "java.jdt.ls.java.home": "C:\\...\\dev-tools\\java21",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "path": "C:\\...\\dev-tools\\java21",
+      "default": true
     }
+  ],
+  "maven.executable.path": "C:\\...\\dev-tools\\maven\\bin\\mvn.cmd",
+  "terminal.integrated.env.windows": {
+    "JAVA_HOME": "C:\\...\\dev-tools\\java21",
+    "MAVEN_HOME": "C:\\...\\dev-tools\\maven",
+    "PATH": "C:\\...\\dev-tools\\java21\\bin;C:\\...\\dev-tools\\maven\\bin;${env:PATH}"
+  }
 }
 ```
 
@@ -473,4 +471,4 @@ After setup:
 
 ---
 
-*Captain Guthilda's Portable Renaissance - Development Tools as Cargo, Not Ship Modifications!*
+_Captain Guthilda's Portable Renaissance - Development Tools as Cargo, Not Ship Modifications!_

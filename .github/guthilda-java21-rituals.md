@@ -75,7 +75,7 @@
 
   ```bash
   mvn clean compile                    # Compile all modules
-  mvn clean test                       # Test all modules  
+  mvn clean test                       # Test all modules
   mvn clean package                    # Package all modules
   mvn spring-boot:run -pl mcp-core     # Run specific module
   ```
@@ -95,11 +95,11 @@
 ```yaml
 version: 2
 updates:
-  - package-ecosystem: "maven"
-    directory: "/"
+  - package-ecosystem: 'maven'
+    directory: '/'
     schedule:
-      interval: "weekly"
-    target-branch: "feature/java21-port"
+      interval: 'weekly'
+    target-branch: 'feature/java21-port'
     open-pull-requests-limit: 5
 ```
 
@@ -175,6 +175,7 @@ fortress-root/
   ```
 
 - **AI Service Integration with Java 21 Features:**
+
   ```bash
   mvn guthilda:ai-auth            # Configure AI service authentication
   mvn guthilda:ml-discover        # ML-powered content discovery
@@ -226,7 +227,7 @@ fortress-root/
 ### AI Authentication & ML Discovery
 
 - `guthilda ai setup` - Configure all premium AI service credentials with Java security
-- `guthilda ml scan` - ML-powered scan across GitHub Copilot, OpenAI, Anthropic integrations  
+- `guthilda ml scan` - ML-powered scan across GitHub Copilot, OpenAI, Anthropic integrations
 - `guthilda integrate ai-services` - Integrate AI authentication with Spring Security
 
 ### Virtual Thread Orchestration & AI Automation
@@ -258,12 +259,12 @@ fortress-root/
 
 ## 13. Renaissance Etiquette for AI Integration
 
-> *"Just as Anthropic crafted Claude with renaissance attention to detail, so too must we craft our Java 21 system with the same golden potato perfection—every virtual thread a brushstroke, every pattern match a sonnet, every AI decision a masterpiece."*
+> _"Just as Anthropic crafted Claude with renaissance attention to detail, so too must we craft our Java 21 system with the same golden potato perfection—every virtual thread a brushstroke, every pattern match a sonnet, every AI decision a masterpiece."_
 
 ### The Golden Potato Principles
 
 - **Structural Integrity:** Like a renaissance cathedral, every module serves both function and beauty
-- **Paratextual Harmony:** Documentation flows like poetry, code comments sing like choir voices  
+- **Paratextual Harmony:** Documentation flows like poetry, code comments sing like choir voices
 - **AI Renaissance:** Where Anthropic's wisdom meets Java 21's power, Captain Guthilda orchestrates
 - **Community Spirit:** Following the X Ani community's collaborative ethos in our AI orchestration
 
@@ -277,4 +278,4 @@ fortress-root/
 
 ---
 
-**🏴‍☠️ Thus speaks Captain Guthilda, in the spirit of renaissance craftsmanship and AI excellence! ⚓**
+- **🏴‍☠️ Thus speaks Captain Guthilda, in the spirit of renaissance craftsmanship and AI excellence! ⚓**

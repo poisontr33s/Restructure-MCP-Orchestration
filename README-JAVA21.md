@@ -9,7 +9,7 @@ This is the **Java 21 port** of the MCP Orchestration System, designed to levera
 ### Why Java 21?
 
 - **🚀 Virtual Threads**: Massive concurrency for orchestrating thousands of MCP servers
-- **🎯 Pattern Matching**: Enhanced control flow for server state management  
+- **🎯 Pattern Matching**: Enhanced control flow for server state management
 - **📦 Records**: Immutable data structures for configuration and monitoring
 - **⚡ Performance**: Significantly better performance than Node.js for CPU-intensive tasks
 - **🤖 AI Integration**: Better ecosystem for ML/AI libraries and frameworks
@@ -17,16 +17,14 @@ This is the **Java 21 port** of the MCP Orchestration System, designed to levera
 
 ## Architecture
 
-`
-🏴‍☠️ CAPTAIN GUTHILDA'S JAVA 21 FLEET
+`🏴‍☠️ CAPTAIN GUTHILDA'S JAVA 21 FLEET
 ├── 📦 mcp-shared/          # Common types and utilities (Records & Enums)
 ├── ⚙️  mcp-core/           # Orchestration engine (Spring Boot + Virtual Threads)
 ├── 💻 mcp-cli/             # Command line interface (PicoCLI)
 ├── 📊 mcp-monitor/         # Web dashboard (React + Java backend)
 ├── 🤖 mcp-guthilda/        # AI orchestration module
 ├── 🔌 mcp-servers/         # MCP server implementations
-└── 🧠 mcp-ai-integration/  # AI/ML integration layer
-`
+└── 🧠 mcp-ai-integration/  # AI/ML integration layer`
 
 ## Java 21 Features Used
 
@@ -34,7 +32,7 @@ This is the **Java 21 port** of the MCP Orchestration System, designed to levera
 
 ```java
 // Enhanced concurrency for server management
-private final ScheduledExecutorService virtualScheduler = 
+private final ScheduledExecutorService virtualScheduler =
     Executors.newVirtualThreadPerTaskExecutor();
 ```
 
@@ -215,12 +213,12 @@ The Java 21 port includes enhanced AI integration capabilities:
 
 Compared to the TypeScript version:
 
-| Metric | TypeScript/Node.js | Java 21 | Improvement |
-|--------|-------------------|---------|-------------|
-| Server Startup | ~2s | ~800ms | **2.5x faster** |
-| Concurrent Requests | 1,000 | 10,000+ | **10x more** |
-| Memory Usage | 150MB | 80MB | **47% less** |
-| Health Check Latency | 50ms | 5ms | **10x faster** |
+| Metric               | TypeScript/Node.js | Java 21 | Improvement     |
+| -------------------- | ------------------ | ------- | --------------- |
+| Server Startup       | ~2s                | ~800ms  | **2.5x faster** |
+| Concurrent Requests  | 1,000              | 10,000+ | **10x more**    |
+| Memory Usage         | 150MB              | 80MB    | **47% less**    |
+| Health Check Latency | 50ms               | 5ms     | **10x faster**  |
 
 ## Migration from TypeScript
 
@@ -340,4 +338,4 @@ MIT License - See [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ and ⚡ Java 21 for the future of AI/ML orchestration**
+- **Built with ❤️ and ⚡ Java 21 for the future of AI/ML orchestration**

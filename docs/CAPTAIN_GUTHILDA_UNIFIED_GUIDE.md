@@ -110,18 +110,20 @@ repo-root/
 
 ### Dependency Management
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm dependencies:analyze` | Analyze dependency update PRs |
-| `pnpm dependencies:batch` | Create batch dependency updates |
+| Command                         | Purpose                          |
+| ------------------------------- | -------------------------------- |
+| `pnpm dependencies:analyze`     | Analyze dependency update PRs    |
+| `pnpm dependencies:batch`       | Create batch dependency updates  |
 | `pnpm dependencies:consolidate` | Execute dependency consolidation |
+
 =======
-| Command                               | Purpose                    |
+| Command | Purpose |
 | ------------------------------------- | -------------------------- |
-| `pnpm branch-manager:list`            | List branches across repos |
-| `pnpm branch-manager:cleanup`         | Clean up old branches      |
-| `pnpm branch-manager:copilot-cleanup` | Clean copilot branches     |
->>>>>> main
+| `pnpm branch-manager:list` | List branches across repos |
+| `pnpm branch-manager:cleanup` | Clean up old branches |
+| `pnpm branch-manager:copilot-cleanup` | Clean copilot branches |
+
+> > > > > > main
 
 ---
 
@@ -327,7 +329,7 @@ Captain Guthilda has implemented an Emergency Branch Consolidation Protocol to m
 # Show consolidation plan and current status
 pnpm consolidation:plan
 
-# Create hierarchical branch structure 
+# Create hierarchical branch structure
 pnpm consolidation:create --dry-run
 pnpm consolidation:create
 
@@ -345,7 +347,7 @@ pnpm dependencies:batch
 main/
 ├── feature/
 │   ├── ai-integrations/          # AI/ML integration PRs
-│   ├── workflow-optimization/    # Workflow and automation PRs  
+│   ├── workflow-optimization/    # Workflow and automation PRs
 │   └── monorepo-restructure/     # Monorepo structure PRs
 ├── dependencies/
 │   └── batch-updates/            # Consolidated dependency updates

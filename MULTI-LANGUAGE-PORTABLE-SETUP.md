@@ -1,7 +1,7 @@
 # 🏴‍☠️ CAPTAIN GUTHILDA'S MULTI-LANGUAGE PORTABLE DEVELOPMENT FLEET
 
 > **"Every language deserves its own portable treasure chest!"**  
-> *Extending the Portable Approach to Go, Ruby, Python, Node.js, and Beyond*
+> _Extending the Portable Approach to Go, Ruby, Python, Node.js, and Beyond_
 
 ---
 
@@ -69,17 +69,17 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 # Download and setup Go
 if (-not (Test-Path $GoDir) -or $Force) {
     $GoArchivePath = Join-Path $TempDir $GoArchive
-    
+
     Write-Host "⬇️  Downloading Go $GoVersion..." -ForegroundColor Yellow
     (New-Object System.Net.WebClient).DownloadFile($GoUrl, $GoArchivePath)
-    
+
     Write-Host "📦 Extracting Go..." -ForegroundColor Yellow
     Expand-Archive -Path $GoArchivePath -DestinationPath $TempDir -Force
-    
+
     # Move extracted go directory
     $ExtractedGoDir = Join-Path $TempDir "go"
     Move-Item $ExtractedGoDir $GoDir -Force
-    
+
     Write-Host "✅ Go installed to: $GoDir" -ForegroundColor Green
 } else {
     Write-Host "✅ Go already installed in: $GoDir" -ForegroundColor Green
@@ -100,13 +100,13 @@ Add to `.vscode/settings.json`:
 
 ```json
 {
-    "go.goroot": "${workspaceFolder}/dev-tools/go",
-    "go.gopath": "${workspaceFolder}/dev-tools/go-workspace",
-    "go.toolsGopath": "${workspaceFolder}/dev-tools/go-tools",
-    "go.useLanguageServer": true,
-    "go.alternateTools": {
-        "go": "${workspaceFolder}/dev-tools/go/bin/go.exe"
-    }
+  "go.goroot": "${workspaceFolder}/dev-tools/go",
+  "go.gopath": "${workspaceFolder}/dev-tools/go-workspace",
+  "go.toolsGopath": "${workspaceFolder}/dev-tools/go-tools",
+  "go.useLanguageServer": true,
+  "go.alternateTools": {
+    "go": "${workspaceFolder}/dev-tools/go/bin/go.exe"
+  }
 }
 ```
 
@@ -144,14 +144,14 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 # Download and setup Ruby
 if (-not (Test-Path $RubyDir) -or $Force) {
     $RubyArchivePath = Join-Path $TempDir $RubyArchive
-    
+
     Write-Host "⬇️  Downloading Ruby $RubyVersion..." -ForegroundColor Yellow
     (New-Object System.Net.WebClient).DownloadFile($RubyUrl, $RubyArchivePath)
-    
+
     Write-Host "📦 Extracting Ruby..." -ForegroundColor Yellow
     # Note: Requires 7-Zip or alternative extractor for .7z files
     # For simplicity, use ZIP version instead in real implementation
-    
+
     Write-Host "✅ Ruby installed to: $RubyDir" -ForegroundColor Green
 } else {
     Write-Host "✅ Ruby already installed in: $RubyDir" -ForegroundColor Green
@@ -166,9 +166,9 @@ Add to `.vscode/settings.json`:
 
 ```json
 {
-    "ruby.interpreter.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/ruby.exe",
-    "ruby.rdbg.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/rdbg.exe",
-    "ruby.rubocop.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/rubocop.exe"
+  "ruby.interpreter.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/ruby.exe",
+  "ruby.rdbg.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/rdbg.exe",
+  "ruby.rubocop.commandPath": "${workspaceFolder}/dev-tools/ruby/bin/rubocop.exe"
 }
 ```
 
@@ -206,22 +206,22 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 # Download and setup Python
 if (-not (Test-Path $PythonDir) -or $Force) {
     $PythonArchivePath = Join-Path $TempDir $PythonArchive
-    
+
     Write-Host "⬇️  Downloading Python $PythonVersion..." -ForegroundColor Yellow
     (New-Object System.Net.WebClient).DownloadFile($PythonUrl, $PythonArchivePath)
-    
+
     Write-Host "📦 Extracting Python..." -ForegroundColor Yellow
     Expand-Archive -Path $PythonArchivePath -DestinationPath $PythonDir -Force
-    
+
     # Download and install pip
     $GetPipUrl = "https://bootstrap.pypa.io/get-pip.py"
     $GetPipPath = Join-Path $PythonDir "get-pip.py"
     (New-Object System.Net.WebClient).DownloadFile($GetPipUrl, $GetPipPath)
-    
+
     # Install pip
     $PythonExe = Join-Path $PythonDir "python.exe"
     & $PythonExe $GetPipPath
-    
+
     Write-Host "✅ Python installed to: $PythonDir" -ForegroundColor Green
 } else {
     Write-Host "✅ Python already installed in: $PythonDir" -ForegroundColor Green
@@ -236,11 +236,11 @@ Add to `.vscode/settings.json`:
 
 ```json
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/dev-tools/python/python.exe",
-    "python.terminal.activateEnvironment": false,
-    "python.venvPath": "${workspaceFolder}/dev-tools/python-venvs",
-    "python.formatting.provider": "black",
-    "python.formatting.blackPath": "${workspaceFolder}/dev-tools/python/Scripts/black.exe"
+  "python.defaultInterpreterPath": "${workspaceFolder}/dev-tools/python/python.exe",
+  "python.terminal.activateEnvironment": false,
+  "python.venvPath": "${workspaceFolder}/dev-tools/python-venvs",
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "${workspaceFolder}/dev-tools/python/Scripts/black.exe"
 }
 ```
 
@@ -278,17 +278,17 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 # Download and setup Node.js
 if (-not (Test-Path $NodeDir) -or $Force) {
     $NodeArchivePath = Join-Path $TempDir $NodeArchive
-    
+
     Write-Host "⬇️  Downloading Node.js $NodeVersion..." -ForegroundColor Yellow
     (New-Object System.Net.WebClient).DownloadFile($NodeUrl, $NodeArchivePath)
-    
+
     Write-Host "📦 Extracting Node.js..." -ForegroundColor Yellow
     Expand-Archive -Path $NodeArchivePath -DestinationPath $TempDir -Force
-    
+
     # Move extracted node directory
     $ExtractedNodeDir = Join-Path $TempDir "node-v${NodeVersion}-win-x64"
     Move-Item $ExtractedNodeDir $NodeDir -Force
-    
+
     Write-Host "✅ Node.js installed to: $NodeDir" -ForegroundColor Green
 } else {
     Write-Host "✅ Node.js already installed in: $NodeDir" -ForegroundColor Green
@@ -303,12 +303,12 @@ Add to `.vscode/settings.json`:
 
 ```json
 {
-    "typescript.preferences.includePackageJsonAutoImports": "on",
-    "javascript.preferences.includePackageJsonAutoImports": "on",
-    "npm.packageManager": "npm",
-    "terminal.integrated.env.windows": {
-        "NODE_PATH": "${workspaceFolder}/dev-tools/node"
-    }
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "javascript.preferences.includePackageJsonAutoImports": "on",
+  "npm.packageManager": "npm",
+  "terminal.integrated.env.windows": {
+    "NODE_PATH": "${workspaceFolder}/dev-tools/node"
+  }
 }
 ```
 
@@ -425,7 +425,7 @@ $RepoRoot = $PWD
 
 foreach ($Language in $Languages) {
     $SetupScript = "setup-portable-$Language.ps1"
-    
+
     if (Test-Path $SetupScript) {
         Write-Host ""
         Write-Host "🚀 Setting up $Language..." -ForegroundColor Yellow
@@ -445,21 +445,25 @@ Write-Host "📝 Run .\setup-dev-env.ps1 to activate all environments" -Foregrou
 ## 🌟 **BENEFITS OF THE MULTI-LANGUAGE APPROACH**
 
 ### ✅ **Complete Isolation**
+
 - Each language has its own portable installation
 - No conflicts between different project requirements
 - No system pollution or admin privileges needed
 
 ### ✅ **Version Control**
+
 - Lock specific versions for reproducibility
 - Different projects can use different language versions
 - Easy to upgrade or downgrade specific tools
 
 ### ✅ **Team Consistency**
+
 - Everyone uses identical toolchains
 - Eliminates "works on my machine" issues
 - Easy onboarding for new team members
 
 ### ✅ **CI/CD Ready**
+
 - Same environment locally and in pipelines
 - Fast setup in containerized environments
 - Portable between different CI systems
@@ -469,6 +473,7 @@ Write-Host "📝 Run .\setup-dev-env.ps1 to activate all environments" -Foregrou
 ## 🚀 **USAGE EXAMPLES**
 
 ### Full Multi-Language Project Setup:
+
 ```powershell
 # Setup all languages
 .\setup-all-portable-tools.ps1
@@ -487,6 +492,7 @@ npm --version      # npm (comes with Node.js)
 ```
 
 ### Project-Specific Language Setup:
+
 ```powershell
 # Only setup languages you need
 .\setup-all-portable-tools.ps1 -Languages @("java", "go", "python")
@@ -509,4 +515,4 @@ This multi-language portable approach transforms your development workflow:
 
 ---
 
-*Captain Guthilda's Multi-Language Portable Fleet - Sail with all languages, anchor at none!*
+_Captain Guthilda's Multi-Language Portable Fleet - Sail with all languages, anchor at none!_

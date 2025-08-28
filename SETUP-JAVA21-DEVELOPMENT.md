@@ -1,7 +1,7 @@
 # 🏴‍☠️ CAPTAIN GUTHILDA'S NATIVE JAVA 21 DEVELOPMENT ENVIRONMENT SETUP
 
 > **"Before we sail the Java 21 seas, we must prepare our ship with the proper tools - using only the official channels!"**  
-> *Java 21 + Maven + VS Code Configuration Guide (Native Installation Only)*
+> _Java 21 + Maven + VS Code Configuration Guide (Native Installation Only)_
 
 ---
 
@@ -23,16 +23,16 @@ The Java 21 MCP Orchestration System requires:
 
 1. **Navigate to**: <https://adoptium.net/temurin/releases/?version=21>
 2. **Select**:
-    - Operating System: **Windows**
-    - Architecture: **x64**
-    - Package Type: **JDK**
-    - Version: **21 (LTS)**
+   - Operating System: **Windows**
+   - Architecture: **x64**
+   - Package Type: **JDK**
+   - Version: **21 (LTS)**
 3. **Download**: `.msi` installer (e.g., `OpenJDK21U-jdk_x64_windows_hotspot_21.0.x_xx.msi`)
 4. **Install**:
-    - Run the `.msi` installer as Administrator
-    - ✅ Check "Set JAVA_HOME variable"
-    - ✅ Check "Add to PATH"
-    - ✅ Check "Associate .jar files"
+   - Run the `.msi` installer as Administrator
+   - ✅ Check "Set JAVA_HOME variable"
+   - ✅ Check "Add to PATH"
+   - ✅ Check "Associate .jar files"
 5. **Installation Path**: Typically `C:\Program Files\Eclipse Adoptium\jdk-21.0.x+xx-hotspot\`
 
 ### Option B: Oracle JDK (Official Alternative)
@@ -41,8 +41,8 @@ The Java 21 MCP Orchestration System requires:
 2. **Select**: Windows x64 Installer
 3. **Download**: `jdk-21_windows-x64_bin.exe`
 4. **Install**:
-    - Run the installer as Administrator
-    - Follow the installation wizard with default settings
+   - Run the installer as Administrator
+   - Follow the installation wizard with default settings
 5. **Installation Path**: Typically `C:\Program Files\Java\jdk-21\`
 
 ---
@@ -53,36 +53,36 @@ The Java 21 MCP Orchestration System requires:
 
 1. **Navigate to**: <https://maven.apache.org/download.cgi>
 2. **Download**:
-    - **Binary zip archive**: `apache-maven-3.9.x-bin.zip`
-    - ⚠️ Do NOT download the source archive
+   - **Binary zip archive**: `apache-maven-3.9.x-bin.zip`
+   - ⚠️ Do NOT download the source archive
 3. **Extract**:
-    - Create directory: `C:\Program Files\Apache\`
-    - Extract zip contents to: `C:\Program Files\Apache\maven\`
-    - Final path should be: `C:\Program Files\Apache\maven\bin\mvn.cmd`
+   - Create directory: `C:\Program Files\Apache\`
+   - Extract zip contents to: `C:\Program Files\Apache\maven\`
+   - Final path should be: `C:\Program Files\Apache\maven\bin\mvn.cmd`
 4. **Configure Environment Variables**:
 
-    ```powershell
-    # Run as Administrator in PowerShell
-    
-    # Set MAVEN_HOME
-    [Environment]::SetEnvironmentVariable("MAVEN_HOME", "C:\Program Files\Apache\maven", "Machine")
-    
-    # Add Maven to PATH
-    $currentPath = [Environment]::GetEnvironmentVariable("PATH", "Machine")
-    $newPath = $currentPath + ";C:\Program Files\Apache\maven\bin"
-    [Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
-    ```
+   ```powershell
+   # Run as Administrator in PowerShell
+
+   # Set MAVEN_HOME
+   [Environment]::SetEnvironmentVariable("MAVEN_HOME", "C:\Program Files\Apache\maven", "Machine")
+
+   # Add Maven to PATH
+   $currentPath = [Environment]::GetEnvironmentVariable("PATH", "Machine")
+   $newPath = $currentPath + ";C:\Program Files\Apache\maven\bin"
+   [Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
+   ```
 
 ### Manual PATH Configuration (Alternative)
 
 1. **Open System Properties**: `Win + R` → `sysdm.cpl` → **Advanced** tab
 2. **Environment Variables** → **System Variables**
 3. **New Variable**:
-    - Variable name: `MAVEN_HOME`
-    - Variable value: `C:\Program Files\Apache\maven`
+   - Variable name: `MAVEN_HOME`
+   - Variable value: `C:\Program Files\Apache\maven`
 4. **Edit PATH**:
-    - Find `Path` in System Variables → **Edit**
-    - **New** → Add: `%MAVEN_HOME%\bin`
+   - Find `Path` in System Variables → **Edit**
+   - **New** → Add: `%MAVEN_HOME%\bin`
 
 ---
 
@@ -130,21 +130,21 @@ Java home: C:\Program Files\Eclipse Adoptium\jdk-21.0.x+xx-hotspot
 2. **Search for**: "java home"
 3. **Configure java.jdt.ls.java.home**:
 
-    ```json
-    {
-      "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.x+xx-hotspot",
-      "java.configuration.runtimes": [
-         {
-            "name": "JavaSE-21",
-            "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.x+xx-hotspot",
-            "default": true
-         }
-      ],
-      "java.compile.nullAnalysis.mode": "automatic",
-      "java.configuration.detectJdksAtStart": true,
-      "maven.executable.path": "C:\\Program Files\\Apache\\maven\\bin\\mvn.cmd"
-    }
-    ```
+   ```json
+   {
+     "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.x+xx-hotspot",
+     "java.configuration.runtimes": [
+       {
+         "name": "JavaSE-21",
+         "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.x+xx-hotspot",
+         "default": true
+       }
+     ],
+     "java.compile.nullAnalysis.mode": "automatic",
+     "java.configuration.detectJdksAtStart": true,
+     "maven.executable.path": "C:\\Program Files\\Apache\\maven\\bin\\mvn.cmd"
+   }
+   ```
 
 ### Required VS Code Extensions (Official)
 
@@ -244,11 +244,11 @@ Your system now has:
 *Captain Guthilda's Native Development Environment - No package managers, just official installations!*🏴‍☠️ CAPTAIN GUTHILDA'S JAVA 21 DEVELOPMENT ENVIRONMENT SETUP
 
 > **"Before we sail the Java 21 seas, we must prepare our ship with the proper tools!"**  
-> *Java 21 + Maven + VS Code Configuration Guide*
+> _Java 21 + Maven + VS Code Configuration Guide_
 
 ---
 
-## **🚨** *IMMEDIATE ACTION REQUIRED
+## **🚨** \*IMMEDIATE ACTION REQUIRED
 
 The Java 21 MCP Orchestration System requires:
 
@@ -342,21 +342,17 @@ Java version: 21.0.x, vendor: Eclipse Adoptium
 
 ---
 
-## **🛠️** (*STEP 4: Configure VS Code Java Extensions*)
+## **🛠️** (_STEP 4: Configure VS Code Java Extensions_)
 
 ### Fix the Extension Issues
 
 1. **Reload VS Code Extensions**:
 
-   `
-   Ctrl+Shift+P → "Developer: Reload Window"
-   `
+   `Ctrl+Shift+P → "Developer: Reload Window"`
 
 2. **Configure Java Runtime** in VS Code:
 
-   `
-   Ctrl+Shift+P → "Java: Configure Java Runtime"
-   `
+   `Ctrl+Shift+P → "Java: Configure Java Runtime"`
 
 3. **Set java.configuration.runtimes** in VS Code settings.json:
 
@@ -444,15 +440,11 @@ $env:PATH += ";C:\Program Files\Apache\maven\bin"
 1. **Uninstall and reinstall** Extension Pack for Java
 2. **Clear workspace cache**:
 
-   `
-   Ctrl+Shift+P → "Java: Clean Workspace"
-   `
+   `Ctrl+Shift+P → "Java: Clean Workspace"`
 
 3. **Reload window**:
 
-   `
-   Ctrl+Shift+P → "Developer: Reload Window"
-   `
+   `Ctrl+Shift+P → "Developer: Reload Window"`
 
 ### Issue 4: "Cannot read properties of undefined"
 
@@ -510,4 +502,4 @@ Once Java 21 and Maven are installed:
 
 ---
 
-*Captain Guthilda's Renaissance Development Environment - Ready for AI-Assisted Java 21 Development!*
+_Captain Guthilda's Renaissance Development Environment - Ready for AI-Assisted Java 21 Development!_

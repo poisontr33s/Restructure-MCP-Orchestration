@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpTransport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP v2 Java Client</a> &gt; <a href="index.source.html" class="el_package">com.mcp.v2.client.transport.http</a> &gt; <span class="el_source">HttpTransport.java</span></div><h1>HttpTransport.java</h1><pre class="source lang-java linenums">package com.mcp.v2.client.transport.http;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mcp.v2.client.MCPTransportException;
+import com.mcp.v2.client.transport.MCPTransport;
+import com.mcp.v2.client.types.MCPTypes;
+import okhttp3.*;
+import okhttp3.logging.HttpLoggingInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+/**
+ * HTTP transport implementation for MCP v2.
+ */
+public class HttpTransport implements MCPTransport {
+    
+<span class="fc" id="L24">    private static final Logger logger = LoggerFactory.getLogger(HttpTransport.class);</span>
+<span class="fc" id="L25">    private static final MediaType JSON = MediaType.get(&quot;application/json; charset=utf-8&quot;);</span>
+    
+    private final MCPTypes.TransportConfig config;
+    private final OkHttpClient httpClient;
+    private final ObjectMapper objectMapper;
+    
+    private Consumer&lt;MCPTypes.MCPResponse&gt; messageHandler;
+    private Runnable connectHandler;
+    private Runnable disconnectHandler;
+    private Consumer&lt;Throwable&gt; errorHandler;
+    
+<span class="fc" id="L36">    private volatile boolean connected = false;</span>
+
+<span class="fc" id="L38">    public HttpTransport(MCPTypes.TransportConfig config) {</span>
+<span class="fc" id="L39">        this.config = config;</span>
+<span class="fc" id="L40">        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());</span>
+        
+        // Build HTTP client with configuration
+<span class="fc" id="L43">        OkHttpClient.Builder builder = new OkHttpClient.Builder()</span>
+<span class="fc" id="L44">                .connectTimeout(Duration.ofMillis(config.getTimeout()))</span>
+<span class="fc" id="L45">                .readTimeout(Duration.ofMillis(config.getTimeout()))</span>
+<span class="fc" id="L46">                .writeTimeout(Duration.ofMillis(config.getTimeout()));</span>
+        
+        // Add retry interceptor
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (config.getRetryAttempts() &gt; 0) {</span>
+<span class="fc" id="L50">            builder.addInterceptor(new RetryInterceptor(config.getRetryAttempts()));</span>
+        }
+        
+        // Add logging interceptor if enabled
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (config.isEnableMetrics()) {</span>
+<span class="fc" id="L55">            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(logger::debug);</span>
+<span class="fc" id="L56">            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);</span>
+<span class="fc" id="L57">            builder.addInterceptor(logging);</span>
+        }
+        
+<span class="fc" id="L60">        this.httpClient = builder.build();</span>
+<span class="fc" id="L61">    }</span>
+
+    @Override
+    public CompletableFuture&lt;Void&gt; connect() {
+<span class="nc" id="L65">        return CompletableFuture.supplyAsync(() -&gt; {</span>
+            try {
+                // Test connectivity with a health check
+<span class="nc" id="L68">                Request request = new Request.Builder()</span>
+<span class="nc" id="L69">                        .url(config.getEndpoint() + &quot;/health&quot;)</span>
+<span class="nc" id="L70">                        .head()</span>
+<span class="nc" id="L71">                        .build();</span>
+                
+<span class="nc" id="L73">                try (Response response = httpClient.newCall(request).execute()) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                    if (response.isSuccessful()) {</span>
+<span class="nc" id="L75">                        connected = true;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                        if (connectHandler != null) {</span>
+<span class="nc" id="L77">                            connectHandler.run();</span>
+                        }
+<span class="nc" id="L79">                        logger.info(&quot;Connected to HTTP endpoint: {}&quot;, config.getEndpoint());</span>
+<span class="nc" id="L80">                        return null;</span>
+                    } else {
+<span class="nc" id="L82">                        throw new MCPTransportException(&quot;Failed to connect: HTTP &quot; + response.code());</span>
+                    }
+                }
+<span class="nc" id="L85">            } catch (IOException e) {</span>
+<span class="nc" id="L86">                connected = false;</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                if (errorHandler != null) {</span>
+<span class="nc" id="L88">                    errorHandler.accept(e);</span>
+                }
+<span class="nc" id="L90">                throw new MCPTransportException(&quot;Connection failed&quot;, e);</span>
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; disconnect() {
+<span class="fc" id="L97">        return CompletableFuture.runAsync(() -&gt; {</span>
+<span class="fc" id="L98">            connected = false;</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if (disconnectHandler != null) {</span>
+<span class="fc" id="L100">                disconnectHandler.run();</span>
+            }
+<span class="fc" id="L102">            logger.info(&quot;Disconnected from HTTP endpoint&quot;);</span>
+<span class="fc" id="L103">        });</span>
+    }
+
+    @Override
+    public boolean isConnected() {
+<span class="nc" id="L108">        return connected;</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; send(MCPTypes.MCPRequest request) {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (!connected) {</span>
+<span class="nc" id="L114">            return CompletableFuture.failedFuture(</span>
+                new MCPTransportException(&quot;Transport not connected&quot;));
+        }
+        
+<span class="nc" id="L118">        return CompletableFuture.supplyAsync(() -&gt; {</span>
+            try {
+<span class="nc" id="L120">                String jsonBody = objectMapper.writeValueAsString(request);</span>
+<span class="nc" id="L121">                RequestBody body = RequestBody.create(jsonBody, JSON);</span>
+                
+<span class="nc" id="L123">                Request httpRequest = new Request.Builder()</span>
+<span class="nc" id="L124">                        .url(config.getEndpoint())</span>
+<span class="nc" id="L125">                        .post(body)</span>
+<span class="nc" id="L126">                        .addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L127">                        .addHeader(&quot;Accept&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L128">                        .build();</span>
+                
+<span class="nc" id="L130">                try (Response response = httpClient.newCall(httpRequest).execute()) {</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">                    if (response.isSuccessful() &amp;&amp; response.body() != null) {</span>
+<span class="nc" id="L132">                        String responseBody = response.body().string();</span>
+<span class="nc" id="L133">                        MCPTypes.MCPResponse mcpResponse = objectMapper.readValue(</span>
+                            responseBody, MCPTypes.MCPResponse.class);
+                        
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                        if (messageHandler != null) {</span>
+<span class="nc" id="L137">                            messageHandler.accept(mcpResponse);</span>
+                        }
+<span class="nc" id="L139">                        return null;</span>
+                    } else {
+<span class="nc" id="L141">                        throw new MCPTransportException(&quot;HTTP request failed: &quot; + response.code());</span>
+                    }
+                }
+<span class="nc" id="L144">            } catch (IOException e) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (errorHandler != null) {</span>
+<span class="nc" id="L146">                    errorHandler.accept(e);</span>
+                }
+<span class="nc" id="L148">                throw new MCPTransportException(&quot;Failed to send request&quot;, e);</span>
+            }
+        });
+    }
+
+    @Override
+    public void onMessage(Consumer&lt;MCPTypes.MCPResponse&gt; handler) {
+<span class="fc" id="L155">        this.messageHandler = handler;</span>
+<span class="fc" id="L156">    }</span>
+
+    @Override
+    public void onConnect(Runnable handler) {
+<span class="fc" id="L160">        this.connectHandler = handler;</span>
+<span class="fc" id="L161">    }</span>
+
+    @Override
+    public void onDisconnect(Runnable handler) {
+<span class="fc" id="L165">        this.disconnectHandler = handler;</span>
+<span class="fc" id="L166">    }</span>
+
+    @Override
+    public void onError(Consumer&lt;Throwable&gt; handler) {
+<span class="fc" id="L170">        this.errorHandler = handler;</span>
+<span class="fc" id="L171">    }</span>
+
+    @Override
+    public MCPTypes.TransportConfig getConfig() {
+<span class="nc" id="L175">        return config;</span>
+    }
+
+    @Override
+    public void close() {
+        try {
+<span class="fc" id="L181">            disconnect().get(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L182">        } catch (Exception e) {</span>
+<span class="nc" id="L183">            logger.warn(&quot;Error during disconnect&quot;, e);</span>
+<span class="fc" id="L184">        }</span>
+        
+<span class="fc" id="L186">        httpClient.connectionPool().evictAll();</span>
+<span class="fc" id="L187">        httpClient.dispatcher().executorService().shutdown();</span>
+<span class="fc" id="L188">    }</span>
+
+    /**
+     * Retry interceptor for HTTP requests.
+     */
+    private static class RetryInterceptor implements Interceptor {
+        private final int maxRetries;
+
+<span class="fc" id="L196">        public RetryInterceptor(int maxRetries) {</span>
+<span class="fc" id="L197">            this.maxRetries = maxRetries;</span>
+<span class="fc" id="L198">        }</span>
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+<span class="nc" id="L202">            Request request = chain.request();</span>
+<span class="nc" id="L203">            Response response = null;</span>
+<span class="nc" id="L204">            IOException exception = null;</span>
+
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            for (int retry = 0; retry &lt;= maxRetries; retry++) {</span>
+                try {
+<span class="nc" id="L208">                    response = chain.proceed(request);</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                    if (response.isSuccessful()) {</span>
+<span class="nc" id="L210">                        return response;</span>
+                    }
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                    if (response != null) {</span>
+<span class="nc" id="L213">                        response.close();</span>
+                    }
+<span class="nc" id="L215">                } catch (IOException e) {</span>
+<span class="nc" id="L216">                    exception = e;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                    if (retry == maxRetries) {</span>
+<span class="nc" id="L218">                        throw e;</span>
+                    }
+                    
+                    // Exponential backoff
+                    try {
+<span class="nc" id="L223">                        Thread.sleep((long) Math.pow(2, retry) * 1000);</span>
+<span class="nc" id="L224">                    } catch (InterruptedException ie) {</span>
+<span class="nc" id="L225">                        Thread.currentThread().interrupt();</span>
+<span class="nc" id="L226">                        throw new IOException(&quot;Retry interrupted&quot;, ie);</span>
+<span class="nc" id="L227">                    }</span>
+<span class="nc" id="L228">                }</span>
+            }
+
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            if (exception != null) {</span>
+<span class="nc" id="L232">                throw exception;</span>
+            }
+<span class="nc" id="L234">            return response;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

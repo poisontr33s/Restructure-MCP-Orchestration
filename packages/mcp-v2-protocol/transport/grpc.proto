@@ -1,0 +1,453 @@
+syntax = "proto3";
+
+package mcp.v2;
+
+option java_multiple_files = true;
+option java_package = "org.mcp.v2.protocol";
+option java_outer_classname = "McpV2Proto";
+option go_package = "github.com/mcp-v2/protocol/go";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// ============================================================================
+// Core Protocol Messages
+// ============================================================================
+
+// MCP v2 Request message for gRPC transport
+message McpRequest {
+  string id = 1;                              // Request identifier
+  string method = 2;                          // Method to execute
+  google.protobuf.Struct params = 3;          // Method parameters
+  ContextualSession context = 4;              // Contextual session
+  RequestMetadata metadata = 5;               // Request metadata
+}
+
+// MCP v2 Response message for gRPC transport
+message McpResponse {
+  string id = 1;                              // Request ID this responds to
+  oneof payload {
+    google.protobuf.Struct result = 2;        // Success result
+    ErrorResponse error = 3;                  // Error information
+  }
+  ResponseMetadata metadata = 4;              // Response metadata
+  IntelligenceMetadata intelligence = 5;      // AI intelligence metadata
+}
+
+// Streaming response for long-running operations
+message StreamResponse {
+  string request_id = 1;                      // Original request ID
+  oneof chunk {
+    google.protobuf.Struct data = 2;          // Data chunk
+    ErrorResponse error = 3;                  // Error occurred
+    StreamComplete complete = 4;              // Stream completed
+  }
+  ResponseMetadata metadata = 5;              // Chunk metadata
+}
+
+// Notification message (server-to-client, no response expected)
+message Notification {
+  string method = 1;                          // Notification method
+  google.protobuf.Struct params = 2;          // Notification parameters
+  google.protobuf.Timestamp timestamp = 3;   // Notification timestamp
+  NotificationMetadata metadata = 4;          // Notification metadata
+}
+
+// ============================================================================
+// Context and Session Management
+// ============================================================================
+
+// Contextual session information
+message ContextualSession {
+  string session_id = 1;                     // Session identifier
+  string user_id = 2;                        // User identifier
+  string project_id = 3;                     // Project identifier
+  TaskType task_type = 4;                    // Type of task
+  ExpertiseLevel expertise = 5;              // User expertise level
+  UserPreferences preferences = 6;           // User preferences
+  repeated ContextItem history = 7;          // Context history
+}
+
+// User preferences for response customization
+message UserPreferences {
+  VerbosityLevel verbosity = 1;              // Response verbosity
+  CodeStyle code_style = 2;                  // Preferred code style
+  ErrorHandling error_handling = 3;          // Error handling preference
+}
+
+// Individual context item
+message ContextItem {
+  ContextType type = 1;                      // Context type
+  string content = 2;                        // Context content
+  double relevance_score = 3;                // Relevance score (0-1)
+  google.protobuf.Timestamp timestamp = 4;   // Context timestamp
+  repeated string tags = 5;                  // Searchable tags
+}
+
+// ============================================================================
+// Metadata Structures
+// ============================================================================
+
+// Request metadata
+message RequestMetadata {
+  google.protobuf.Timestamp timestamp = 1;   // Request timestamp
+  SourceInfo source = 2;                     // Source information
+  RoutingInfo routing = 3;                   // Routing preferences
+  TracingInfo tracing = 4;                   // Distributed tracing
+}
+
+// Response metadata
+message ResponseMetadata {
+  google.protobuf.Timestamp timestamp = 1;   // Response timestamp
+  double processing_time_ms = 2;             // Processing time in milliseconds
+  string server_id = 3;                      // Processing server ID
+  string server_version = 4;                 // Server version
+  bool cache_hit = 5;                        // Whether served from cache
+  RateLimitInfo rate_limiting = 6;           // Rate limiting information
+}
+
+// AI intelligence metadata
+message IntelligenceMetadata {
+  double context_score = 1;                  // Context relevance score
+  bool adaptation_applied = 2;               // Whether adaptation was applied
+  repeated LearningSignal learning_signals = 3; // Learning signals
+  repeated string next_actions = 4;          // Suggested next actions
+}
+
+// Notification metadata
+message NotificationMetadata {
+  NotificationPriority priority = 1;         // Notification priority
+  repeated string recipients = 2;            // Target recipients
+  bool requires_acknowledgment = 3;          // Whether ACK is required
+  google.protobuf.Timestamp expires_at = 4; // Expiration time
+}
+
+// ============================================================================
+// Source and Routing Information
+// ============================================================================
+
+// Source information
+message SourceInfo {
+  Language language = 1;                     // Implementation language
+  string framework = 2;                      // Framework used
+  string version = 3;                        // Client version
+}
+
+// Routing information
+message RoutingInfo {
+  repeated string preferred_servers = 1;     // Preferred server IDs
+  repeated string exclude_servers = 2;       // Servers to exclude
+  double max_latency_ms = 3;                 // Max acceptable latency
+  Priority priority = 4;                     // Request priority
+}
+
+// Distributed tracing information
+message TracingInfo {
+  string trace_id = 1;                       // Trace identifier
+  string span_id = 2;                        // Current span ID
+  string parent_span_id = 3;                 // Parent span ID
+}
+
+// Rate limiting information
+message RateLimitInfo {
+  int32 remaining = 1;                       // Remaining requests
+  google.protobuf.Timestamp reset_time = 2; // When limit resets
+}
+
+// ============================================================================
+// Error Handling
+// ============================================================================
+
+// Error response structure
+message ErrorResponse {
+  int32 code = 1;                            // Error code
+  string message = 2;                        // Error message
+  ErrorData data = 3;                        // Additional error data
+}
+
+// Additional error data
+message ErrorData {
+  ErrorType type = 1;                        // Error type
+  string details = 2;                        // Detailed error information
+  string stack_trace = 3;                    // Stack trace (dev mode)
+  repeated string suggestions = 4;           // AI-generated suggestions
+}
+
+// ============================================================================
+// Streaming and Completion
+// ============================================================================
+
+// Stream completion marker
+message StreamComplete {
+  google.protobuf.Struct final_result = 1;  // Final aggregated result
+  ExecutionMetrics metrics = 2;              // Execution metrics
+}
+
+// Execution metrics
+message ExecutionMetrics {
+  double cpu_time_ms = 1;                    // CPU time in milliseconds
+  int64 memory_usage_bytes = 2;              // Memory usage in bytes
+  int32 network_calls = 3;                   // Number of network calls
+  int32 cache_hits = 4;                      // Number of cache hits
+}
+
+// ============================================================================
+// AI and Learning
+// ============================================================================
+
+// Learning signal for model improvement
+message LearningSignal {
+  SignalType type = 1;                       // Signal type
+  google.protobuf.Any value = 2;             // Signal value
+  double weight = 3;                         // Signal importance weight
+  google.protobuf.Timestamp timestamp = 4;   // Signal timestamp
+}
+
+// ============================================================================
+// Health and Capabilities
+// ============================================================================
+
+// Server health check request
+message HealthCheckRequest {
+  // Empty - no parameters needed
+}
+
+// Server health check response
+message HealthCheckResponse {
+  HealthStatus status = 1;                   // Overall health status
+  google.protobuf.Timestamp timestamp = 2;   // Check timestamp
+  string version = 3;                        // Server version
+  double uptime_seconds = 4;                 // Server uptime
+  repeated HealthCheck checks = 5;           // Individual health checks
+}
+
+// Individual health check
+message HealthCheck {
+  string name = 1;                           // Check name
+  HealthStatus status = 2;                   // Check status
+  string message = 3;                        // Check message
+  double duration_ms = 4;                    // Check duration
+  google.protobuf.Timestamp timestamp = 5;   // Check timestamp
+}
+
+// Server capabilities request
+message CapabilitiesRequest {
+  // Empty - no parameters needed
+}
+
+// Server capabilities response
+message CapabilitiesResponse {
+  repeated ServerCapability capabilities = 1; // Server capabilities
+  ProtocolInfo protocol = 2;                 // Protocol information
+}
+
+// Server capability definition
+message ServerCapability {
+  string name = 1;                           // Capability name
+  string version = 2;                        // Capability version
+  string description = 3;                    // Capability description
+  repeated string methods = 4;               // Supported methods
+  google.protobuf.Struct parameters = 5;     // Capability parameters
+}
+
+// Protocol information
+message ProtocolInfo {
+  string version = 1;                        // Protocol version
+  TransportType transport = 2;               // Transport type
+  repeated ProtocolFeature features = 3;     // Enabled features
+  repeated string extensions = 4;            // Protocol extensions
+}
+
+// ============================================================================
+// Enumerations
+// ============================================================================
+
+// Task types
+enum TaskType {
+  TASK_TYPE_UNSPECIFIED = 0;
+  TASK_TYPE_JAVA_DEVELOPMENT = 1;
+  TASK_TYPE_TYPESCRIPT_DEVELOPMENT = 2;
+  TASK_TYPE_PYTHON_DEVELOPMENT = 3;
+  TASK_TYPE_SYSTEM_ARCHITECTURE = 4;
+  TASK_TYPE_DEBUGGING = 5;
+  TASK_TYPE_DOCUMENTATION = 6;
+  TASK_TYPE_TESTING = 7;
+  TASK_TYPE_DEPLOYMENT = 8;
+}
+
+// Expertise levels
+enum ExpertiseLevel {
+  EXPERTISE_LEVEL_UNSPECIFIED = 0;
+  EXPERTISE_LEVEL_BEGINNER = 1;
+  EXPERTISE_LEVEL_INTERMEDIATE = 2;
+  EXPERTISE_LEVEL_ADVANCED = 3;
+  EXPERTISE_LEVEL_EXPERT = 4;
+}
+
+// Verbosity levels
+enum VerbosityLevel {
+  VERBOSITY_LEVEL_UNSPECIFIED = 0;
+  VERBOSITY_LEVEL_MINIMAL = 1;
+  VERBOSITY_LEVEL_NORMAL = 2;
+  VERBOSITY_LEVEL_DETAILED = 3;
+  VERBOSITY_LEVEL_COMPREHENSIVE = 4;
+}
+
+// Code styles
+enum CodeStyle {
+  CODE_STYLE_UNSPECIFIED = 0;
+  CODE_STYLE_FUNCTIONAL = 1;
+  CODE_STYLE_OOP = 2;
+  CODE_STYLE_HYBRID = 3;
+}
+
+// Error handling preferences
+enum ErrorHandling {
+  ERROR_HANDLING_UNSPECIFIED = 0;
+  ERROR_HANDLING_STRICT = 1;
+  ERROR_HANDLING_GRACEFUL = 2;
+  ERROR_HANDLING_PERMISSIVE = 3;
+}
+
+// Context types
+enum ContextType {
+  CONTEXT_TYPE_UNSPECIFIED = 0;
+  CONTEXT_TYPE_ERROR_PATTERN = 1;
+  CONTEXT_TYPE_CODE_SOLUTION = 2;
+  CONTEXT_TYPE_CONFIGURATION = 3;
+  CONTEXT_TYPE_WORKFLOW_STATE = 4;
+  CONTEXT_TYPE_USER_FEEDBACK = 5;
+  CONTEXT_TYPE_PERFORMANCE_METRIC = 6;
+}
+
+// Languages
+enum Language {
+  LANGUAGE_UNSPECIFIED = 0;
+  LANGUAGE_TYPESCRIPT = 1;
+  LANGUAGE_JAVA = 2;
+  LANGUAGE_PYTHON = 3;
+  LANGUAGE_GO = 4;
+  LANGUAGE_RUST = 5;
+}
+
+// Request priority levels
+enum Priority {
+  PRIORITY_UNSPECIFIED = 0;
+  PRIORITY_LOW = 1;
+  PRIORITY_NORMAL = 2;
+  PRIORITY_HIGH = 3;
+  PRIORITY_CRITICAL = 4;
+}
+
+// Error types
+enum ErrorType {
+  ERROR_TYPE_UNSPECIFIED = 0;
+  ERROR_TYPE_VALIDATION = 1;
+  ERROR_TYPE_TIMEOUT = 2;
+  ERROR_TYPE_SERVER = 3;
+  ERROR_TYPE_NOT_FOUND = 4;
+  ERROR_TYPE_PERMISSION = 5;
+  ERROR_TYPE_RATE_LIMIT = 6;
+}
+
+// Health status
+enum HealthStatus {
+  HEALTH_STATUS_UNSPECIFIED = 0;
+  HEALTH_STATUS_HEALTHY = 1;
+  HEALTH_STATUS_DEGRADED = 2;
+  HEALTH_STATUS_UNHEALTHY = 3;
+  HEALTH_STATUS_UNKNOWN = 4;
+}
+
+// Signal types for learning
+enum SignalType {
+  SIGNAL_TYPE_UNSPECIFIED = 0;
+  SIGNAL_TYPE_USER_SATISFACTION = 1;
+  SIGNAL_TYPE_ERROR_RATE = 2;
+  SIGNAL_TYPE_PERFORMANCE_METRIC = 3;
+  SIGNAL_TYPE_USAGE_PATTERN = 4;
+  SIGNAL_TYPE_FEEDBACK_EXPLICIT = 5;
+}
+
+// Transport types
+enum TransportType {
+  TRANSPORT_TYPE_UNSPECIFIED = 0;
+  TRANSPORT_TYPE_HTTP_JSONRPC = 1;
+  TRANSPORT_TYPE_WEBSOCKET = 2;
+  TRANSPORT_TYPE_GRPC = 3;
+  TRANSPORT_TYPE_TCP = 4;
+  TRANSPORT_TYPE_UNIX_SOCKET = 5;
+}
+
+// Protocol features
+enum ProtocolFeature {
+  PROTOCOL_FEATURE_UNSPECIFIED = 0;
+  PROTOCOL_FEATURE_BIDIRECTIONAL = 1;
+  PROTOCOL_FEATURE_STREAMING = 2;
+  PROTOCOL_FEATURE_MULTIPLEXING = 3;
+  PROTOCOL_FEATURE_HEARTBEAT = 4;
+  PROTOCOL_FEATURE_RECONNECTION = 5;
+  PROTOCOL_FEATURE_AUTHENTICATION = 6;
+  PROTOCOL_FEATURE_ENCRYPTION = 7;
+}
+
+// Notification priority
+enum NotificationPriority {
+  NOTIFICATION_PRIORITY_UNSPECIFIED = 0;
+  NOTIFICATION_PRIORITY_LOW = 1;
+  NOTIFICATION_PRIORITY_NORMAL = 2;
+  NOTIFICATION_PRIORITY_HIGH = 3;
+  NOTIFICATION_PRIORITY_URGENT = 4;
+}
+
+// ============================================================================
+// gRPC Service Definitions
+// ============================================================================
+
+// Main MCP v2 service
+service McpV2Service {
+  // Execute a single request
+  rpc ExecuteRequest(McpRequest) returns (McpResponse);
+  
+  // Execute multiple requests in batch
+  rpc ExecuteBatch(stream McpRequest) returns (stream McpResponse);
+  
+  // Execute a streaming request (for long-running operations)
+  rpc ExecuteStream(McpRequest) returns (stream StreamResponse);
+  
+  // Bidirectional streaming for real-time communication
+  rpc BidirectionalStream(stream McpRequest) returns (stream McpResponse);
+  
+  // Subscribe to server notifications
+  rpc SubscribeNotifications(NotificationSubscription) returns (stream Notification);
+}
+
+// Health monitoring service
+service HealthService {
+  // Check server health
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+  
+  // Watch health status changes
+  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+}
+
+// Server capabilities and discovery service
+service DiscoveryService {
+  // Get server capabilities
+  rpc GetCapabilities(CapabilitiesRequest) returns (CapabilitiesResponse);
+  
+  // Watch for capability changes
+  rpc WatchCapabilities(CapabilitiesRequest) returns (stream CapabilitiesResponse);
+}
+
+// ============================================================================
+// Additional Messages for Services
+// ============================================================================
+
+// Notification subscription configuration
+message NotificationSubscription {
+  repeated string methods = 1;              // Methods to subscribe to
+  NotificationPriority min_priority = 2;    // Minimum priority level
+  google.protobuf.Struct filters = 3;       // Additional filters
+}

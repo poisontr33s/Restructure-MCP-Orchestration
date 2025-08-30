@@ -1,0 +1,419 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mcp-v2.org/schemas/response.json",
+  "title": "MCP v2 Response",
+  "description": "Universal response format for MCP v2 protocol across all languages",
+  "type": "object",
+  "required": ["id", "jsonrpc"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Request ID this response corresponds to",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "jsonrpc": {
+      "type": "string",
+      "const": "2.0",
+      "description": "JSON-RPC version (always 2.0 for MCP v2)"
+    },
+    "result": {
+      "description": "Successful result data",
+      "oneOf": [
+        {"$ref": "#/$defs/ToolCallResult"},
+        {"$ref": "#/$defs/ContextResult"},
+        {"$ref": "#/$defs/IntelligenceResult"},
+        {"$ref": "#/$defs/BridgeResult"},
+        {"type": "object", "additionalProperties": true}
+      ]
+    },
+    "error": {
+      "$ref": "#/$defs/ErrorResponse",
+      "description": "Error information if request failed"
+    },
+    "metadata": {
+      "$ref": "#/$defs/ResponseMetadata",
+      "description": "Response metadata for optimization and analytics"
+    },
+    "intelligence": {
+      "$ref": "#/$defs/IntelligenceMetadata",
+      "description": "AI-enhanced metadata for context-aware processing"
+    }
+  },
+  "oneOf": [
+    {"required": ["result"]},
+    {"required": ["error"]}
+  ],
+  "$defs": {
+    "ToolCallResult": {
+      "type": "object",
+      "description": "Result from tool execution",
+      "properties": {
+        "output": {
+          "type": "string",
+          "description": "Tool execution output"
+        },
+        "exitCode": {
+          "type": "integer",
+          "description": "Exit code (0 for success)"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Artifact"
+          },
+          "description": "Generated artifacts (files, images, etc.)"
+        },
+        "metrics": {
+          "$ref": "#/$defs/ExecutionMetrics",
+          "description": "Execution performance metrics"
+        }
+      },
+      "required": ["output", "exitCode"]
+    },
+    "ContextResult": {
+      "type": "object",
+      "description": "Result from context operations",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["store", "retrieve", "search", "analyze"]
+        },
+        "data": {
+          "description": "Context data payload",
+          "oneOf": [
+            {"type": "string"},
+            {"type": "object"},
+            {"type": "array"}
+          ]
+        },
+        "relevance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Relevance score for retrieved context"
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "AI-generated suggestions based on context"
+        }
+      },
+      "required": ["operation", "data"]
+    },
+    "IntelligenceResult": {
+      "type": "object",
+      "description": "Result from AI intelligence enhancement",
+      "properties": {
+        "enhanced": {
+          "type": "boolean",
+          "description": "Whether enhancement was applied"
+        },
+        "insights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AiInsight"
+          },
+          "description": "AI-generated insights"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AiRecommendation"
+          },
+          "description": "AI-generated recommendations"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score for AI analysis"
+        }
+      },
+      "required": ["enhanced"]
+    },
+    "BridgeResult": {
+      "type": "object",
+      "description": "Result from server bridge communication",
+      "properties": {
+        "bridged": {
+          "type": "boolean",
+          "description": "Whether bridging was successful"
+        },
+        "targetServer": {
+          "type": "string",
+          "description": "Target server ID"
+        },
+        "response": {
+          "description": "Response from target server",
+          "type": "object"
+        },
+        "route": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Communication route taken"
+        }
+      },
+      "required": ["bridged", "targetServer"]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "Error information",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "data": {
+          "type": "object",
+          "description": "Additional error data",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "validation-error",
+                "timeout-error",
+                "server-error",
+                "not-found-error",
+                "permission-error",
+                "rate-limit-error"
+              ]
+            },
+            "details": {
+              "type": "string",
+              "description": "Detailed error information"
+            },
+            "stackTrace": {
+              "type": "string",
+              "description": "Stack trace (development mode only)"
+            },
+            "suggestions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "AI-generated suggestions to fix the error"
+            }
+          }
+        }
+      },
+      "required": ["code", "message"]
+    },
+    "ResponseMetadata": {
+      "type": "object",
+      "description": "Response metadata",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Response timestamp"
+        },
+        "processingTime": {
+          "type": "number",
+          "description": "Processing time in milliseconds"
+        },
+        "serverId": {
+          "type": "string",
+          "description": "ID of server that processed the request"
+        },
+        "serverVersion": {
+          "type": "string",
+          "description": "Version of processing server"
+        },
+        "cacheHit": {
+          "type": "boolean",
+          "description": "Whether response was served from cache"
+        },
+        "rateLimiting": {
+          "type": "object",
+          "properties": {
+            "remaining": {
+              "type": "integer",
+              "description": "Remaining requests in current window"
+            },
+            "resetTime": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When rate limit resets"
+            }
+          }
+        }
+      },
+      "required": ["timestamp", "processingTime", "serverId"]
+    },
+    "IntelligenceMetadata": {
+      "type": "object",
+      "description": "AI-enhanced metadata",
+      "properties": {
+        "contextScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Context relevance score"
+        },
+        "adaptationApplied": {
+          "type": "boolean",
+          "description": "Whether user preference adaptation was applied"
+        },
+        "learningSignals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LearningSignal"
+          },
+          "description": "Signals for machine learning improvement"
+        },
+        "nextActions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "AI-suggested next actions"
+        }
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "description": "Generated artifact",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["file", "image", "document", "code", "data"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Artifact name"
+        },
+        "content": {
+          "type": "string",
+          "description": "Artifact content (base64 for binary)"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Size in bytes"
+        }
+      },
+      "required": ["type", "name", "content"]
+    },
+    "ExecutionMetrics": {
+      "type": "object",
+      "description": "Execution performance metrics",
+      "properties": {
+        "cpuTime": {
+          "type": "number",
+          "description": "CPU time in milliseconds"
+        },
+        "memoryUsage": {
+          "type": "integer",
+          "description": "Memory usage in bytes"
+        },
+        "networkCalls": {
+          "type": "integer",
+          "description": "Number of network calls made"
+        },
+        "cacheHits": {
+          "type": "integer",
+          "description": "Number of cache hits"
+        }
+      }
+    },
+    "AiInsight": {
+      "type": "object",
+      "description": "AI-generated insight",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "pattern-detection",
+            "optimization-opportunity",
+            "potential-issue",
+            "best-practice",
+            "knowledge-gap"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "Insight message"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "actionable": {
+          "type": "boolean",
+          "description": "Whether this insight can be acted upon"
+        }
+      },
+      "required": ["type", "message", "confidence"]
+    },
+    "AiRecommendation": {
+      "type": "object",
+      "description": "AI-generated recommendation",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "Recommended action"
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why this action is recommended"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "effort": {
+          "type": "string",
+          "enum": ["minimal", "low", "medium", "high"]
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        }
+      },
+      "required": ["action", "rationale", "priority"]
+    },
+    "LearningSignal": {
+      "type": "object",
+      "description": "Signal for machine learning improvement",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "user-satisfaction",
+            "error-rate",
+            "performance-metric",
+            "usage-pattern",
+            "feedback-explicit"
+          ]
+        },
+        "value": {
+          "description": "Signal value",
+          "oneOf": [
+            {"type": "number"},
+            {"type": "string"},
+            {"type": "boolean"}
+          ]
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Signal importance weight"
+        }
+      },
+      "required": ["type", "value"]
+    }
+  }
+}

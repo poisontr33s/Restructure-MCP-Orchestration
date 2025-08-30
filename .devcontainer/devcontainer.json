@@ -1,0 +1,76 @@
+{
+  "name": "MCP v2 Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": "true"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11",
+      "installTools": "true"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.vscode-json",
+        "ms-python.python",
+        "ms-python.pylint",
+        "redhat.java",
+        "vscjava.vscode-java-pack",
+        "ms-azuretools.vscode-docker",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "typescript.preferences.includePackageJsonAutoImports": "on",
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-17",
+            "path": "/usr/local/sdkman/candidates/java/17.0.8-tem"
+          }
+        ]
+      }
+    }
+  },
+
+  "forwardPorts": [3000, 5432, 6379, 9090, 3001],
+  "portsAttributes": {
+    "3000": {
+      "label": "MCP Server",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    },
+    "6379": {
+      "label": "Redis",
+      "onAutoForward": "silent"
+    },
+    "9090": {
+      "label": "Prometheus",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "mounts": [
+    "source=${localWorkspaceFolder}/mcp-v2-shared-infrastructure/volumes,target=/workspace/volumes,type=bind"
+  ],
+
+  "postCreateCommand": "npm install -g pnpm && pnpm install",
+  
+  "remoteUser": "node",
+  
+  "containerEnv": {
+    "MCP_ENV": "development",
+    "NODE_ENV": "development"
+  }
+}

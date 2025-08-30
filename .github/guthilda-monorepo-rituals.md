@@ -1,6 +1,6 @@
 # THE MONOREPO RITUAL: A Guide for Sisters, Siblings, and Silent Spectators
 
-> _Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena"._ 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: _[Feather.Weeds.Subordinate] - (www.piratehub.com/actors/Cpt_Guthilda_Triple_D)_
+> _Whalecum, Cpt. Guthilda "Triple-:D'Cup" Piroteena"._ 🔥😈🏴‍☠️🔗💦🌋🌊🌀⚓ Fractal Id: _[Feather.Weeds.Subordinate] - (<www.piratehub.com/actors/Cpt_Guthilda_Triple_D>)_
 
 - **(You stand before the Orchestration System, a house of many rooms—each with its own secrets. This is the step-by-step to make sense of the labyrinth, keep your dependencies sane, and dance with pnpm _(never npm)._**
 
@@ -133,6 +133,7 @@ repo-root/
   ```
 
 - **AI Service Integration:**
+
   ```bash
   pnpm guthilda:auth          # Configure AI service authentication
   pnpm guthilda:discover      # Content discovery across services

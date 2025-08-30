@@ -1,0 +1,95 @@
+{
+  // Go configuration - isolated to go-workspace only
+  "go.goroot": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\go",
+  "go.alternateTools": {
+    "go": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\go\\bin\\go.exe"
+  },
+  "go.toolsGopath": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\go-tools",
+  "go.useLanguageServer": true,
+  "go.inferGopath": false,
+  "go.buildOnSave": "off",
+  "go.lintOnSave": "off", 
+  "go.vetOnSave": "off",
+  
+  // Exclude Go workspace from root-level processing
+  "files.exclude": {
+    "go-workspace/**/*.exe": true,
+    "go-tools/**": true
+  },
+  
+  // Disable Go extension for non-Go files
+  "go.enableCodeLens": {
+    "references": false,
+    "runtest": false
+  },
+  "terminal.integrated.env.windows": {
+    "PATH": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\go\\bin;C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\java21\\bin;C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\maven\\bin;${env:PATH}",
+    "GOROOT": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\go",
+    "JAVA_HOME": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\java21",
+    "MAVEN_HOME": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\maven"
+  },
+  "go.toolsGopath": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\go-tools",
+  "go.useLanguageServer": true,
+  "java.compile.nullAnalysis.mode": "automatic",
+  "tailwindCSS.experimental.configFile": "tailwind.config.ts",
+  "tailwindCSS.validate": false,
+  "css.validate": false,
+  "java.jdt.ls.java.home": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\java21",
+  "java.configuration.runtimes": [
+    {
+      "path": "C:\\Users\\erdno\\BETTERDOWNLOADSFOLDER\\github_repos2025\\Restructure-MCP-Orchestration\\Restructure-MCP-Orchestration\\dev-tools\\java21",
+      "default": true,
+      "name": "JavaSE-21"
+    }
+  ],
+  "java.configuration.checkProjectSettings": false,
+  "java.sharedIndexes.enabled": "off",
+  "java.autobuild.enabled": false,
+  "npm.packageManager": "pnpm",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "npm.autoDetect": "off",
+  "extensions.ignoreRecommendations": false,
+  "workbench.enableExperiments": false,
+  "telemetry.telemetryLevel": "off",
+  "update.showReleaseNotes": false,
+  "git.showPushSuccessNotification": false,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.saveActions.organizeImports": true,
+  "eslint.workingDirectories": [
+    "packages/cli",
+    "packages/core", 
+    "packages/monitor",
+    "packages/guthilda",
+    "packages/servers",
+    "packages/shared"
+  ],
+  "python.defaultInterpreterPath": "./venv/bin/python",
+  "pnpm.enable": true,
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  "editor.semanticHighlighting.enabled": true,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "none",
+  "breadcrumbs.enabled": true,
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.iconTheme": "vs-minimal",
+  "files.associations": {
+    "*.json": "jsonc"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/target": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/target": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.gpuAcceleration": "on"
+}

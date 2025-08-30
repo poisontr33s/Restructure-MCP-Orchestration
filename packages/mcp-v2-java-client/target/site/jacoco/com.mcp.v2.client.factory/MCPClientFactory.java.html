@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MCPClientFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP v2 Java Client</a> &gt; <a href="index.source.html" class="el_package">com.mcp.v2.client.factory</a> &gt; <span class="el_source">MCPClientFactory.java</span></div><h1>MCPClientFactory.java</h1><pre class="source lang-java linenums">package com.mcp.v2.client.factory;
+
+import com.mcp.v2.client.MCPClient;
+import com.mcp.v2.client.MCPClientBuilder;
+import com.mcp.v2.client.impl.BaseMCPClient;
+import com.mcp.v2.client.impl.HttpMCPClient;
+import com.mcp.v2.client.impl.WebSocketMCPClient;
+import com.mcp.v2.client.transport.MCPTransport;
+import com.mcp.v2.client.transport.http.HttpTransport;
+import com.mcp.v2.client.transport.websocket.WebSocketTransport;
+import com.mcp.v2.client.types.MCPTypes;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+/**
+ * Factory for creating MCP v2 clients with different configurations.
+ */
+<span class="nc" id="L20">public class MCPClientFactory {</span>
+
+    /**
+     * Create an HTTP-based MCP client.
+     *
+     * @param endpoint The HTTP endpoint URL
+     * @return MCP client builder
+     */
+    public static MCPClientBuilder createHttpClient(String endpoint) {
+<span class="fc" id="L29">        MCPTypes.TransportConfig transport = new MCPTypes.TransportConfig(&quot;http&quot;, endpoint);</span>
+<span class="fc" id="L30">        return new DefaultMCPClientBuilder().transport(transport);</span>
+    }
+
+    /**
+     * Create a WebSocket-based MCP client.
+     *
+     * @param endpoint The WebSocket endpoint URL
+     * @return MCP client builder
+     */
+    public static MCPClientBuilder createWebSocketClient(String endpoint) {
+<span class="fc" id="L40">        MCPTypes.TransportConfig transport = new MCPTypes.TransportConfig(&quot;websocket&quot;, endpoint);</span>
+<span class="fc" id="L41">        return new DefaultMCPClientBuilder().transport(transport);</span>
+    }
+
+    /**
+     * Create a production-ready MCP client with optimized settings.
+     *
+     * @param transportType The transport type (&quot;http&quot; or &quot;websocket&quot;)
+     * @param endpoint The endpoint URL
+     * @return MCP client builder
+     */
+    public static MCPClientBuilder createProductionClient(String transportType, String endpoint) {
+<span class="fc" id="L52">        MCPTypes.TransportConfig transport = new MCPTypes.TransportConfig(transportType, endpoint);</span>
+<span class="fc" id="L53">        transport.setTimeout(30000);</span>
+<span class="fc" id="L54">        transport.setRetryAttempts(3);</span>
+<span class="fc" id="L55">        transport.setEnableMetrics(true);</span>
+
+<span class="fc" id="L57">        return new DefaultMCPClientBuilder()</span>
+<span class="fc" id="L58">                .transport(transport)</span>
+<span class="fc" id="L59">                .enableMetrics(true)</span>
+<span class="fc" id="L60">                .enableLogging(true)</span>
+<span class="fc" id="L61">                .enableCaching(true);</span>
+    }
+
+    /**
+     * Create a development MCP client with debug settings.
+     *
+     * @param transportType The transport type
+     * @param endpoint The endpoint URL
+     * @return MCP client builder
+     */
+    public static MCPClientBuilder createDevelopmentClient(String transportType, String endpoint) {
+<span class="nc" id="L72">        MCPTypes.TransportConfig transport = new MCPTypes.TransportConfig(transportType, endpoint);</span>
+<span class="nc" id="L73">        transport.setTimeout(60000);</span>
+<span class="nc" id="L74">        transport.setRetryAttempts(1);</span>
+<span class="nc" id="L75">        transport.setEnableMetrics(true);</span>
+
+<span class="nc" id="L77">        return new DefaultMCPClientBuilder()</span>
+<span class="nc" id="L78">                .transport(transport)</span>
+<span class="nc" id="L79">                .enableMetrics(true)</span>
+<span class="nc" id="L80">                .enableLogging(true)</span>
+<span class="nc" id="L81">                .enableCaching(false);</span>
+    }
+
+    /**
+     * Create a cached MCP client that caches responses.
+     *
+     * @param transportType The transport type
+     * @param endpoint The endpoint URL
+     * @return MCP client builder
+     */
+    public static MCPClientBuilder createCachedClient(String transportType, String endpoint) {
+<span class="nc" id="L92">        return createProductionClient(transportType, endpoint)</span>
+<span class="nc" id="L93">                .enableCaching(true);</span>
+    }
+
+    /**
+     * Default implementation of MCPClientBuilder.
+     */
+<span class="fc" id="L99">    private static class DefaultMCPClientBuilder implements MCPClientBuilder {</span>
+        
+<span class="fc" id="L101">        private String clientId = UUID.randomUUID().toString();</span>
+        private MCPTypes.TransportConfig transport;
+        private MCPTypes.ContextInfo defaultContext;
+<span class="fc" id="L104">        private boolean enableCaching = true;</span>
+<span class="fc" id="L105">        private boolean enableMetrics = true;</span>
+<span class="fc" id="L106">        private boolean enableLogging = true;</span>
+<span class="fc" id="L107">        private final Map&lt;String, Object&gt; metadata = new HashMap&lt;&gt;();</span>
+
+        @Override
+        public MCPClientBuilder clientId(String clientId) {
+<span class="fc" id="L111">            this.clientId = clientId;</span>
+<span class="fc" id="L112">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder transport(MCPTypes.TransportConfig transport) {
+<span class="fc" id="L117">            this.transport = transport;</span>
+<span class="fc" id="L118">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder defaultContext(MCPTypes.ContextInfo context) {
+<span class="nc" id="L123">            this.defaultContext = context;</span>
+<span class="nc" id="L124">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder enableCaching(boolean enableCaching) {
+<span class="fc" id="L129">            this.enableCaching = enableCaching;</span>
+<span class="fc" id="L130">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder enableMetrics(boolean enableMetrics) {
+<span class="fc" id="L135">            this.enableMetrics = enableMetrics;</span>
+<span class="fc" id="L136">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder enableLogging(boolean enableLogging) {
+<span class="fc" id="L141">            this.enableLogging = enableLogging;</span>
+<span class="fc" id="L142">            return this;</span>
+        }
+
+        @Override
+        public MCPClientBuilder metadata(String key, Object value) {
+<span class="fc" id="L147">            this.metadata.put(key, value);</span>
+<span class="fc" id="L148">            return this;</span>
+        }
+
+        @Override
+        public MCPClient build() {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">            if (transport == null) {</span>
+<span class="nc" id="L154">                throw new IllegalArgumentException(&quot;Transport configuration is required&quot;);</span>
+            }
+
+<span class="fc" id="L157">            MCPTypes.ClientConfig config = new MCPTypes.ClientConfig(clientId, transport);</span>
+<span class="fc" id="L158">            config.setDefaultContext(defaultContext);</span>
+<span class="fc" id="L159">            config.setEnableCaching(enableCaching);</span>
+<span class="fc" id="L160">            config.setEnableMetrics(enableMetrics);</span>
+<span class="fc" id="L161">            config.setEnableLogging(enableLogging);</span>
+<span class="fc" id="L162">            config.setMetadata(metadata);</span>
+
+<span class="fc" id="L164">            MCPTransport mcpTransport = createTransport(transport);</span>
+            
+<span class="pc bpc" id="L166" title="1 of 3 branches missed.">            switch (transport.getType().toLowerCase()) {</span>
+                case &quot;http&quot;:
+<span class="fc" id="L168">                    return new HttpMCPClient(config, mcpTransport);</span>
+                case &quot;websocket&quot;:
+<span class="fc" id="L170">                    return new WebSocketMCPClient(config, mcpTransport);</span>
+                default:
+<span class="nc" id="L172">                    throw new IllegalArgumentException(&quot;Unsupported transport type: &quot; + transport.getType());</span>
+            }
+        }
+
+        private MCPTransport createTransport(MCPTypes.TransportConfig config) {
+<span class="pc bpc" id="L177" title="1 of 3 branches missed.">            switch (config.getType().toLowerCase()) {</span>
+                case &quot;http&quot;:
+<span class="fc" id="L179">                    return new HttpTransport(config);</span>
+                case &quot;websocket&quot;:
+<span class="fc" id="L181">                    return new WebSocketTransport(config);</span>
+                default:
+<span class="nc" id="L183">                    throw new IllegalArgumentException(&quot;Unsupported transport type: &quot; + config.getType());</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

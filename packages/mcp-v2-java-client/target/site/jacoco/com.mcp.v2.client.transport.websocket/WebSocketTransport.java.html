@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketTransport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP v2 Java Client</a> &gt; <a href="index.source.html" class="el_package">com.mcp.v2.client.transport.websocket</a> &gt; <span class="el_source">WebSocketTransport.java</span></div><h1>WebSocketTransport.java</h1><pre class="source lang-java linenums">package com.mcp.v2.client.transport.websocket;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mcp.v2.client.MCPTransportException;
+import com.mcp.v2.client.transport.MCPTransport;
+import com.mcp.v2.client.types.MCPTypes;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+/**
+ * WebSocket transport implementation for MCP v2.
+ */
+public class WebSocketTransport implements MCPTransport {
+    
+<span class="fc" id="L31">    private static final Logger logger = LoggerFactory.getLogger(WebSocketTransport.class);</span>
+    
+    private final MCPTypes.TransportConfig config;
+    private final ObjectMapper objectMapper;
+    private final EventLoopGroup group;
+    private final URI uri;
+    
+    private Consumer&lt;MCPTypes.MCPResponse&gt; messageHandler;
+    private Runnable connectHandler;
+    private Runnable disconnectHandler;
+    private Consumer&lt;Throwable&gt; errorHandler;
+    
+    private Channel channel;
+<span class="fc" id="L44">    private volatile boolean connected = false;</span>
+
+<span class="fc" id="L46">    public WebSocketTransport(MCPTypes.TransportConfig config) {</span>
+<span class="fc" id="L47">        this.config = config;</span>
+<span class="fc" id="L48">        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L49">        this.group = new NioEventLoopGroup();</span>
+        
+        try {
+<span class="fc" id="L52">            this.uri = URI.create(config.getEndpoint());</span>
+<span class="nc" id="L53">        } catch (Exception e) {</span>
+<span class="nc" id="L54">            throw new MCPTransportException(&quot;Invalid WebSocket URI: &quot; + config.getEndpoint(), e);</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">    }</span>
+
+    @Override
+    public CompletableFuture&lt;Void&gt; connect() {
+<span class="nc" id="L60">        final CompletableFuture&lt;Void&gt; future = new CompletableFuture&lt;&gt;();</span>
+        
+        try {
+<span class="nc" id="L63">            boolean ssl = &quot;wss&quot;.equalsIgnoreCase(uri.getScheme());</span>
+            final SslContext sslCtx;
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (ssl) {</span>
+<span class="nc" id="L66">                sslCtx = SslContextBuilder.forClient()</span>
+<span class="nc" id="L67">                        .trustManager(InsecureTrustManagerFactory.INSTANCE)</span>
+<span class="nc" id="L68">                        .build();</span>
+            } else {
+<span class="nc" id="L70">                sslCtx = null;</span>
+            }
+            
+<span class="nc bnc" id="L73" title="All 4 branches missed.">            final int port = uri.getPort() == -1 ? (ssl ? 443 : 80) : uri.getPort();</span>
+            
+<span class="nc" id="L75">            final WebSocketClientHandshaker handshaker = WebSocketClientHandshakerFactory.newHandshaker(</span>
+                    uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
+            
+<span class="nc" id="L78">            Bootstrap bootstrap = new Bootstrap();</span>
+<span class="nc" id="L79">            bootstrap.group(group)</span>
+<span class="nc" id="L80">                    .channel(NioSocketChannel.class)</span>
+<span class="nc" id="L81">                    .handler(new ChannelInitializer&lt;SocketChannel&gt;() {</span>
+                        @Override
+                        protected void initChannel(SocketChannel ch) {
+<span class="nc" id="L84">                            ChannelPipeline pipeline = ch.pipeline();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                            if (sslCtx != null) {</span>
+<span class="nc" id="L86">                                pipeline.addLast(sslCtx.newHandler(ch.alloc(), uri.getHost(), port));</span>
+                            }
+<span class="nc" id="L88">                            pipeline.addLast(new HttpClientCodec());</span>
+<span class="nc" id="L89">                            pipeline.addLast(new HttpObjectAggregator(8192));</span>
+<span class="nc" id="L90">                            pipeline.addLast(new WebSocketClientHandler(handshaker, future));</span>
+<span class="nc" id="L91">                        }</span>
+                    });
+            
+<span class="nc" id="L94">            bootstrap.connect(uri.getHost(), port).addListener((ChannelFutureListener) channelFuture -&gt; {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                if (channelFuture.isSuccess()) {</span>
+<span class="nc" id="L96">                    this.channel = channelFuture.channel();</span>
+                } else {
+<span class="nc" id="L98">                    future.completeExceptionally(new MCPTransportException(&quot;Failed to connect&quot;, channelFuture.cause()));</span>
+                }
+<span class="nc" id="L100">            });</span>
+            
+<span class="nc" id="L102">        } catch (Exception e) {</span>
+<span class="nc" id="L103">            future.completeExceptionally(new MCPTransportException(&quot;Connection setup failed&quot;, e));</span>
+<span class="nc" id="L104">        }</span>
+        
+<span class="nc" id="L106">        return future;</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; disconnect() {
+<span class="nc" id="L111">        CompletableFuture&lt;Void&gt; future = new CompletableFuture&lt;&gt;();</span>
+        
+<span class="nc bnc" id="L113" title="All 4 branches missed.">        if (channel != null &amp;&amp; channel.isActive()) {</span>
+<span class="nc" id="L114">            channel.writeAndFlush(new CloseWebSocketFrame()).addListener((ChannelFutureListener) channelFuture -&gt; {</span>
+<span class="nc" id="L115">                connected = false;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                if (disconnectHandler != null) {</span>
+<span class="nc" id="L117">                    disconnectHandler.run();</span>
+                }
+<span class="nc" id="L119">                future.complete(null);</span>
+<span class="nc" id="L120">            });</span>
+        } else {
+<span class="nc" id="L122">            connected = false;</span>
+<span class="nc" id="L123">            future.complete(null);</span>
+        }
+        
+<span class="nc" id="L126">        return future;</span>
+    }
+
+    @Override
+    public boolean isConnected() {
+<span class="nc bnc" id="L131" title="All 6 branches missed.">        return connected &amp;&amp; channel != null &amp;&amp; channel.isActive();</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; send(MCPTypes.MCPRequest request) {
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (!isConnected()) {</span>
+<span class="nc" id="L137">            return CompletableFuture.failedFuture(new MCPTransportException(&quot;Transport not connected&quot;));</span>
+        }
+        
+<span class="nc" id="L140">        CompletableFuture&lt;Void&gt; future = new CompletableFuture&lt;&gt;();</span>
+        
+        try {
+<span class="nc" id="L143">            String json = objectMapper.writeValueAsString(request);</span>
+<span class="nc" id="L144">            TextWebSocketFrame frame = new TextWebSocketFrame(json);</span>
+            
+<span class="nc" id="L146">            channel.writeAndFlush(frame).addListener((ChannelFutureListener) channelFuture -&gt; {</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                if (channelFuture.isSuccess()) {</span>
+<span class="nc" id="L148">                    future.complete(null);</span>
+                } else {
+<span class="nc" id="L150">                    future.completeExceptionally(new MCPTransportException(&quot;Failed to send message&quot;, channelFuture.cause()));</span>
+                }
+<span class="nc" id="L152">            });</span>
+<span class="nc" id="L153">        } catch (Exception e) {</span>
+<span class="nc" id="L154">            future.completeExceptionally(new MCPTransportException(&quot;Failed to serialize request&quot;, e));</span>
+<span class="nc" id="L155">        }</span>
+        
+<span class="nc" id="L157">        return future;</span>
+    }
+
+    @Override
+    public void onMessage(Consumer&lt;MCPTypes.MCPResponse&gt; handler) {
+<span class="fc" id="L162">        this.messageHandler = handler;</span>
+<span class="fc" id="L163">    }</span>
+
+    @Override
+    public void onConnect(Runnable handler) {
+<span class="fc" id="L167">        this.connectHandler = handler;</span>
+<span class="fc" id="L168">    }</span>
+
+    @Override
+    public void onDisconnect(Runnable handler) {
+<span class="fc" id="L172">        this.disconnectHandler = handler;</span>
+<span class="fc" id="L173">    }</span>
+
+    @Override
+    public void onError(Consumer&lt;Throwable&gt; handler) {
+<span class="fc" id="L177">        this.errorHandler = handler;</span>
+<span class="fc" id="L178">    }</span>
+
+    @Override
+    public MCPTypes.TransportConfig getConfig() {
+<span class="nc" id="L182">        return config;</span>
+    }
+
+    @Override
+    public void close() {
+        try {
+<span class="nc" id="L188">            disconnect().get(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L189">        } catch (Exception e) {</span>
+<span class="nc" id="L190">            logger.warn(&quot;Error during disconnect&quot;, e);</span>
+<span class="nc" id="L191">        }</span>
+        
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (group != null) {</span>
+<span class="nc" id="L194">            group.shutdownGracefully();</span>
+        }
+<span class="nc" id="L196">    }</span>
+
+    /**
+     * WebSocket client handler for managing the WebSocket connection.
+     */
+    private class WebSocketClientHandler extends SimpleChannelInboundHandler&lt;Object&gt; {
+        
+        private final WebSocketClientHandshaker handshaker;
+        private final CompletableFuture&lt;Void&gt; connectionFuture;
+        private ChannelPromise handshakeFuture;
+
+<span class="nc" id="L207">        public WebSocketClientHandler(WebSocketClientHandshaker handshaker, CompletableFuture&lt;Void&gt; connectionFuture) {</span>
+<span class="nc" id="L208">            this.handshaker = handshaker;</span>
+<span class="nc" id="L209">            this.connectionFuture = connectionFuture;</span>
+<span class="nc" id="L210">        }</span>
+
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) {
+<span class="nc" id="L214">            handshakeFuture = ctx.newPromise();</span>
+<span class="nc" id="L215">            handshaker.handshake(ctx.channel());</span>
+<span class="nc" id="L216">        }</span>
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) {
+<span class="nc" id="L220">            connected = false;</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">            if (disconnectHandler != null) {</span>
+<span class="nc" id="L222">                disconnectHandler.run();</span>
+            }
+<span class="nc" id="L224">            logger.info(&quot;WebSocket connection closed&quot;);</span>
+<span class="nc" id="L225">        }</span>
+
+        @Override
+        public void channelRead0(ChannelHandlerContext ctx, Object msg) {
+<span class="nc" id="L229">            Channel ch = ctx.channel();</span>
+            
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            if (!handshaker.isHandshakeComplete()) {</span>
+                try {
+<span class="nc" id="L233">                    handshaker.finishHandshake(ch, (FullHttpResponse) msg);</span>
+<span class="nc" id="L234">                    connected = true;</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                    if (connectHandler != null) {</span>
+<span class="nc" id="L236">                        connectHandler.run();</span>
+                    }
+<span class="nc" id="L238">                    connectionFuture.complete(null);</span>
+<span class="nc" id="L239">                    logger.info(&quot;WebSocket handshake completed&quot;);</span>
+<span class="nc" id="L240">                } catch (WebSocketHandshakeException e) {</span>
+<span class="nc" id="L241">                    connected = false;</span>
+<span class="nc" id="L242">                    connectionFuture.completeExceptionally(e);</span>
+<span class="nc" id="L243">                    logger.error(&quot;WebSocket handshake failed&quot;, e);</span>
+<span class="nc" id="L244">                }</span>
+<span class="nc" id="L245">                return;</span>
+            }
+
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            if (msg instanceof WebSocketFrame) {</span>
+<span class="nc" id="L249">                WebSocketFrame frame = (WebSocketFrame) msg;</span>
+                
+<span class="nc bnc" id="L251" title="All 2 branches missed.">                if (frame instanceof TextWebSocketFrame) {</span>
+<span class="nc" id="L252">                    TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;</span>
+<span class="nc" id="L253">                    handleTextMessage(textFrame.text());</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">                } else if (frame instanceof CloseWebSocketFrame) {</span>
+<span class="nc" id="L255">                    ch.close();</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                } else if (frame instanceof PongWebSocketFrame) {</span>
+<span class="nc" id="L257">                    logger.debug(&quot;Received pong frame&quot;);</span>
+                }
+            }
+<span class="nc" id="L260">        }</span>
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+<span class="nc" id="L264">            logger.error(&quot;WebSocket error&quot;, cause);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            if (errorHandler != null) {</span>
+<span class="nc" id="L266">                errorHandler.accept(cause);</span>
+            }
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            if (!connectionFuture.isDone()) {</span>
+<span class="nc" id="L269">                connectionFuture.completeExceptionally(cause);</span>
+            }
+<span class="nc" id="L271">            ctx.close();</span>
+<span class="nc" id="L272">        }</span>
+
+        private void handleTextMessage(String text) {
+            try {
+<span class="nc" id="L276">                MCPTypes.MCPResponse response = objectMapper.readValue(text, MCPTypes.MCPResponse.class);</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">                if (messageHandler != null) {</span>
+<span class="nc" id="L278">                    messageHandler.accept(response);</span>
+                }
+<span class="nc" id="L280">            } catch (Exception e) {</span>
+<span class="nc" id="L281">                logger.error(&quot;Failed to parse WebSocket message: {}&quot;, text, e);</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">                if (errorHandler != null) {</span>
+<span class="nc" id="L283">                    errorHandler.accept(e);</span>
+                }
+<span class="nc" id="L285">            }</span>
+<span class="nc" id="L286">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

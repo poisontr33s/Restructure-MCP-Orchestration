@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseMCPClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP v2 Java Client</a> &gt; <a href="index.source.html" class="el_package">com.mcp.v2.client.impl</a> &gt; <span class="el_source">BaseMCPClient.java</span></div><h1>BaseMCPClient.java</h1><pre class="source lang-java linenums">package com.mcp.v2.client.impl;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mcp.v2.client.MCPClient;
+import com.mcp.v2.client.MCPClientException;
+import com.mcp.v2.client.MCPContextException;
+import com.mcp.v2.client.transport.MCPTransport;
+import com.mcp.v2.client.types.MCPTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+
+/**
+ * Base implementation of the MCP v2 client.
+ */
+public abstract class BaseMCPClient implements MCPClient {
+    
+<span class="fc" id="L32">    protected static final Logger logger = LoggerFactory.getLogger(BaseMCPClient.class);</span>
+<span class="fc" id="L33">    protected static final ObjectMapper objectMapper = new ObjectMapper()</span>
+<span class="fc" id="L34">            .registerModule(new JavaTimeModule());</span>
+
+    protected final MCPTypes.ClientConfig config;
+    protected final MCPTransport transport;
+    protected final Map&lt;String, CompletableFuture&lt;MCPTypes.MCPResponse&gt;&gt; pendingRequests;
+    protected final Map&lt;MCPTypes.EventType, CopyOnWriteArrayList&lt;Consumer&lt;MCPTypes.EventData&gt;&gt;&gt; eventListeners;
+    protected final Sinks.Many&lt;MCPTypes.EventData&gt; eventSink;
+    protected final Flux&lt;MCPTypes.EventData&gt; eventFlux;
+    
+    // Metrics
+<span class="fc" id="L44">    protected final AtomicLong requestCounter = new AtomicLong(0);</span>
+<span class="fc" id="L45">    protected final AtomicLong responseCounter = new AtomicLong(0);</span>
+<span class="fc" id="L46">    protected final AtomicLong errorCounter = new AtomicLong(0);</span>
+<span class="fc" id="L47">    protected final Map&lt;String, Object&gt; metrics = new ConcurrentHashMap&lt;&gt;();</span>
+
+    protected MCPTypes.ContextInfo currentContext;
+<span class="fc" id="L50">    protected volatile boolean connected = false;</span>
+
+<span class="fc" id="L52">    public BaseMCPClient(MCPTypes.ClientConfig config, MCPTransport transport) {</span>
+<span class="fc" id="L53">        this.config = config;</span>
+<span class="fc" id="L54">        this.transport = transport;</span>
+<span class="fc" id="L55">        this.pendingRequests = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L56">        this.eventListeners = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L57">        this.eventSink = Sinks.many().multicast().onBackpressureBuffer();</span>
+<span class="fc" id="L58">        this.eventFlux = eventSink.asFlux();</span>
+<span class="fc" id="L59">        this.currentContext = config.getDefaultContext();</span>
+
+        // Initialize metrics
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (config.isEnableMetrics()) {</span>
+<span class="fc" id="L63">            initializeMetrics();</span>
+        }
+
+        // Set up transport event handling
+<span class="fc" id="L67">        setupTransportEventHandling();</span>
+<span class="fc" id="L68">    }</span>
+
+    protected void initializeMetrics() {
+<span class="fc" id="L71">        metrics.put(&quot;clientId&quot;, config.getClientId());</span>
+<span class="fc" id="L72">        metrics.put(&quot;version&quot;, config.getVersion());</span>
+<span class="fc" id="L73">        metrics.put(&quot;startTime&quot;, Instant.now());</span>
+<span class="fc" id="L74">        metrics.put(&quot;requestsTotal&quot;, 0L);</span>
+<span class="fc" id="L75">        metrics.put(&quot;responsesTotal&quot;, 0L);</span>
+<span class="fc" id="L76">        metrics.put(&quot;errorsTotal&quot;, 0L);</span>
+<span class="fc" id="L77">        metrics.put(&quot;connectionStatus&quot;, &quot;disconnected&quot;);</span>
+<span class="fc" id="L78">    }</span>
+
+    protected void setupTransportEventHandling() {
+<span class="fc" id="L81">        transport.onMessage(this::handleMessage);</span>
+<span class="fc" id="L82">        transport.onConnect(() -&gt; {</span>
+<span class="nc" id="L83">            connected = true;</span>
+<span class="nc" id="L84">            updateMetric(&quot;connectionStatus&quot;, &quot;connected&quot;);</span>
+<span class="nc" id="L85">            emitEvent(MCPTypes.EventType.CONNECTION_OPENED, createEventData(&quot;Connection established&quot;));</span>
+<span class="nc" id="L86">        });</span>
+<span class="fc" id="L87">        transport.onDisconnect(() -&gt; {</span>
+<span class="fc" id="L88">            connected = false;</span>
+<span class="fc" id="L89">            updateMetric(&quot;connectionStatus&quot;, &quot;disconnected&quot;);</span>
+<span class="fc" id="L90">            emitEvent(MCPTypes.EventType.CONNECTION_CLOSED, createEventData(&quot;Connection closed&quot;));</span>
+<span class="fc" id="L91">        });</span>
+<span class="fc" id="L92">        transport.onError(this::handleTransportError);</span>
+<span class="fc" id="L93">    }</span>
+
+    @Override
+    public CompletableFuture&lt;MCPTypes.MCPResponse&gt; sendRequest(MCPTypes.MCPRequest request) {
+<span class="nc" id="L97">        return sendRequestReactive(request).toFuture();</span>
+    }
+
+    @Override
+    public Mono&lt;MCPTypes.MCPResponse&gt; sendRequestReactive(MCPTypes.MCPRequest request) {
+<span class="nc" id="L102">        return Mono.fromCallable(() -&gt; {</span>
+<span class="nc" id="L103">            validateRequest(request);</span>
+<span class="nc" id="L104">            enrichRequest(request);</span>
+            
+<span class="nc" id="L106">            CompletableFuture&lt;MCPTypes.MCPResponse&gt; future = new CompletableFuture&lt;&gt;();</span>
+<span class="nc" id="L107">            pendingRequests.put(request.getId(), future);</span>
+            
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (config.isEnableMetrics()) {</span>
+<span class="nc" id="L110">                requestCounter.incrementAndGet();</span>
+<span class="nc" id="L111">                updateMetric(&quot;requestsTotal&quot;, requestCounter.get());</span>
+            }
+            
+<span class="nc" id="L114">            emitEvent(MCPTypes.EventType.REQUEST_SENT, createEventData(request));</span>
+            
+<span class="nc" id="L116">            transport.send(request);</span>
+<span class="nc" id="L117">            return future;</span>
+<span class="nc" id="L118">        }).flatMap(Mono::fromFuture);</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;MCPTypes.MCPResponse&gt; send(String method, JsonNode params) {
+<span class="nc" id="L123">        MCPTypes.MCPRequest request = new MCPTypes.MCPRequest(</span>
+<span class="nc" id="L124">            UUID.randomUUID().toString(),</span>
+            method,
+            params
+        );
+<span class="nc" id="L128">        return sendRequest(request);</span>
+    }
+
+    @Override
+    public Mono&lt;MCPTypes.MCPResponse&gt; sendReactive(String method, JsonNode params) {
+<span class="nc" id="L133">        MCPTypes.MCPRequest request = new MCPTypes.MCPRequest(</span>
+<span class="nc" id="L134">            UUID.randomUUID().toString(),</span>
+            method,
+            params
+        );
+<span class="nc" id="L138">        return sendRequestReactive(request);</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; connect() {
+<span class="nc" id="L143">        return transport.connect().thenRun(() -&gt; {</span>
+<span class="nc" id="L144">            logger.info(&quot;Connected to MCP server: {}&quot;, config.getTransport().getEndpoint());</span>
+<span class="nc" id="L145">        });</span>
+    }
+
+    @Override
+    public CompletableFuture&lt;Void&gt; disconnect() {
+<span class="fc" id="L150">        return transport.disconnect().thenRun(() -&gt; {</span>
+<span class="fc" id="L151">            connected = false;</span>
+<span class="fc" id="L152">            logger.info(&quot;Disconnected from MCP server&quot;);</span>
+<span class="fc" id="L153">        });</span>
+    }
+
+    @Override
+    public boolean isConnected() {
+<span class="pc bpc" id="L158" title="3 of 4 branches missed.">        return connected &amp;&amp; transport.isConnected();</span>
+    }
+
+    @Override
+    public MCPTypes.ContextInfo getContext() {
+<span class="fc" id="L163">        return currentContext;</span>
+    }
+
+    @Override
+    public void updateContext(MCPTypes.ContextInfo context) {
+<span class="fc" id="L168">        this.currentContext = context;</span>
+<span class="fc" id="L169">        emitEvent(MCPTypes.EventType.CONTEXT_UPDATED, createEventData(context));</span>
+<span class="fc" id="L170">    }</span>
+
+    @Override
+    public Flux&lt;MCPTypes.EventData&gt; events() {
+<span class="nc" id="L174">        return eventFlux;</span>
+    }
+
+    @Override
+    public void addEventListener(MCPTypes.EventType eventType, Consumer&lt;MCPTypes.EventData&gt; listener) {
+<span class="fc" id="L179">        eventListeners.computeIfAbsent(eventType, k -&gt; new CopyOnWriteArrayList&lt;&gt;()).add(listener);</span>
+<span class="fc" id="L180">    }</span>
+
+    @Override
+    public void removeEventListener(MCPTypes.EventType eventType, Consumer&lt;MCPTypes.EventData&gt; listener) {
+<span class="nc" id="L184">        CopyOnWriteArrayList&lt;Consumer&lt;MCPTypes.EventData&gt;&gt; listeners = eventListeners.get(eventType);</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (listeners != null) {</span>
+<span class="nc" id="L186">            listeners.remove(listener);</span>
+        }
+<span class="nc" id="L188">    }</span>
+
+    @Override
+    public MCPTypes.ClientConfig getConfig() {
+<span class="fc" id="L192">        return config;</span>
+    }
+
+    @Override
+    public JsonNode getMetrics() {
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (!config.isEnableMetrics()) {</span>
+<span class="nc" id="L198">            return objectMapper.createObjectNode();</span>
+        }
+        
+        // Update runtime metrics
+<span class="fc" id="L202">        metrics.put(&quot;timestamp&quot;, Instant.now());</span>
+<span class="fc" id="L203">        metrics.put(&quot;connected&quot;, isConnected());</span>
+<span class="fc" id="L204">        metrics.put(&quot;pendingRequests&quot;, pendingRequests.size());</span>
+        
+<span class="fc" id="L206">        return objectMapper.valueToTree(metrics);</span>
+    }
+
+    @Override
+    public void close() {
+        try {
+<span class="fc" id="L212">            disconnect().get();</span>
+<span class="nc" id="L213">        } catch (Exception e) {</span>
+<span class="nc" id="L214">            logger.warn(&quot;Error during disconnect&quot;, e);</span>
+<span class="fc" id="L215">        }</span>
+        
+<span class="fc" id="L217">        pendingRequests.clear();</span>
+<span class="fc" id="L218">        eventListeners.clear();</span>
+<span class="fc" id="L219">        eventSink.tryEmitComplete();</span>
+        
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (transport != null) {</span>
+<span class="fc" id="L222">            transport.close();</span>
+        }
+<span class="fc" id="L224">    }</span>
+
+    protected void handleMessage(MCPTypes.MCPResponse response) {
+        try {
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (config.isEnableMetrics()) {</span>
+<span class="nc" id="L229">                responseCounter.incrementAndGet();</span>
+<span class="nc" id="L230">                updateMetric(&quot;responsesTotal&quot;, responseCounter.get());</span>
+            }
+            
+<span class="nc" id="L233">            emitEvent(MCPTypes.EventType.RESPONSE_RECEIVED, createEventData(response));</span>
+            
+<span class="nc" id="L235">            CompletableFuture&lt;MCPTypes.MCPResponse&gt; future = pendingRequests.remove(response.getId());</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if (future != null) {</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">                if (response.isSuccess()) {</span>
+<span class="nc" id="L238">                    future.complete(response);</span>
+                } else {
+<span class="nc" id="L240">                    future.completeExceptionally(new MCPClientException(</span>
+<span class="nc" id="L241">                        response.getError().getCode(),</span>
+<span class="nc" id="L242">                        response.getError().getMessage(),</span>
+<span class="nc" id="L243">                        response.getError().getType()</span>
+                    ));
+                }
+            } else {
+<span class="nc" id="L247">                logger.warn(&quot;Received response for unknown request ID: {}&quot;, response.getId());</span>
+            }
+<span class="nc" id="L249">        } catch (Exception e) {</span>
+<span class="nc" id="L250">            logger.error(&quot;Error handling message&quot;, e);</span>
+<span class="nc" id="L251">            handleError(e);</span>
+<span class="nc" id="L252">        }</span>
+<span class="nc" id="L253">    }</span>
+
+    protected void handleTransportError(Throwable error) {
+<span class="nc" id="L256">        logger.error(&quot;Transport error&quot;, error);</span>
+<span class="nc" id="L257">        handleError(error);</span>
+<span class="nc" id="L258">    }</span>
+
+    protected void handleError(Throwable error) {
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        if (config.isEnableMetrics()) {</span>
+<span class="nc" id="L262">            errorCounter.incrementAndGet();</span>
+<span class="nc" id="L263">            updateMetric(&quot;errorsTotal&quot;, errorCounter.get());</span>
+        }
+        
+<span class="nc" id="L266">        emitEvent(MCPTypes.EventType.ERROR_OCCURRED, createEventData(error));</span>
+<span class="nc" id="L267">    }</span>
+
+    protected void validateRequest(MCPTypes.MCPRequest request) {
+<span class="nc bnc" id="L270" title="All 4 branches missed.">        if (request.getId() == null || request.getId().trim().isEmpty()) {</span>
+<span class="nc" id="L271">            throw new MCPClientException(&quot;Request ID cannot be null or empty&quot;);</span>
+        }
+<span class="nc bnc" id="L273" title="All 4 branches missed.">        if (request.getMethod() == null || request.getMethod().trim().isEmpty()) {</span>
+<span class="nc" id="L274">            throw new MCPClientException(&quot;Request method cannot be null or empty&quot;);</span>
+        }
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        if (!isConnected()) {</span>
+<span class="nc" id="L277">            throw new MCPClientException(&quot;Client is not connected&quot;);</span>
+        }
+<span class="nc" id="L279">    }</span>
+
+    protected void enrichRequest(MCPTypes.MCPRequest request) {
+        // Set current context if not provided
+<span class="nc bnc" id="L283" title="All 4 branches missed.">        if (request.getContext() == null &amp;&amp; currentContext != null) {</span>
+<span class="nc" id="L284">            request.setContext(currentContext);</span>
+        }
+        
+        // Set timestamp if not provided
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (request.getTimestamp() == null) {</span>
+<span class="nc" id="L289">            request.setTimestamp(Instant.now());</span>
+        }
+        
+        // Add client metadata
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        if (request.getMetadata() == null) {</span>
+<span class="nc" id="L294">            request.setMetadata(new ConcurrentHashMap&lt;&gt;());</span>
+        }
+<span class="nc" id="L296">        request.getMetadata().put(&quot;clientId&quot;, config.getClientId());</span>
+<span class="nc" id="L297">        request.getMetadata().put(&quot;clientVersion&quot;, config.getVersion());</span>
+<span class="nc" id="L298">    }</span>
+
+    protected void emitEvent(MCPTypes.EventType eventType, JsonNode data) {
+<span class="fc" id="L301">        MCPTypes.EventData eventData = new MCPTypes.EventData(eventType, data);</span>
+<span class="fc" id="L302">        eventData.setSource(config.getClientId());</span>
+        
+        // Emit to reactive stream
+<span class="fc" id="L305">        eventSink.tryEmitNext(eventData);</span>
+        
+        // Notify event listeners
+<span class="fc" id="L308">        CopyOnWriteArrayList&lt;Consumer&lt;MCPTypes.EventData&gt;&gt; listeners = eventListeners.get(eventType);</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        if (listeners != null) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            for (Consumer&lt;MCPTypes.EventData&gt; listener : listeners) {</span>
+                try {
+<span class="fc" id="L312">                    listener.accept(eventData);</span>
+<span class="nc" id="L313">                } catch (Exception e) {</span>
+<span class="nc" id="L314">                    logger.warn(&quot;Error in event listener&quot;, e);</span>
+<span class="fc" id="L315">                }</span>
+<span class="fc" id="L316">            }</span>
+        }
+<span class="fc" id="L318">    }</span>
+
+    protected JsonNode createEventData(Object data) {
+        try {
+<span class="fc" id="L322">            return objectMapper.valueToTree(data);</span>
+<span class="nc" id="L323">        } catch (Exception e) {</span>
+<span class="nc" id="L324">            ObjectNode errorNode = objectMapper.createObjectNode();</span>
+<span class="nc" id="L325">            errorNode.put(&quot;error&quot;, &quot;Failed to serialize event data: &quot; + e.getMessage());</span>
+<span class="nc" id="L326">            return errorNode;</span>
+        }
+    }
+
+    protected void updateMetric(String key, Object value) {
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">        if (config.isEnableMetrics()) {</span>
+<span class="fc" id="L332">            metrics.put(key, value);</span>
+        }
+<span class="fc" id="L334">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

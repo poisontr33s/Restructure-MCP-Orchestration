@@ -1,0 +1,56 @@
+{
+  "name": "@mcp-v2/typescript-client",
+  "version": "2.0.0",
+  "description": "TypeScript client library for MCP v2 protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build:watch": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "typescript",
+    "client",
+    "protocol",
+    "v2"
+  ],
+  "author": "MCP v2 Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "eventemitter3": "^5.0.1",
+    "ioredis": "^5.3.2",
+    "uuid": "^9.0.1",
+    "ws": "^8.14.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/mcp-v2-orchestration.git",
+    "directory": "mcp-v2-typescript-client"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

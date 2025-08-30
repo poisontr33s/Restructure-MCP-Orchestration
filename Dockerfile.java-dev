@@ -1,0 +1,288 @@
+# Java-First Development Dockerfile for MCP Orchestration System
+# Optimized for Captain Guthilda's Modern MCP Orchestration System - Java 21 Edition
+# 🏴‍☠️ Multi-stage build for development and production
+
+# =================================================================
+# BASE STAGE: Ubuntu with Java 21 and essential tools
+# =================================================================
+FROM ubuntu:22.04 as java-base
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install base system packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    nano \
+    htop \
+    tree \
+    jq \
+    unzip \
+    zip \
+    build-essential \
+    pkg-config \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    apt-transport-https \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Java 21 (Eclipse Temurin for better performance)
+ARG JAVA_VERSION=21
+RUN wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc \
+    && echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list \
+    && apt-get update \
+    && apt-get install -y temurin-${JAVA_VERSION}-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set JAVA_HOME
+ENV JAVA_HOME=/usr/lib/jvm/temurin-${JAVA_VERSION}-jdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+# =================================================================
+# BUILD TOOLS STAGE: Maven, Gradle, and development tools
+# =================================================================
+FROM java-base as build-tools
+
+# Install Maven
+ARG MAVEN_VERSION=3.9.6
+RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar xzf - -C /usr/share \
+    && mv /usr/share/apache-maven-${MAVEN_VERSION} /usr/share/maven \
+    && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+ENV MAVEN_HOME=/usr/share/maven
+ENV PATH=$MAVEN_HOME/bin:$PATH
+
+# Install Gradle
+ARG GRADLE_VERSION=8.5
+RUN curl -fsSL https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle.zip \
+    && unzip gradle.zip -d /opt \
+    && mv /opt/gradle-${GRADLE_VERSION} /opt/gradle \
+    && rm gradle.zip \
+    && ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+
+ENV GRADLE_HOME=/opt/gradle
+ENV PATH=$GRADLE_HOME/bin:$PATH
+
+# Install additional Java development tools
+RUN curl -s "https://get.sdkman.io" | bash \
+    && /bin/bash -c "source ~/.sdkman/bin/sdkman-init.sh"
+
+# Install Node.js (for any frontend components or tooling)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm yarn
+
+# Install Go (for polyglot support)
+ARG GO_VERSION=1.21.6
+RUN curl -fsSL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -xz -C /usr/local \
+    && ln -s /usr/local/go/bin/go /usr/bin/go \
+    && ln -s /usr/local/go/bin/gofmt /usr/bin/gofmt
+
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/home/dev/go
+ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+
+# Install Python (for polyglot support)
+ARG PYTHON_VERSION=3.12
+RUN add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get install -y \
+        python${PYTHON_VERSION} \
+        python${PYTHON_VERSION}-dev \
+        python${PYTHON_VERSION}-venv \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1 \
+    && python3 -m pip install --upgrade pip setuptools wheel
+
+# Install Rust (for additional polyglot support)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+# =================================================================
+# DEVELOPMENT STAGE: Full development environment
+# =================================================================
+FROM build-tools as development
+
+# Create development user
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+RUN groupadd -g ${GROUP_ID} dev \
+    && useradd -l -u ${USER_ID} -g dev -m -s /bin/bash dev \
+    && usermod -aG sudo dev \
+    && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Install development and testing tools
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    docker-compose \
+    postgresql-client \
+    redis-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install monitoring and profiling tools
+RUN apt-get update && apt-get install -y \
+    graphviz \
+    fonts-dejavu-core \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/*
+
+# Switch to development user
+USER dev
+WORKDIR /home/dev
+
+# Configure Git (will be overridden by mounted config)
+RUN git config --global init.defaultBranch main \
+    && git config --global user.name "MCP Java Developer" \
+    && git config --global user.email "dev@mcp-java.local"
+
+# Pre-download common Maven dependencies to speed up builds
+RUN mkdir -p /tmp/maven-warmup && cd /tmp/maven-warmup \
+    && echo '<?xml version="1.0" encoding="UTF-8"?>' > pom.xml \
+    && echo '<project xmlns="http://maven.apache.org/POM/4.0.0"' >> pom.xml \
+    && echo '         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' >> pom.xml \
+    && echo '         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">' >> pom.xml \
+    && echo '    <modelVersion>4.0.0</modelVersion>' >> pom.xml \
+    && echo '    <groupId>warmup</groupId>' >> pom.xml \
+    && echo '    <artifactId>maven-warmup</artifactId>' >> pom.xml \
+    && echo '    <version>1.0.0</version>' >> pom.xml \
+    && echo '    <properties>' >> pom.xml \
+    && echo '        <maven.compiler.source>21</maven.compiler.source>' >> pom.xml \
+    && echo '        <maven.compiler.target>21</maven.compiler.target>' >> pom.xml \
+    && echo '        <spring.boot.version>3.2.2</spring.boot.version>' >> pom.xml \
+    && echo '    </properties>' >> pom.xml \
+    && echo '    <dependencies>' >> pom.xml \
+    && echo '        <dependency>' >> pom.xml \
+    && echo '            <groupId>org.springframework.boot</groupId>' >> pom.xml \
+    && echo '            <artifactId>spring-boot-starter-web</artifactId>' >> pom.xml \
+    && echo '            <version>${spring.boot.version}</version>' >> pom.xml \
+    && echo '        </dependency>' >> pom.xml \
+    && echo '        <dependency>' >> pom.xml \
+    && echo '            <groupId>org.springframework.boot</groupId>' >> pom.xml \
+    && echo '            <artifactId>spring-boot-starter-test</artifactId>' >> pom.xml \
+    && echo '            <version>${spring.boot.version}</version>' >> pom.xml \
+    && echo '            <scope>test</scope>' >> pom.xml \
+    && echo '        </dependency>' >> pom.xml \
+    && echo '    </dependencies>' >> pom.xml \
+    && echo '</project>' >> pom.xml \
+    && mvn dependency:go-offline -B \
+    && cd /home/dev && rm -rf /tmp/maven-warmup
+
+# Set up Go workspace and download common dependencies
+RUN mkdir -p /home/dev/go/{bin,pkg,src} \
+    && go install golang.org/x/tools/gopls@latest \
+    && go install github.com/go-delve/delve/cmd/dlv@latest \
+    && go install honnef.co/go/tools/cmd/staticcheck@latest
+
+# Install common Python packages for data science and development
+RUN python3 -m pip install --user \
+    requests \
+    fastapi \
+    uvicorn \
+    pydantic \
+    sqlalchemy \
+    alembic \
+    pytest \
+    black \
+    flake8 \
+    mypy
+
+# Install common Rust development tools
+RUN /home/dev/.cargo/bin/rustup component add rustfmt clippy \
+    && /home/dev/.cargo/bin/cargo install cargo-watch cargo-edit
+
+# Create workspace directory
+RUN mkdir -p /workspace
+WORKDIR /workspace
+
+# Set up shell environment with Java-specific settings and polyglot support
+RUN echo 'export PS1="\u@java-dev:\w$ "' >> /home/dev/.bashrc \
+    && echo 'export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-amd64' >> /home/dev/.bashrc \
+    && echo 'export MAVEN_HOME=/usr/share/maven' >> /home/dev/.bashrc \
+    && echo 'export GRADLE_HOME=/opt/gradle' >> /home/dev/.bashrc \
+    && echo 'export GOROOT=/usr/local/go' >> /home/dev/.bashrc \
+    && echo 'export GOPATH=/home/dev/go' >> /home/dev/.bashrc \
+    && echo 'export PATH=$JAVA_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin:$GOROOT/bin:$GOPATH/bin:$HOME/.cargo/bin:$PATH' >> /home/dev/.bashrc \
+    && echo 'cd /workspace' >> /home/dev/.bashrc \
+    && echo 'echo "🏴‍☠️ Captain Guthilda'\''s MCP Java-First Development Environment"' >> /home/dev/.bashrc \
+    && echo 'echo "☕ Java $(java --version | head -1)"' >> /home/dev/.bashrc \
+    && echo 'echo "📦 Maven $(mvn --version | head -1 | cut -d\" \" -f3)"' >> /home/dev/.bashrc \
+    && echo 'echo "🔧 Gradle $(gradle --version | grep \"Gradle\" | cut -d\" \" -f2)"' >> /home/dev/.bashrc \
+    && echo 'echo "🐹 Go $(go version | cut -d\" \" -f3)"' >> /home/dev/.bashrc \
+    && echo 'echo "🐍 Python $(python3 --version)"' >> /home/dev/.bashrc \
+    && echo 'echo "🦀 Rust $(rustc --version | cut -d\" \" -f2)"' >> /home/dev/.bashrc \
+    && echo 'echo "📂 Workspace: /workspace"' >> /home/dev/.bashrc \
+    && echo 'echo "🚀 Ready for polyglot development with Java-first focus!"' >> /home/dev/.bashrc
+
+# Java-specific and polyglot environment variables for optimal performance
+ENV JAVA_OPTS="-Xmx4g -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+ENV MAVEN_OPTS="-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120"
+ENV GRADLE_OPTS="-Xmx2g -XX:+UseG1GC -Dorg.gradle.daemon=true -Dorg.gradle.parallel=true -Dorg.gradle.configureondemand=true"
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/home/dev/go
+ENV PATH=$JAVA_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin:$GOROOT/bin:$GOPATH/bin:/home/dev/.cargo/bin:$PATH
+
+# Health check for Spring Boot applications
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Default command
+CMD ["/bin/bash"]
+
+# =================================================================
+# PRODUCTION STAGE: Minimal runtime with pre-built JARs
+# =================================================================
+FROM java-base as production
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# Create application user
+RUN groupadd -g ${GROUP_ID} mcp \
+    && useradd -l -u ${USER_ID} -g mcp -m -s /bin/bash mcp
+
+# Install only production runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+USER mcp
+WORKDIR /app
+
+# Copy built artifacts (to be populated by CI/CD)
+COPY --chown=mcp:mcp target/*.jar ./app.jar
+
+# Production-optimized Java settings
+ENV JAVA_OPTS="-Xmx2g -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Run the application
+CMD ["java", "-jar", "app.jar"]
+
+# =================================================================
+# TESTING STAGE: For running tests in CI/CD
+# =================================================================
+FROM development as testing
+
+USER dev
+WORKDIR /workspace
+
+# Install additional testing tools
+RUN curl -s https://codecov.io/bash > /usr/local/bin/codecov \
+    && chmod +x /usr/local/bin/codecov
+
+# Set test-specific environment
+ENV SPRING_PROFILES_ACTIVE=test
+ENV MAVEN_OPTS="-Xmx1g"
+
+CMD ["mvn", "clean", "test"]

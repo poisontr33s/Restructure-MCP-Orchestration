@@ -1,0 +1,173 @@
+# Prometheus Configuration for MCP Java Orchestration System
+# Optimized for Spring Boot applications with Micrometer
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'mcp-java-monitor'
+    environment: 'development'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # MCP Core Service (Spring Boot)
+  - job_name: 'mcp-core'
+    static_configs:
+      - targets: ['java-dev:8080']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-core'
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'jvm_.*|tomcat_.*|spring_.*|http_.*|process_.*'
+        action: keep
+
+  # MCP Monitor Service (Spring Boot)
+  - job_name: 'mcp-monitor'
+    static_configs:
+      - targets: ['java-dev:8081']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-monitor'
+
+  # MCP Guthilda Service (Spring Boot)
+  - job_name: 'mcp-guthilda'
+    static_configs:
+      - targets: ['java-dev:8082']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-guthilda'
+
+  # MCP AI Integration Service (Spring Boot)
+  - job_name: 'mcp-ai-integration'
+    static_configs:
+      - targets: ['java-dev:8083']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-ai-integration'
+
+  # MCP Servers Service (Spring Boot)
+  - job_name: 'mcp-servers'
+    static_configs:
+      - targets: ['java-dev:8084']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-servers'
+
+  # MCP CLI Service (if has web interface)
+  - job_name: 'mcp-cli'
+    static_configs:
+      - targets: ['java-dev:8085']
+    metrics_path: /actuator/prometheus
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'mcp-cli'
+
+  # PostgreSQL Database
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Zipkin Tracing
+  - job_name: 'zipkin'
+    static_configs:
+      - targets: ['zipkin:9411']
+    metrics_path: /prometheus
+    scrape_interval: 30s
+
+  # Node Exporter (if added for system metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['java-dev:9100']
+    scrape_interval: 30s
+
+  # JVM metrics specifically for garbage collection and memory
+  - job_name: 'jvm-metrics'
+    static_configs:
+      - targets: 
+          - 'java-dev:8080'
+          - 'java-dev:8081'
+          - 'java-dev:8082'
+          - 'java-dev:8083'
+          - 'java-dev:8084'
+    metrics_path: /actuator/prometheus
+    scrape_interval: 10s
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'jvm_gc_.*|jvm_memory_.*|jvm_threads_.*|jvm_classes_.*'
+        action: keep
+      - source_labels: [__name__]
+        target_label: __tmp_name
+        replacement: '${1}'
+      - source_labels: [__tmp_name]
+        regex: 'jvm_(.*)'
+        target_label: subsystem
+        replacement: 'jvm'
+
+# Remote write configuration (for long-term storage if needed)
+# remote_write:
+#   - url: "http://victoriametrics:8428/api/v1/write"
+#     queue_config:
+#       max_samples_per_send: 1000
+#       batch_send_deadline: 5s

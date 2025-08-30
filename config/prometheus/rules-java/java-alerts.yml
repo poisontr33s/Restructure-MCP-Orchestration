@@ -1,0 +1,183 @@
+# Prometheus Alert Rules for MCP Java Orchestration System
+# 🏴‍☠️ Captain Guthilda's Java Application Monitoring Rules
+
+groups:
+  # JVM and Application Health
+  - name: java_application_health
+    rules:
+      - alert: ApplicationDown
+        expr: up{job=~"mcp-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MCP service {{ $labels.job }} is down"
+          description: "The {{ $labels.job }} service has been down for more than 1 minute."
+
+      - alert: HighMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High JVM heap memory usage on {{ $labels.instance }}"
+          description: "JVM heap memory usage is above 85% for more than 5 minutes. Current value: {{ $value }}%"
+
+      - alert: CriticalMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical JVM heap memory usage on {{ $labels.instance }}"
+          description: "JVM heap memory usage is above 95% for more than 2 minutes. Current value: {{ $value }}%"
+
+      - alert: HighGCTime
+        expr: rate(jvm_gc_collection_seconds_sum[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High garbage collection time on {{ $labels.instance }}"
+          description: "GC time is consuming more than 10% of CPU time for more than 5 minutes."
+
+  # Spring Boot Specific Alerts
+  - name: spring_boot_health
+    rules:
+      - alert: SpringBootHealthCheckFailed
+        expr: spring_boot_application_ready_time == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Spring Boot health check failed on {{ $labels.instance }}"
+          description: "Spring Boot application health check has been failing for more than 2 minutes."
+
+      - alert: HighHttpErrorRate
+        expr: rate(http_server_requests_seconds_count{status=~"5.."}[5m]) / rate(http_server_requests_seconds_count[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP error rate on {{ $labels.instance }}"
+          description: "HTTP 5xx error rate is above 10% for more than 5 minutes. Current rate: {{ $value }}%"
+
+      - alert: SlowHttpResponses
+        expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow HTTP responses on {{ $labels.instance }}"
+          description: "95th percentile of HTTP response time is above 2 seconds for more than 5 minutes."
+
+      - alert: HighThreadCount
+        expr: jvm_threads_live_threads > 200
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High thread count on {{ $labels.instance }}"
+          description: "JVM thread count is above 200 for more than 5 minutes. Current count: {{ $value }}"
+
+  # Database and Cache Alerts
+  - name: data_layer_health
+    rules:
+      - alert: DatabaseConnectionFailure
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL database has been unreachable for more than 1 minute."
+
+      - alert: RedisConnectionFailure
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis cache has been unreachable for more than 1 minute."
+
+      - alert: HighDatabaseConnections
+        expr: hikaricp_connections_active > 15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High database connection usage on {{ $labels.instance }}"
+          description: "Active database connections are above 15 for more than 5 minutes."
+
+  # AI/ML Integration Alerts
+  - name: ai_integration_health
+    rules:
+      - alert: AIServiceHighLatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High AI service latency on {{ $labels.instance }}"
+          description: "95th percentile of AI service response time is above 10 seconds."
+
+      - alert: AIServiceErrorRate
+        expr: rate(ai_request_errors_total[5m]) / rate(ai_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High AI service error rate on {{ $labels.instance }}"
+          description: "AI service error rate is above 5% for more than 5 minutes."
+
+  # System Resource Alerts
+  - name: system_resources
+    rules:
+      - alert: HighCPUUsage
+        expr: process_cpu_usage > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 5 minutes."
+
+      - alert: LowDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk usage is above 85% for more than 5 minutes."
+
+  # Custom MCP Orchestration Alerts
+  - name: mcp_orchestration
+    rules:
+      - alert: MCPServerUnhealthy
+        expr: mcp_server_health_status != 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP server {{ $labels.server_name }} is unhealthy"
+          description: "MCP server {{ $labels.server_name }} has been reporting unhealthy status for more than 2 minutes."
+
+      - alert: GuthildaServiceDown
+        expr: up{job="mcp-guthilda"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🏴‍☠️ Captain Guthilda's service is down!"
+          description: "The Guthilda orchestration service has been down for more than 1 minute. All hands on deck!"
+
+      - alert: HighMCPMessageLatency
+        expr: histogram_quantile(0.95, rate(mcp_message_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High MCP message processing latency"
+          description: "95th percentile of MCP message processing time is above 5 seconds."

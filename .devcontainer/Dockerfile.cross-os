@@ -1,0 +1,146 @@
+# Multi-stage container for cross-OS MCP v2 development
+# Contains ALL development tools - no host dependencies required
+
+FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.04
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    build-essential \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    jq \
+    unzip \
+    vim \
+    tree \
+    htop \
+    && rm -rf /var/lib/apt/lists/*
+
+# ===============================================
+# Go Installation (Container-based)
+# ===============================================
+ARG GO_VERSION=1.21.6
+RUN wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz \
+    && rm go${GO_VERSION}.linux-amd64.tar.gz
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOROOT="/usr/local/go"
+ENV GOPATH="/go"
+ENV PATH="${GOPATH}/bin:${PATH}"
+
+# ===============================================
+# Java Installation (Container-based)
+# ===============================================
+RUN apt-get update && apt-get install -y openjdk-21-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME="/usr/lib/jvm/java-21-openjdk-amd64"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# Maven Installation
+ARG MAVEN_VERSION=3.9.9
+RUN wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+    && tar -C /usr/local -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+    && ln -s /usr/local/apache-maven-${MAVEN_VERSION} /usr/local/maven \
+    && rm apache-maven-${MAVEN_VERSION}-bin.tar.gz
+
+ENV MAVEN_HOME="/usr/local/maven"
+ENV PATH="${MAVEN_HOME}/bin:${PATH}"
+
+# ===============================================
+# Node.js and pnpm Installation (Container-based)
+# ===============================================
+ARG NODE_VERSION=20
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm@latest \
+    && rm -rf /var/lib/apt/lists/*
+
+# ===============================================
+# Python Installation (Container-based)
+# ===============================================
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-dev \
+    python3-pip \
+    python3.11-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Update python alternatives
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+
+# Install Python development tools
+RUN pip3 install --upgrade pip setuptools wheel \
+    && pip3 install poetry pytest black flake8 mypy
+
+# ===============================================
+# Docker-in-Docker Setup (Container-based)
+# ===============================================
+# Install Docker CLI and Docker Compose
+RUN curl -fsSL https://get.docker.com | sh \
+    && curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose
+
+# ===============================================
+# Development Tools (Container-based)
+# ===============================================
+# Install additional development utilities
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest \
+    && go install github.com/swaggo/swag/cmd/swag@latest
+
+# Install Rust (for additional tooling)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && . $HOME/.cargo/env
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# ===============================================
+# MCP v2 Development Setup
+# ===============================================
+# Create workspace directory
+RUN mkdir -p /workspace /go/src /go/bin /go/pkg
+
+# Set up non-root user for development
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure user environment
+USER $USERNAME
+ENV HOME=/home/$USERNAME
+
+# Set up Go workspace for user
+RUN mkdir -p $HOME/go/src $HOME/go/bin $HOME/go/pkg
+ENV GOPATH="$HOME/go"
+ENV PATH="$GOPATH/bin:${PATH}"
+
+# Create convenient aliases
+RUN echo 'alias ll="ls -la"' >> $HOME/.bashrc \
+    && echo 'alias gs="git status"' >> $HOME/.bashrc \
+    && echo 'alias gp="git pull"' >> $HOME/.bashrc \
+    && echo 'alias mcp-validate="node validate-mcp-v2-implementations.js"' >> $HOME/.bashrc
+
+# Set working directory
+WORKDIR /workspace
+
+# Default command
+CMD ["bash"]

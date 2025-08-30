@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  dev-environment:
+    build:
+      context: .
+      dockerfile: Dockerfile.cross-os
+    volumes:
+      # Mount workspace
+      - ../:/workspace:cached
+      
+      # Docker-in-Docker socket
+      - /var/run/docker.sock:/var/run/docker-host.sock
+      
+      # Preserve shell history and git config
+      - vscode-bash-history:/home/vscode/.bash_history
+      - vscode-git-config:/home/vscode/.gitconfig
+      
+    environment:
+      # Container-based development environment
+      - DOCKER_HOST=unix:///var/run/docker-host.sock
+      
+      # Language tool paths (container-based)
+      - GOROOT=/usr/local/go
+      - GOPATH=/go
+      - JAVA_HOME=/opt/java/openjdk
+      - MAVEN_HOME=/usr/local/maven
+      - NODE_PATH=/usr/local/lib/node_modules
+      
+      # MCP v2 development configuration
+      - MCP_V2_DEV_MODE=true
+      - MCP_V2_VALIDATION_ENABLED=true
+      
+    working_dir: /workspace
+    
+    # Keep container running
+    command: sleep infinity
+    
+    # Enable Docker-in-Docker capabilities
+    privileged: true
+    
+    # Network for inter-service communication
+    networks:
+      - dev-network
+
+volumes:
+  vscode-bash-history:
+  vscode-git-config:
+
+networks:
+  dev-network:
+    driver: bridge

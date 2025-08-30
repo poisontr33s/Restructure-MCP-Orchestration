@@ -1,0 +1,104 @@
+{
+  "name": "MCP v2 Cross-OS Development Environment",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "dev-environment",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+
+  // Container-first approach - all tools in container, not host
+  "features": {
+    // Docker-in-Docker for orchestration testing without host Docker Desktop
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "true"
+    }
+  },
+
+  // VS Code extensions for polyglot development
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Core language support - no host installations needed
+        "golang.go",                           // Go development
+        "redhat.java",                         // Java development  
+        "ms-python.python",                    // Python development
+        "ms-vscode.vscode-typescript-next",    // TypeScript development
+        
+        // Container and Docker support
+        "ms-vscode-remote.remote-containers",  // Dev Containers
+        "ms-azuretools.vscode-docker",         // Docker integration
+        
+        // MCP protocol development
+        "ms-vscode.vscode-json",               // JSON schema validation
+        "redhat.vscode-yaml",                  // YAML support for configs
+        "ms-vscode.vscode-eslint",             // Code quality
+        "esbenp.prettier-vscode",              // Code formatting
+        
+        // Testing and validation
+        "ms-vscode.test-adapter-converter",    // Test framework integration
+        "hbenl.vscode-test-explorer"           // Test explorer
+      ],
+      
+      "settings": {
+        // Go configuration - container paths
+        "go.goroot": "/usr/local/go",
+        "go.gopath": "/go",
+        "go.useLanguageServer": true,
+        "go.toolsManagement.checkForUpdates": "local",
+        
+        // Java configuration - container paths  
+        "java.home": "/opt/java/openjdk",
+        "java.jdt.ls.java.home": "/opt/java/openjdk",
+        "maven.executable.path": "/usr/local/bin/mvn",
+        
+        // Python configuration - container paths
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "python.terminal.activateEnvironment": false,
+        
+        // Node.js configuration - container paths
+        "npm.packageManager": "pnpm",
+        "typescript.preferences.includePackageJsonAutoImports": "on",
+        
+        // Container-specific terminal
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash",
+            "args": ["-l"]
+          }
+        },
+        
+        // Docker-in-Docker configuration
+        "docker.dockerPath": "/usr/local/bin/docker",
+        "docker.host": "unix:///var/run/docker.sock"
+      }
+    }
+  },
+
+  // Forward ports for development servers
+  "forwardPorts": [
+    3000,  // Frontend dev server
+    8080,  // Backend API server
+    9090,  // Prometheus
+    3001,  // Grafana
+    5432,  // PostgreSQL
+    6379,  // Redis
+    15672, // RabbitMQ Management
+    9411   // Jaeger UI
+  ],
+
+  // Development lifecycle commands
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "echo '🚀 MCP v2 Development Environment Ready!'",
+  
+  // Container user configuration
+  "remoteUser": "vscode",
+  "containerUser": "vscode",
+  
+  // Mount project files and preserve git
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
+  ]
+}

@@ -1,0 +1,330 @@
+# Java-First Development Environment for MCP Orchestration System
+# Optimized for Captain Guthilda's Modern MCP Orchestration System - Java 21 Edition
+# 🏴‍☠️ Repository-as-OS approach for Java monorepo development
+
+version: '3.9'
+
+name: mcp-java-orchestration
+
+networks:
+  mcp-net:
+    driver: bridge
+    name: ${MCP_NETWORK:-mcp-java-net}
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  # Maven & Gradle caches for faster builds
+  maven_repo:
+    name: mcp-maven-repo
+  gradle_cache:
+    name: mcp-gradle-cache
+  
+  # Database persistence
+  postgres_data:
+    name: mcp-postgres-data
+  redis_data:
+    name: mcp-redis-data
+  
+  # Monitoring data
+  prometheus_data:
+    name: mcp-prometheus-data
+  grafana_data:
+    name: mcp-grafana-data
+  
+  # IDE workspace persistence (for settings, indexes, etc.)
+  idea_workspace:
+    name: mcp-idea-workspace
+  vscode_workspace:
+    name: mcp-vscode-workspace
+
+services:
+  # =================================================================
+  # JAVA DEVELOPMENT ENVIRONMENT (Primary Container)
+  # =================================================================
+  
+  java-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.java-dev
+      args:
+        - JAVA_VERSION=${JAVA_VERSION:-21}
+        - MAVEN_VERSION=${MAVEN_VERSION:-3.9.6}
+        - GRADLE_VERSION=${GRADLE_VERSION:-8.5}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_ID=${GROUP_ID:-1000}
+      target: development
+    container_name: mcp-java-dev
+    hostname: java-dev
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.10
+    volumes:
+      # Mount entire repository as workspace
+      - type: bind
+        source: .
+        target: /workspace
+        consistency: cached
+      # Persistent Maven repository
+      - maven_repo:/home/dev/.m2/repository
+      # Persistent Gradle cache
+      - gradle_cache:/home/dev/.gradle
+      # IDE workspaces
+      - idea_workspace:/home/dev/.IntelliJIdea2024.1
+      - vscode_workspace:/home/dev/.vscode-server
+      # SSH keys for git operations
+      - ${HOME}/.ssh:/home/dev/.ssh:ro
+      # Git configuration
+      - ${HOME}/.gitconfig:/home/dev/.gitconfig:ro
+    environment:
+      - WORKSPACE_ROOT=/workspace
+      - JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+      - MAVEN_HOME=/usr/share/maven
+      - GRADLE_HOME=/opt/gradle
+      - JAVA_OPTS=-Xmx4g -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+      - MAVEN_OPTS=-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+      - GRADLE_OPTS=-Xmx2g -XX:+UseG1GC -Dorg.gradle.daemon=true -Dorg.gradle.parallel=true
+      - SPRING_PROFILES_ACTIVE=dev,docker
+      - LOGGING_LEVEL_ROOT=INFO
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    ports:
+      # Spring Boot applications
+      - "8080:8080"   # mcp-core
+      - "8081:8081"   # mcp-monitor  
+      - "8082:8082"   # mcp-guthilda
+      - "8083:8083"   # mcp-ai-integration
+      - "8084:8084"   # mcp-servers
+      - "8085:8085"   # mcp-cli (if has web interface)
+      # Debug ports for remote debugging
+      - "5005:5005"   # mcp-core debug
+      - "5006:5006"   # mcp-monitor debug
+      - "5007:5007"   # mcp-guthilda debug
+      - "5008:5008"   # mcp-ai-integration debug
+      # Additional dev servers
+      - "3000:3000"   # Frontend dev server (if any)
+      - "9999:9999"   # Hot reload server
+    depends_on:
+      - postgres
+      - redis
+      - prometheus
+    command: ["/bin/bash", "-c", "while true; do sleep 30; done"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # DATABASE LAYER (PostgreSQL for Spring Boot apps)
+  # =================================================================
+  
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    container_name: mcp-postgres
+    hostname: postgres
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.20
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-mcp_orchestration}
+      - POSTGRES_USER=${POSTGRES_USER:-mcp_dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-java_dev_2025}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mcp_dev} -d ${POSTGRES_DB:-mcp_orchestration}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # =================================================================
+  # CACHE & SESSION STORE (Redis for Spring Boot)
+  # =================================================================
+  
+  redis:
+    image: redis:${REDIS_VERSION:-7.2}-alpine
+    container_name: mcp-redis
+    hostname: redis
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.21
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-java_redis_2025}
+    volumes:
+      - redis_data:/data
+      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD:-java_redis_2025}"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-java_redis_2025}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # =================================================================
+  # MONITORING & OBSERVABILITY (Optimized for Spring Boot)
+  # =================================================================
+  
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    container_name: mcp-prometheus
+    hostname: prometheus
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.30
+    volumes:
+      - ./config/prometheus/prometheus-java.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/rules-java:/etc/prometheus/rules
+      - prometheus_data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--log.level=info'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    container_name: mcp-grafana
+    hostname: grafana
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.31
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-java_admin_2025}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-worldmap-panel
+      - GF_FEATURE_TOGGLES_ENABLE=ngalert
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+      - ./config/grafana/dashboards-java:/var/lib/grafana/dashboards
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # =================================================================
+  # ZIPKIN (Distributed Tracing for Spring Boot)
+  # =================================================================
+  
+  zipkin:
+    image: openzipkin/zipkin:${ZIPKIN_VERSION:-latest}
+    container_name: mcp-zipkin
+    hostname: zipkin
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.32
+    environment:
+      - STORAGE_TYPE=mem
+      - JAVA_OPTS=-Xmx512m -XX:+UseG1GC
+    ports:
+      - "${ZIPKIN_PORT:-9411}:9411"
+    restart: unless-stopped
+
+  # =================================================================
+  # SONARQUBE (Code Quality Analysis)
+  # =================================================================
+  
+  sonarqube:
+    image: sonarqube:${SONARQUBE_VERSION:-community}
+    container_name: mcp-sonarqube
+    hostname: sonarqube
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.33
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-mcp_orchestration}
+      - SONAR_JDBC_USERNAME=${POSTGRES_USER:-mcp_dev}
+      - SONAR_JDBC_PASSWORD=${POSTGRES_PASSWORD:-java_dev_2025}
+      - SONAR_TELEMETRY_ENABLE=false
+    volumes:
+      - ./config/sonarqube/data:/opt/sonarqube/data
+      - ./config/sonarqube/logs:/opt/sonarqube/logs
+      - ./config/sonarqube/extensions:/opt/sonarqube/extensions
+    ports:
+      - "${SONARQUBE_PORT:-9000}:9000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    
+  # =================================================================
+  # NEXUS (Maven Repository Manager)
+  # =================================================================
+  
+  nexus:
+    image: sonatype/nexus3:${NEXUS_VERSION:-latest}
+    container_name: mcp-nexus
+    hostname: nexus
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.34
+    environment:
+      - NEXUS_SECURITY_RANDOMPASSWORD=false
+    volumes:
+      - ./config/nexus/data:/nexus-data
+    ports:
+      - "${NEXUS_PORT:-8081}:8081"
+    restart: unless-stopped
+
+  # =================================================================
+  # MAILHOG (Email Testing for Spring Boot)
+  # =================================================================
+  
+  mailhog:
+    image: mailhog/mailhog:${MAILHOG_VERSION:-latest}
+    container_name: mcp-mailhog
+    hostname: mailhog
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.35
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"  # SMTP
+      - "${MAILHOG_WEB_PORT:-8025}:8025"   # Web UI
+    restart: unless-stopped
+
+  # =================================================================
+  # API GATEWAY (Nginx for routing to Spring Boot services)
+  # =================================================================
+  
+  gateway:
+    image: nginx:${NGINX_VERSION:-alpine}
+    container_name: mcp-gateway
+    hostname: gateway
+    networks:
+      mcp-net:
+        ipv4_address: 172.21.0.50
+    volumes:
+      - ./config/nginx/nginx-java.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/ssl:/etc/nginx/ssl
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - java-dev
+      - grafana
+      - prometheus
+      - sonarqube
+      - nexus
+    restart: unless-stopped

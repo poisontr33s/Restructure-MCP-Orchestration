@@ -1,0 +1,263 @@
+# MCP v2 Repository-OS Docker Compose Configuration
+# This creates a complete development environment within your repository
+
+version: '3.9'
+
+name: mcp-v2-repo-os
+
+networks:
+  repo-net:
+    driver: bridge
+    name: ${REPO_NETWORK:-mcp-v2-repo-net}
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  # Persistent data volumes
+  postgres_data:
+    name: mcp-v2-postgres-data
+  redis_data:
+    name: mcp-v2-redis-data
+  grafana_data:
+    name: mcp-v2-grafana-data
+  prometheus_data:
+    name: mcp-v2-prometheus-data
+  registry_data:
+    name: mcp-v2-registry-data
+  
+  # Shared cache volumes
+  maven_cache:
+    name: mcp-v2-maven-cache
+  npm_cache:
+    name: mcp-v2-npm-cache
+  pip_cache:
+    name: mcp-v2-pip-cache
+
+services:
+  # =================================================================
+  # DEVELOPMENT ENVIRONMENT (Repository OS Core)
+  # =================================================================
+  
+  dev-env:
+    build:
+      context: .
+      dockerfile: Dockerfile.repo-os
+      args:
+        - NODE_VERSION=${NODE_VERSION:-20.11.0}
+        - JAVA_VERSION=${JAVA_VERSION:-21}
+        - PYTHON_VERSION=${PYTHON_VERSION:-3.12}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_ID=${GROUP_ID:-1000}
+      target: development
+    container_name: mcp-v2-repo-os
+    hostname: repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.10
+    volumes:
+      # Mount entire repository as workspace
+      - type: bind
+        source: .
+        target: ${WORKSPACE_ROOT:-/workspace}
+      # Shared caches for faster builds
+      - maven_cache:/home/dev/.m2
+      - npm_cache:/home/dev/.npm
+      - pip_cache:/home/dev/.cache/pip
+      # SSH keys for git operations
+      - ${HOME}/.ssh:/home/dev/.ssh:ro
+      # Git configuration
+      - ${HOME}/.gitconfig:/home/dev/.gitconfig:ro
+    environment:
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT:-/workspace}
+      - NODE_ENV=development
+      - JAVA_OPTS=-Xmx2g -XX:+UseG1GC
+      - MAVEN_OPTS=-Xmx1g
+      - PYTHONPATH=${WORKSPACE_ROOT:-/workspace}
+    working_dir: ${WORKSPACE_ROOT:-/workspace}
+    stdin_open: true
+    tty: true
+    ports:
+      # Development servers
+      - "3000:3000"   # TypeScript dev server
+      - "8080:8080"   # Java Spring Boot
+      - "8000:8000"   # Python FastAPI
+      - "4000:4000"   # Additional dev server
+    depends_on:
+      - postgres-repo-os
+      - redis-repo-os
+      - prometheus-repo-os
+    command: ["/bin/bash", "-c", "while true; do sleep 30; done"]
+
+  # =================================================================
+  # DATABASE LAYER
+  # =================================================================
+  
+  postgres-repo-os:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    container_name: mcp-v2-postgres
+    hostname: postgres-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.20
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-mcp_v2_repo}
+      - POSTGRES_USER=${POSTGRES_USER:-mcp_dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-repo_dev_2025}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mcp_dev} -d ${POSTGRES_DB:-mcp_v2_repo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # =================================================================
+  # CACHE & MESSAGING LAYER  
+  # =================================================================
+  
+  redis-repo-os:
+    image: redis:${REDIS_VERSION:-7.2}-alpine
+    container_name: mcp-v2-redis
+    hostname: redis-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.21
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-repo_redis_2025}
+    volumes:
+      - redis_data:/data
+      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD:-repo_redis_2025}"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-repo_redis_2025}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  rabbitmq-repo-os:
+    image: rabbitmq:${RABBITMQ_VERSION:-3.12-management}
+    container_name: mcp-v2-rabbitmq
+    hostname: rabbitmq-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.22
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-mcp_queue}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-queue_2025}
+      - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
+    volumes:
+      - ./config/rabbitmq/:/etc/rabbitmq/
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # =================================================================
+  # MONITORING & OBSERVABILITY
+  # =================================================================
+  
+  prometheus-repo-os:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    container_name: mcp-v2-prometheus
+    hostname: prometheus-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.30
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/rules/:/etc/prometheus/rules/
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    restart: unless-stopped
+
+  grafana-repo-os:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    container_name: mcp-v2-grafana
+    hostname: grafana-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.31
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-repo_admin_2025}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./config/grafana/dashboards/:/var/lib/grafana/dashboards/
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus-repo-os
+    restart: unless-stopped
+
+  # =================================================================
+  # CONTAINER REGISTRY (For Repository-Internal Images)
+  # =================================================================
+  
+  registry-repo-os:
+    image: registry:${REGISTRY_VERSION:-2.8}
+    container_name: mcp-v2-registry
+    hostname: registry-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.40
+    environment:
+      - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=Repository Registry
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+    volumes:
+      - registry_data:/var/lib/registry
+      - ./config/registry/:/auth/
+    ports:
+      - "${REGISTRY_PORT:-5000}:5000"
+    restart: unless-stopped
+
+  # =================================================================
+  # REVERSE PROXY & API GATEWAY
+  # =================================================================
+  
+  gateway-repo-os:
+    image: caddy:${CADDY_VERSION:-2.7-alpine}
+    container_name: mcp-v2-gateway
+    hostname: gateway-repo-os
+    networks:
+      repo-net:
+        ipv4_address: 172.20.0.50
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./config/caddy/certs:/etc/caddy/certs
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8443:8443"  # Admin API
+    depends_on:
+      - dev-env
+      - grafana-repo-os
+      - prometheus-repo-os
+    restart: unless-stopped

@@ -1,0 +1,187 @@
+version: '3.8'
+
+# GPU-Accelerated MCP v2 Infrastructure
+# Extends base docker-compose.yml with RTX 4090 GPU support
+
+services:
+  # GPU-Accelerated Development Environment
+  dev-environment-gpu:
+    image: nvidia/cuda:12.0-devel-ubuntu22.04
+    runtime: nvidia
+    container_name: mcp-v2-dev-gpu
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+      - NODE_OPTIONS=--max-old-space-size=8192
+    volumes:
+      - ../..:/workspace:rw
+      - gpu_dev_cache:/tmp/gpu_cache
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspace
+    command: tail -f /dev/null
+    ports:
+      - "3000:3000"   # Development server
+      - "8080:8080"   # MCP protocol server
+      - "9000:9000"   # Monitoring dashboard
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - development
+
+  # GPU-Accelerated Build Service
+  mcp-v2-gpu-builder:
+    image: nvidia/cuda:12.0-devel-ubuntu22.04
+    runtime: nvidia
+    container_name: mcp-v2-gpu-builder
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - MAKEFLAGS=-j32  # Utilize all 32 threads
+    volumes:
+      - ../..:/workspace:rw
+      - gpu_build_cache:/tmp/gpu_cache
+      - maven_cache:/root/.m2
+      - npm_cache:/root/.npm
+      - go_cache:/root/go
+    working_dir: /workspace
+    command: |
+      bash -c "
+        apt-get update && apt-get install -y curl wget git build-essential &&
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&
+        apt-get install -y nodejs &&
+        npm install -g pnpm &&
+        curl -s https://get.sdkman.io | bash &&
+        source ~/.sdkman/bin/sdkman-init.sh &&
+        sdk install java 21.0.1-open &&
+        wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz &&
+        tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz &&
+        export PATH=/usr/local/go/bin:$PATH &&
+        tail -f /dev/null
+      "
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - build
+
+  # GPU Performance Monitor
+  gpu-monitor:
+    image: mindprince/nvidia_gpu_prometheus_exporter:latest
+    runtime: nvidia
+    container_name: mcp-v2-gpu-monitor
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "9445:9445"
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - monitoring
+    restart: unless-stopped
+
+  # Enhanced Prometheus for GPU Metrics
+  prometheus-gpu:
+    image: prom/prometheus:latest
+    container_name: mcp-v2-prometheus-gpu
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus-gpu.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_gpu_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - monitoring
+    restart: unless-stopped
+
+  # GPU-Optimized Grafana Dashboard
+  grafana-gpu:
+    image: grafana/grafana:latest
+    container_name: mcp-v2-grafana-gpu
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=mcpv2_gpu_admin
+      - GF_FEATURE_TOGGLES_ENABLE=ngalert
+    volumes:
+      - grafana_gpu_data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - prometheus-gpu
+      - gpu-monitor
+
+  # Parallel Test Runner (GPU-accelerated)
+  test-runner-gpu:
+    image: nvidia/cuda:12.0-runtime-ubuntu22.04
+    runtime: nvidia
+    container_name: mcp-v2-test-runner-gpu
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NODE_OPTIONS=--max-old-space-size=4096
+      - MAVEN_OPTS=-Xmx4g -XX:+UseG1GC -XX:MaxGCPauseMillis=100
+      - PYTEST_XDIST_WORKER_COUNT=8
+    volumes:
+      - ../..:/workspace:rw
+      - test_cache:/tmp/test_cache
+    working_dir: /workspace
+    command: |
+      bash -c "
+        echo 'Setting up parallel test environment...' &&
+        # Install required runtimes
+        apt-get update && apt-get install -y curl wget &&
+        # Node.js setup
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&
+        apt-get install -y nodejs &&
+        npm install -g pnpm &&
+        # Java setup
+        apt-get install -y openjdk-21-jdk maven &&
+        # Python setup
+        apt-get install -y python3 python3-pip &&
+        pip3 install pytest pytest-xdist &&
+        echo 'Test environment ready. Use docker exec to run tests.' &&
+        tail -f /dev/null
+      "
+    networks:
+      - mcp-v2-network
+    profiles:
+      - gpu
+      - testing
+
+volumes:
+  gpu_dev_cache:
+    driver: local
+  gpu_build_cache:
+    driver: local
+  maven_cache:
+    driver: local
+  npm_cache:
+    driver: local
+  go_cache:
+    driver: local
+  test_cache:
+    driver: local
+  prometheus_gpu_data:
+    driver: local
+  grafana_gpu_data:
+    driver: local
+
+networks:
+  mcp-v2-network:
+    external: true

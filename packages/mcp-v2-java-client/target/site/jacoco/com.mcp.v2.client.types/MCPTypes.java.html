@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MCPTypes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP v2 Java Client</a> &gt; <a href="index.source.html" class="el_package">com.mcp.v2.client.types</a> &gt; <span class="el_source">MCPTypes.java</span></div><h1>MCPTypes.java</h1><pre class="source lang-java linenums">package com.mcp.v2.client.types;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Core types for MCP v2 protocol implementation in Java.
+ */
+<span class="nc" id="L14">public class MCPTypes {</span>
+
+    /**
+     * Base interface for all MCP v2 messages.
+     */
+    public interface MCPMessage {
+        String getId();
+        String getVersion();
+        Instant getTimestamp();
+        Map&lt;String, Object&gt; getMetadata();
+    }
+
+    /**
+     * MCP v2 Request message structure.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class MCPRequest implements MCPMessage {
+        @JsonProperty(&quot;id&quot;)
+        private String id;
+
+<span class="fc" id="L34">        @JsonProperty(&quot;jsonrpc&quot;)</span>
+        private String jsonrpc = &quot;2.0&quot;;
+
+        @JsonProperty(&quot;method&quot;)
+        private String method;
+
+        @JsonProperty(&quot;params&quot;)
+        private JsonNode params;
+
+<span class="fc" id="L43">        @JsonProperty(&quot;version&quot;)</span>
+        private String version = &quot;2.0&quot;;
+
+        @JsonProperty(&quot;timestamp&quot;)
+        private Instant timestamp;
+
+        @JsonProperty(&quot;metadata&quot;)
+        private Map&lt;String, Object&gt; metadata;
+
+        @JsonProperty(&quot;context&quot;)
+        private ContextInfo context;
+
+        // Constructors
+<span class="fc" id="L56">        public MCPRequest() {</span>
+<span class="fc" id="L57">            this.timestamp = Instant.now();</span>
+<span class="fc" id="L58">        }</span>
+
+        public MCPRequest(String id, String method, JsonNode params) {
+<span class="fc" id="L61">            this();</span>
+<span class="fc" id="L62">            this.id = id;</span>
+<span class="fc" id="L63">            this.method = method;</span>
+<span class="fc" id="L64">            this.params = params;</span>
+<span class="fc" id="L65">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L68">        public String getId() { return id; }</span>
+<span class="nc" id="L69">        public void setId(String id) { this.id = id; }</span>
+
+<span class="fc" id="L71">        public String getJsonrpc() { return jsonrpc; }</span>
+<span class="nc" id="L72">        public void setJsonrpc(String jsonrpc) { this.jsonrpc = jsonrpc; }</span>
+
+<span class="fc" id="L74">        public String getMethod() { return method; }</span>
+<span class="nc" id="L75">        public void setMethod(String method) { this.method = method; }</span>
+
+<span class="fc" id="L77">        public JsonNode getParams() { return params; }</span>
+<span class="nc" id="L78">        public void setParams(JsonNode params) { this.params = params; }</span>
+
+<span class="fc" id="L80">        public String getVersion() { return version; }</span>
+<span class="nc" id="L81">        public void setVersion(String version) { this.version = version; }</span>
+
+<span class="fc" id="L83">        public Instant getTimestamp() { return timestamp; }</span>
+<span class="nc" id="L84">        public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }</span>
+
+<span class="nc" id="L86">        public Map&lt;String, Object&gt; getMetadata() { return metadata; }</span>
+<span class="nc" id="L87">        public void setMetadata(Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }</span>
+
+<span class="nc" id="L89">        public ContextInfo getContext() { return context; }</span>
+<span class="nc" id="L90">        public void setContext(ContextInfo context) { this.context = context; }</span>
+    }
+
+    /**
+     * MCP v2 Response message structure.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class MCPResponse implements MCPMessage {
+        @JsonProperty(&quot;id&quot;)
+        private String id;
+
+<span class="fc" id="L101">        @JsonProperty(&quot;jsonrpc&quot;)</span>
+        private String jsonrpc = &quot;2.0&quot;;
+
+        @JsonProperty(&quot;result&quot;)
+        private JsonNode result;
+
+        @JsonProperty(&quot;error&quot;)
+        private MCPError error;
+
+<span class="fc" id="L110">        @JsonProperty(&quot;version&quot;)</span>
+        private String version = &quot;2.0&quot;;
+
+        @JsonProperty(&quot;timestamp&quot;)
+        private Instant timestamp;
+
+        @JsonProperty(&quot;metadata&quot;)
+        private Map&lt;String, Object&gt; metadata;
+
+        @JsonProperty(&quot;context&quot;)
+        private ContextInfo context;
+
+        // Constructors
+<span class="fc" id="L123">        public MCPResponse() {</span>
+<span class="fc" id="L124">            this.timestamp = Instant.now();</span>
+<span class="fc" id="L125">        }</span>
+
+        public MCPResponse(String id, JsonNode result) {
+<span class="fc" id="L128">            this();</span>
+<span class="fc" id="L129">            this.id = id;</span>
+<span class="fc" id="L130">            this.result = result;</span>
+<span class="fc" id="L131">        }</span>
+
+        public MCPResponse(String id, MCPError error) {
+<span class="fc" id="L134">            this();</span>
+<span class="fc" id="L135">            this.id = id;</span>
+<span class="fc" id="L136">            this.error = error;</span>
+<span class="fc" id="L137">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L140">        public String getId() { return id; }</span>
+<span class="nc" id="L141">        public void setId(String id) { this.id = id; }</span>
+
+<span class="fc" id="L143">        public String getJsonrpc() { return jsonrpc; }</span>
+<span class="nc" id="L144">        public void setJsonrpc(String jsonrpc) { this.jsonrpc = jsonrpc; }</span>
+
+<span class="fc" id="L146">        public JsonNode getResult() { return result; }</span>
+<span class="nc" id="L147">        public void setResult(JsonNode result) { this.result = result; }</span>
+
+<span class="fc" id="L149">        public MCPError getError() { return error; }</span>
+<span class="nc" id="L150">        public void setError(MCPError error) { this.error = error; }</span>
+
+<span class="fc" id="L152">        public String getVersion() { return version; }</span>
+<span class="nc" id="L153">        public void setVersion(String version) { this.version = version; }</span>
+
+<span class="fc" id="L155">        public Instant getTimestamp() { return timestamp; }</span>
+<span class="nc" id="L156">        public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }</span>
+
+<span class="nc" id="L158">        public Map&lt;String, Object&gt; getMetadata() { return metadata; }</span>
+<span class="nc" id="L159">        public void setMetadata(Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }</span>
+
+<span class="nc" id="L161">        public ContextInfo getContext() { return context; }</span>
+<span class="nc" id="L162">        public void setContext(ContextInfo context) { this.context = context; }</span>
+
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        public boolean isSuccess() { return error == null; }</span>
+    }
+
+    /**
+     * MCP v2 Error structure.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class MCPError {
+        @JsonProperty(&quot;code&quot;)
+        private int code;
+
+        @JsonProperty(&quot;message&quot;)
+        private String message;
+
+        @JsonProperty(&quot;data&quot;)
+        private JsonNode data;
+
+        @JsonProperty(&quot;type&quot;)
+        private String type;
+
+        @JsonProperty(&quot;timestamp&quot;)
+        private Instant timestamp;
+
+        // Constructors
+<span class="fc" id="L188">        public MCPError() {</span>
+<span class="fc" id="L189">            this.timestamp = Instant.now();</span>
+<span class="fc" id="L190">        }</span>
+
+        public MCPError(int code, String message) {
+<span class="fc" id="L193">            this();</span>
+<span class="fc" id="L194">            this.code = code;</span>
+<span class="fc" id="L195">            this.message = message;</span>
+<span class="fc" id="L196">        }</span>
+
+        public MCPError(int code, String message, String type) {
+<span class="fc" id="L199">            this(code, message);</span>
+<span class="fc" id="L200">            this.type = type;</span>
+<span class="fc" id="L201">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L204">        public int getCode() { return code; }</span>
+<span class="nc" id="L205">        public void setCode(int code) { this.code = code; }</span>
+
+<span class="fc" id="L207">        public String getMessage() { return message; }</span>
+<span class="nc" id="L208">        public void setMessage(String message) { this.message = message; }</span>
+
+<span class="nc" id="L210">        public JsonNode getData() { return data; }</span>
+<span class="nc" id="L211">        public void setData(JsonNode data) { this.data = data; }</span>
+
+<span class="fc" id="L213">        public String getType() { return type; }</span>
+<span class="nc" id="L214">        public void setType(String type) { this.type = type; }</span>
+
+<span class="nc" id="L216">        public Instant getTimestamp() { return timestamp; }</span>
+<span class="nc" id="L217">        public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }</span>
+    }
+
+    /**
+     * Context information for MCP operations.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ContextInfo {
+        @JsonProperty(&quot;sessionId&quot;)
+        private String sessionId;
+
+        @JsonProperty(&quot;userId&quot;)
+        private String userId;
+
+        @JsonProperty(&quot;clientId&quot;)
+        private String clientId;
+
+        @JsonProperty(&quot;capabilities&quot;)
+        private Map&lt;String, Boolean&gt; capabilities;
+
+        @JsonProperty(&quot;metadata&quot;)
+        private Map&lt;String, Object&gt; metadata;
+
+        @JsonProperty(&quot;ttl&quot;)
+        private Long ttl;
+
+        @JsonProperty(&quot;priority&quot;)
+        private Integer priority;
+
+        @JsonProperty(&quot;tags&quot;)
+        private String[] tags;
+
+        // Constructors
+<span class="nc" id="L250">        public ContextInfo() {}</span>
+
+<span class="fc" id="L252">        public ContextInfo(String sessionId, String userId, String clientId) {</span>
+<span class="fc" id="L253">            this.sessionId = sessionId;</span>
+<span class="fc" id="L254">            this.userId = userId;</span>
+<span class="fc" id="L255">            this.clientId = clientId;</span>
+<span class="fc" id="L256">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L259">        public String getSessionId() { return sessionId; }</span>
+<span class="nc" id="L260">        public void setSessionId(String sessionId) { this.sessionId = sessionId; }</span>
+
+<span class="fc" id="L262">        public String getUserId() { return userId; }</span>
+<span class="nc" id="L263">        public void setUserId(String userId) { this.userId = userId; }</span>
+
+<span class="fc" id="L265">        public String getClientId() { return clientId; }</span>
+<span class="nc" id="L266">        public void setClientId(String clientId) { this.clientId = clientId; }</span>
+
+<span class="fc" id="L268">        public Map&lt;String, Boolean&gt; getCapabilities() { return capabilities; }</span>
+<span class="nc" id="L269">        public void setCapabilities(Map&lt;String, Boolean&gt; capabilities) { this.capabilities = capabilities; }</span>
+
+<span class="fc" id="L271">        public Map&lt;String, Object&gt; getMetadata() { return metadata; }</span>
+<span class="nc" id="L272">        public void setMetadata(Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }</span>
+
+<span class="fc" id="L274">        public Long getTtl() { return ttl; }</span>
+<span class="fc" id="L275">        public void setTtl(Long ttl) { this.ttl = ttl; }</span>
+
+<span class="fc" id="L277">        public Integer getPriority() { return priority; }</span>
+<span class="fc" id="L278">        public void setPriority(Integer priority) { this.priority = priority; }</span>
+
+<span class="fc" id="L280">        public String[] getTags() { return tags; }</span>
+<span class="nc" id="L281">        public void setTags(String[] tags) { this.tags = tags; }</span>
+    }
+
+    /**
+     * Transport configuration for different connection types.
+     */
+    public static class TransportConfig {
+        private String type;
+        private String endpoint;
+        private Map&lt;String, Object&gt; options;
+<span class="pc" id="L291">        private int timeout = 30000;</span>
+<span class="pc" id="L292">        private int retryAttempts = 3;</span>
+<span class="pc" id="L293">        private boolean enableMetrics = true;</span>
+
+        // Constructors
+<span class="nc" id="L296">        public TransportConfig() {}</span>
+
+<span class="fc" id="L298">        public TransportConfig(String type, String endpoint) {</span>
+<span class="fc" id="L299">            this.type = type;</span>
+<span class="fc" id="L300">            this.endpoint = endpoint;</span>
+<span class="fc" id="L301">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L304">        public String getType() { return type; }</span>
+<span class="nc" id="L305">        public void setType(String type) { this.type = type; }</span>
+
+<span class="fc" id="L307">        public String getEndpoint() { return endpoint; }</span>
+<span class="nc" id="L308">        public void setEndpoint(String endpoint) { this.endpoint = endpoint; }</span>
+
+<span class="nc" id="L310">        public Map&lt;String, Object&gt; getOptions() { return options; }</span>
+<span class="nc" id="L311">        public void setOptions(Map&lt;String, Object&gt; options) { this.options = options; }</span>
+
+<span class="fc" id="L313">        public int getTimeout() { return timeout; }</span>
+<span class="fc" id="L314">        public void setTimeout(int timeout) { this.timeout = timeout; }</span>
+
+<span class="fc" id="L316">        public int getRetryAttempts() { return retryAttempts; }</span>
+<span class="fc" id="L317">        public void setRetryAttempts(int retryAttempts) { this.retryAttempts = retryAttempts; }</span>
+
+<span class="fc" id="L319">        public boolean isEnableMetrics() { return enableMetrics; }</span>
+<span class="fc" id="L320">        public void setEnableMetrics(boolean enableMetrics) { this.enableMetrics = enableMetrics; }</span>
+    }
+
+    /**
+     * Client configuration for MCP v2 clients.
+     */
+    public static class ClientConfig {
+        private String clientId;
+<span class="pc" id="L328">        private String version = &quot;2.0&quot;;</span>
+        private TransportConfig transport;
+        private ContextInfo defaultContext;
+<span class="pc" id="L331">        private boolean enableCaching = true;</span>
+<span class="pc" id="L332">        private boolean enableMetrics = true;</span>
+<span class="pc" id="L333">        private boolean enableLogging = true;</span>
+        private Map&lt;String, Object&gt; metadata;
+
+        // Constructors
+<span class="nc" id="L337">        public ClientConfig() {}</span>
+
+<span class="fc" id="L339">        public ClientConfig(String clientId, TransportConfig transport) {</span>
+<span class="fc" id="L340">            this.clientId = clientId;</span>
+<span class="fc" id="L341">            this.transport = transport;</span>
+<span class="fc" id="L342">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L345">        public String getClientId() { return clientId; }</span>
+<span class="nc" id="L346">        public void setClientId(String clientId) { this.clientId = clientId; }</span>
+
+<span class="fc" id="L348">        public String getVersion() { return version; }</span>
+<span class="nc" id="L349">        public void setVersion(String version) { this.version = version; }</span>
+
+<span class="fc" id="L351">        public TransportConfig getTransport() { return transport; }</span>
+<span class="nc" id="L352">        public void setTransport(TransportConfig transport) { this.transport = transport; }</span>
+
+<span class="fc" id="L354">        public ContextInfo getDefaultContext() { return defaultContext; }</span>
+<span class="fc" id="L355">        public void setDefaultContext(ContextInfo defaultContext) { this.defaultContext = defaultContext; }</span>
+
+<span class="fc" id="L357">        public boolean isEnableCaching() { return enableCaching; }</span>
+<span class="fc" id="L358">        public void setEnableCaching(boolean enableCaching) { this.enableCaching = enableCaching; }</span>
+
+<span class="fc" id="L360">        public boolean isEnableMetrics() { return enableMetrics; }</span>
+<span class="fc" id="L361">        public void setEnableMetrics(boolean enableMetrics) { this.enableMetrics = enableMetrics; }</span>
+
+<span class="fc" id="L363">        public boolean isEnableLogging() { return enableLogging; }</span>
+<span class="fc" id="L364">        public void setEnableLogging(boolean enableLogging) { this.enableLogging = enableLogging; }</span>
+
+<span class="fc" id="L366">        public Map&lt;String, Object&gt; getMetadata() { return metadata; }</span>
+<span class="fc" id="L367">        public void setMetadata(Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }</span>
+    }
+
+    /**
+     * Event types for MCP v2 event system.
+     */
+<span class="fc" id="L373">    public enum EventType {</span>
+<span class="fc" id="L374">        REQUEST_SENT(&quot;request.sent&quot;),</span>
+<span class="fc" id="L375">        RESPONSE_RECEIVED(&quot;response.received&quot;),</span>
+<span class="fc" id="L376">        ERROR_OCCURRED(&quot;error.occurred&quot;),</span>
+<span class="fc" id="L377">        CONNECTION_OPENED(&quot;connection.opened&quot;),</span>
+<span class="fc" id="L378">        CONNECTION_CLOSED(&quot;connection.closed&quot;),</span>
+<span class="fc" id="L379">        CONNECTION_ERROR(&quot;connection.error&quot;),</span>
+<span class="fc" id="L380">        CONTEXT_UPDATED(&quot;context.updated&quot;),</span>
+<span class="fc" id="L381">        METRICS_COLLECTED(&quot;metrics.collected&quot;);</span>
+
+        private final String value;
+
+<span class="fc" id="L385">        EventType(String value) {</span>
+<span class="fc" id="L386">            this.value = value;</span>
+<span class="fc" id="L387">        }</span>
+
+        public String getValue() {
+<span class="fc" id="L390">            return value;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L395">            return value;</span>
+        }
+    }
+
+    /**
+     * Event data structure for MCP v2 events.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class EventData {
+        @JsonProperty(&quot;type&quot;)
+        private EventType type;
+
+        @JsonProperty(&quot;timestamp&quot;)
+        private Instant timestamp;
+
+        @JsonProperty(&quot;data&quot;)
+        private JsonNode data;
+
+        @JsonProperty(&quot;source&quot;)
+        private String source;
+
+        @JsonProperty(&quot;target&quot;)
+        private String target;
+
+        @JsonProperty(&quot;metadata&quot;)
+        private Map&lt;String, Object&gt; metadata;
+
+        // Constructors
+<span class="fc" id="L423">        public EventData() {</span>
+<span class="fc" id="L424">            this.timestamp = Instant.now();</span>
+<span class="fc" id="L425">        }</span>
+
+        public EventData(EventType type, JsonNode data) {
+<span class="fc" id="L428">            this();</span>
+<span class="fc" id="L429">            this.type = type;</span>
+<span class="fc" id="L430">            this.data = data;</span>
+<span class="fc" id="L431">        }</span>
+
+        // Getters and Setters
+<span class="fc" id="L434">        public EventType getType() { return type; }</span>
+<span class="nc" id="L435">        public void setType(EventType type) { this.type = type; }</span>
+
+<span class="nc" id="L437">        public Instant getTimestamp() { return timestamp; }</span>
+<span class="nc" id="L438">        public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }</span>
+
+<span class="nc" id="L440">        public JsonNode getData() { return data; }</span>
+<span class="nc" id="L441">        public void setData(JsonNode data) { this.data = data; }</span>
+
+<span class="nc" id="L443">        public String getSource() { return source; }</span>
+<span class="fc" id="L444">        public void setSource(String source) { this.source = source; }</span>
+
+<span class="nc" id="L446">        public String getTarget() { return target; }</span>
+<span class="nc" id="L447">        public void setTarget(String target) { this.target = target; }</span>
+
+<span class="nc" id="L449">        public Map&lt;String, Object&gt; getMetadata() { return metadata; }</span>
+<span class="nc" id="L450">        public void setMetadata(Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }</span>
+    }
+
+    /**
+     * Standard error codes for MCP v2.
+     */
+<span class="nc" id="L456">    public static class ErrorCodes {</span>
+        public static final int PARSE_ERROR = -32700;
+        public static final int INVALID_REQUEST = -32600;
+        public static final int METHOD_NOT_FOUND = -32601;
+        public static final int INVALID_PARAMS = -32602;
+        public static final int INTERNAL_ERROR = -32603;
+        public static final int SERVER_ERROR_START = -32099;
+        public static final int SERVER_ERROR_END = -32000;
+
+        // MCP-specific error codes
+        public static final int CONTEXT_INVALID = -32100;
+        public static final int CONTEXT_EXPIRED = -32101;
+        public static final int TRANSPORT_ERROR = -32200;
+        public static final int AUTHENTICATION_ERROR = -32300;
+        public static final int AUTHORIZATION_ERROR = -32301;
+        public static final int RATE_LIMIT_ERROR = -32400;
+        public static final int RESOURCE_NOT_FOUND = -32404;
+        public static final int RESOURCE_CONFLICT = -32409;
+        public static final int VALIDATION_ERROR = -32422;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

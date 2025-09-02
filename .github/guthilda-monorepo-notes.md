@@ -14,7 +14,7 @@ and provide a **clear resumption point for us** - (*or any* ***Shipmates***) - *
 - **Session Purpose:** Establish and maintain a modern, scalable monorepo setup
 - **Roles:**
   - **User/Savant:** Conceptual lead, provides vision and meticulous requirements
-  - **GitHub Copilot Chat Ass-istant/Captain/** - *...refer to copilot.instructions.md;* - **"Technical executor, monorepo captain"**
+  - **GitHub Copilot Chat Ass-istant/Captain/** - *...refer to copilot-instructions.md;* - **"Technical executor, monorepo captain"**
 
 ---
 
@@ -140,7 +140,7 @@ after a long night in the bunk with rum, naked at the plank, due gambling and ro
 > **Savant:** “Hmm... Maybe we should retreat to my vscode editor. Where we can discuss in privacy and work more seamlessly… Can you repurpose this ...session as a temporal fix for the continuation in there…?”
 >
 > **Captain:** [Gave instructions for saving, referencing, and resuming the session log as a markdown file for context continuity in VS Code or **GitHub Copilot Chat Ass-istant/Captain/** -
-*...refer to copilot.instructions.md/.*]
+*...refer to copilot-instructions.md/.*]
 
 ---
 

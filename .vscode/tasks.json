@@ -1,43 +1,204 @@
 {
+  "$schema": "vscode://schemas/tasks",
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build MCP System",
+      "label": "Dev: Monitor UI",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm build",
-      "problemMatcher": ["$tsc"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
-      "label": "Start MCP System",
-      "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm start",
-      "problemMatcher": [],
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
+      "command": "pnpm dev",
+      "options": {
+        "cwd": "${workspaceFolder}/packages/monitor",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
       },
-      "dependsOn": ["Build MCP System"]
-    },
-    {
-      "label": "Dev MCP System",
-      "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm start:dev",
-      "problemMatcher": [],
       "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      }
+      "problemMatcher": []
     },
     {
-      "label": "Check MCP Status",
+      "label": "Session: Save MCP Snapshot",
       "type": "shell",
-      "command": "cd ${workspaceFolder}/restructure && pnpm exec mcp status",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/save-mcp-snapshot.ps1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Session: Restore Kickoff",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/restore-kickoff.ps1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Session: Auto Restore on Open",
+      "runOptions": { "runOn": "folderOpen" },
+      "dependsOn": ["Session: Restore Kickoff"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: All",
+      "type": "shell",
+      "command": "pnpm build",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "MCP: Status",
+      "type": "shell",
+      "command": "pnpm exec mcp status",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "MCP: Generate Dynamic Config",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/.vscode/scripts/generate-mcp-config.ps1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Index: Repo Catalog",
+      "type": "shell",
+      "command": "node scripts/index-repo.js",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Env: Check PATH (uv)",
+      "type": "shell",
+      "command": "echo $env:Path; uv --version; uvx --version",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": { "executable": "pwsh" },
+        "env": { "Path": "C:/Users/erdno/.local/bin;${env:Path}" }
+      },
+      "problemMatcher": []
+  },
+    {
+      "label": "Env: Check ML Keys",
+      "type": "shell",
+      "command": "Write-Host 'OPENAI_API_KEY' : ([bool]$env:OPENAI_API_KEY); Write-Host 'GEMINI_API_KEY' : ([bool]$env:GEMINI_API_KEY); Write-Host 'ANTHROPIC_API_KEY' : ([bool]$env:ANTHROPIC_API_KEY); Write-Host 'MCP_EXPERIMENTAL' : ([bool]$env:MCP_EXPERIMENTAL)",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": { "executable": "pwsh" }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "MCP: Use Dynamic",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/use-dynamic-mcp.ps1"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "MCP: Use Base",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/use-base-mcp.ps1"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Log: Clipboard as Note",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile", "-Command",
+        "(Get-Clipboard) | Out-String | ForEach-Object { $_.Trim() } | ForEach-Object { pwsh -NoProfile -File '${workspaceFolder}/.vscode/scripts/append-session-log.ps1' -Topic 'clipboard' -Summary 'Clipboard note' -Details $_ -Actor 'human' }"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Log: Quick Note",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/append-session-log.ps1",
+        "-Topic", "note",
+        "-Summary", "Quick note",
+        "-Details", "Session thought",
+        "-Actor", "human"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ops: Index Repo",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/scripts/ops.ps1", "index"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install: Claude Code (pnpm)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/install-claude.ps1", "pnpm"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install: Claude Code (native)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/install-claude.ps1", "native"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install: Gemini CLI (pnpm)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/install-gemini.ps1", "pnpm"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Index: Repo Catalog (fast)",
+      "type": "shell",
+      "command": "node scripts/index-repo-fast.js",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Verify: Claude & Gemini",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/.vscode/scripts/verify-providers.ps1"],
+      "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     }
   ]

@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2025-08-10T15:04:34.200Z",
+  "packages": [
+    {
+      "name": "mcp-orchestration-system",
+      "version": "1.0.0",
+      "private": true,
+      "scripts": {
+        "dev": "turbo run dev --parallel",
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
+        "prepare": "husky install",
+        "start": "node packages/cli/dist/index.js start",
+        "clean": "pnpm clean:all",
+        "clean:all": "rm -rf node_modules && rm -rf packages/*/node_modules && rm -rf packages/*/dist && rm -rf pnpm-lock.yaml"
+      },
+      "dir": ""
+    },
+    {
+      "name": "@mcp/cli",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\cli"
+    },
+    {
+      "name": "@mcp/core",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\core"
+    },
+    {
+      "name": "@mcp/monitor",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint src --ext .ts,.tsx"
+      },
+      "dir": "packages\\monitor"
+    },
+    {
+      "name": "@mcp/server-base",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\base"
+    },
+    {
+      "name": "@mcp/server-duckduckgo",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\duckduckgo"
+    },
+    {
+      "name": "@mcp/kraken",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\kraken"
+    },
+    {
+      "name": "@mcp/server-sequential-thinking",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\servers\\sequential-thinking"
+    },
+    {
+      "name": "@mcp/shared",
+      "version": "1.0.0",
+      "scripts": {
+        "dev": "tsup src/index.ts --watch --format esm --dts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run"
+      },
+      "dir": "packages\\shared"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "artifact v4 test",
+      "file": ".github\\workflows\\artifact-v4-test.yml"
+    },
+    {
+      "name": "ci",
+      "file": ".github\\workflows\\ci.yml"
+    },
+    {
+      "name": "codeql",
+      "file": ".github\\workflows\\codeql.yml"
+    },
+    {
+      "name": "performance",
+      "file": ".github\\workflows\\performance.yml"
+    },
+    {
+      "name": "release",
+      "file": ".github\\workflows\\release.yml"
+    },
+    {
+      "name": "security",
+      "file": ".github\\workflows\\security.yml"
+    }
+  ],
+  "sessionLog": {
+    "entries": 0,
+    "lastTs": null
+  },
+  "codebase": {
+    "map": "docs/codebase/codebase.json",
+    "overview": "docs/codebase/overview.md"
+  }
+}

@@ -150,33 +150,6 @@ importers:
         specifier: ^7.0.6
         version: 7.0.6(@types/node@24.1.0)
 
-  packages/servers/base:
-    dependencies:
-      '@mcp/shared':
-        specifier: workspace:*
-        version: link:../../shared
-
-  packages/servers/duckduckgo:
-    dependencies:
-      '@mcp/server-base':
-        specifier: workspace:*
-        version: link:../base
-      '@mcp/shared':
-        specifier: workspace:*
-        version: link:../../shared
-      node-fetch:
-        specifier: ^3.3.2
-        version: 3.3.2
-
-  packages/servers/sequential-thinking:
-    dependencies:
-      '@mcp/server-base':
-        specifier: workspace:*
-        version: link:../base
-      '@mcp/shared':
-        specifier: workspace:*
-        version: link:../../shared
-
   packages/shared:
     dependencies:
       zod:

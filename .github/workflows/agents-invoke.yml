@@ -1,0 +1,293 @@
+name: "Agents: Invoke"
+
+on:
+  workflow_dispatch:
+    inputs:
+      agent_id:
+        description: 'Agent to invoke'
+        required: true
+        type: choice
+        options:
+          - 'openai.gpt'
+          - 'anthropic.claude'
+          - 'google.gemini'
+          - 'google.jules'
+          - 'google.gemini_code_assist'
+          - 'github.copilot_coding_agent'
+        default: 'openai.gpt'
+      operation:
+        description: 'Operation to perform'
+        required: true
+        type: choice
+        options:
+          - 'chat'
+          - 'text-generation'
+        default: 'chat'
+      model:
+        description: 'Model to use (optional, uses agent default if empty)'
+        required: false
+        type: string
+      prompt:
+        description: 'Prompt to send to the agent'
+        required: true
+        type: string
+        default: 'Hello! Please introduce yourself and list your capabilities.'
+      temperature:
+        description: 'Temperature (0.0-2.0)'
+        required: false
+        type: string
+        default: '0.7'
+      extra_json:
+        description: 'Extra parameters as JSON (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  invoke:
+    runs-on: ubuntu-latest
+    name: "Invoke AI Agent"
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Validate inputs
+        run: |
+          echo "🎯 Agent ID: ${{ inputs.agent_id }}"
+          echo "🎯 Operation: ${{ inputs.operation }}"
+          echo "🎯 Model: ${{ inputs.model || 'default' }}"
+          echo "🎯 Temperature: ${{ inputs.temperature }}"
+          echo "📝 Prompt length: $(echo '${{ inputs.prompt }}' | wc -c) characters"
+          
+          # Validate temperature
+          if ! echo "${{ inputs.temperature }}" | grep -qE '^[0-9]*\.?[0-9]+$'; then
+            echo "❌ Invalid temperature: must be a number"
+            exit 1
+          fi
+          
+          temp_val=$(echo "${{ inputs.temperature }}" | bc)
+          if (( $(echo "$temp_val < 0" | bc -l) )) || (( $(echo "$temp_val > 2" | bc -l) )); then
+            echo "❌ Invalid temperature: must be between 0.0 and 2.0"
+            exit 1
+          fi
+          
+          # Validate extra_json if provided
+          if [ -n "${{ inputs.extra_json }}" ]; then
+            echo '${{ inputs.extra_json }}' | jq . > /dev/null || {
+              echo "❌ Invalid extra_json: must be valid JSON"
+              exit 1
+            }
+          fi
+          
+      - name: Invoke agent
+        uses: actions/github-script@v7
+        env:
+          # OpenAI
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Anthropic  
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Google Gemini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Google Jules (placeholder)
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          JULES_ENDPOINT: ${{ secrets.JULES_ENDPOINT }}
+          # Google Gemini Code Assist (placeholder)
+          GEMINI_CODE_ASSIST_TOKEN: ${{ secrets.GEMINI_CODE_ASSIST_TOKEN }}
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const fs = require('fs');
+            const path = require('path');
+            
+            console.log('🚀 Starting agent invocation...');
+            
+            // Prepare arguments
+            const args = [
+              '${{ inputs.agent_id }}',
+              '${{ inputs.operation }}',
+              '${{ inputs.prompt }}'
+            ];
+            
+            if ('${{ inputs.model }}') {
+              args.push('${{ inputs.model }}');
+            } else {
+              args.push('');
+            }
+            
+            args.push('${{ inputs.temperature }}');
+            
+            if ('${{ inputs.extra_json }}') {
+              args.push('${{ inputs.extra_json }}');
+            }
+            
+            // Escape arguments for shell
+            const escapedArgs = args.map(arg => {
+              if (!arg) return '""';
+              return `"${arg.replace(/"/g, '\\"')}"`;
+            }).join(' ');
+            
+            console.log('📋 Command arguments prepared');
+            
+            try {
+              // Run the invocation script
+              const command = `node scripts/agents-invoke.mjs ${escapedArgs}`;
+              console.log('🔄 Executing invocation...');
+              
+              const result = execSync(command, { 
+                encoding: 'utf8',
+                cwd: process.cwd(),
+                env: { ...process.env }
+              });
+              
+              console.log('Invocation output:');
+              console.log(result);
+              
+              // Read the generated result file
+              const resultPath = path.join(process.cwd(), 'agent-invocation-result.json');
+              if (fs.existsSync(resultPath)) {
+                const invocationResult = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+                
+                // Create job summary
+                let summary = `# 🤖 Agent Invocation Result\n\n`;
+                
+                if (invocationResult.success) {
+                  summary += `✅ **Status:** Success\n`;
+                  summary += `🤖 **Agent:** ${invocationResult.agent.displayName} (${invocationResult.agent.vendor})\n`;
+                  summary += `🎯 **Operation:** ${invocationResult.invocation.operation}\n`;
+                  if (invocationResult.model) {
+                    summary += `🧠 **Model:** ${invocationResult.model}\n`;
+                  }
+                  summary += `⏰ **Timestamp:** ${invocationResult.invocation.timestamp}\n\n`;
+                  
+                  summary += `## 📝 Response Preview\n\n`;
+                  const response = invocationResult.response || '';
+                  const preview = response.length > 500 ? response.substring(0, 500) + '...' : response;
+                  summary += `\`\`\`\n${preview}\n\`\`\`\n\n`;
+                  
+                  if (invocationResult.usage) {
+                    summary += `## 📊 Usage Statistics\n\n`;
+                    if (invocationResult.usage.prompt_tokens) {
+                      summary += `- **Prompt Tokens:** ${invocationResult.usage.prompt_tokens}\n`;
+                    }
+                    if (invocationResult.usage.completion_tokens) {
+                      summary += `- **Completion Tokens:** ${invocationResult.usage.completion_tokens}\n`;
+                    }
+                    if (invocationResult.usage.total_tokens) {
+                      summary += `- **Total Tokens:** ${invocationResult.usage.total_tokens}\n`;
+                    }
+                    summary += `\n`;
+                  }
+                  
+                  if (invocationResult.note) {
+                    summary += `## ℹ️ Note\n\n`;
+                    summary += `${invocationResult.note}\n\n`;
+                  }
+                  
+                  summary += `## 📁 Artifacts\n\n`;
+                  summary += `Full response and metadata have been saved as workflow artifacts.\n`;
+                  
+                } else {
+                  summary += `❌ **Status:** Failed\n`;
+                  summary += `🤖 **Agent:** ${{ inputs.agent_id }}\n`;
+                  summary += `🎯 **Operation:** ${{ inputs.operation }}\n`;
+                  summary += `⏰ **Timestamp:** ${invocationResult.invocation.timestamp}\n\n`;
+                  
+                  summary += `## ❌ Error Details\n\n`;
+                  summary += `\`\`\`\n${invocationResult.error}\n\`\`\`\n\n`;
+                  
+                  summary += `## 🔍 Troubleshooting\n\n`;
+                  summary += `- Check that required secrets are configured for this agent\n`;
+                  summary += `- Verify the agent supports the requested operation\n`;
+                  summary += `- Review the agents registry for authentication requirements\n`;
+                }
+                
+                // Set job summary
+                core.summary.addRaw(summary);
+                await core.summary.write();
+                
+                if (invocationResult.success) {
+                  console.log('✅ Invocation completed successfully');
+                } else {
+                  console.error('❌ Invocation failed:', invocationResult.error);
+                  process.exit(1);
+                }
+              } else {
+                throw new Error('Result file not generated');
+              }
+              
+            } catch (error) {
+              console.error('❌ Invocation failed:', error);
+              
+              // Create error summary
+              const errorSummary = `# ❌ Agent Invocation Failed\n\n`;
+              errorSummary += `**Agent:** ${{ inputs.agent_id }}\n`;
+              errorSummary += `**Operation:** ${{ inputs.operation }}\n`;
+              errorSummary += `**Error:** ${error.message}\n\n`;
+              errorSummary += `## 🔍 Common Issues\n\n`;
+              errorSummary += `- Missing or invalid API keys for the selected agent\n`;
+              errorSummary += `- Agent does not support the requested operation\n`;
+              errorSummary += `- API rate limits or service unavailability\n`;
+              errorSummary += `- Invalid input parameters\n`;
+              
+              core.summary.addRaw(errorSummary);
+              await core.summary.write();
+              
+              throw error;
+            }
+
+      - name: Upload invocation result artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-invocation-${{ inputs.agent_id }}-${{ github.sha }}
+          path: |
+            agent-invocation-result.json
+            agent-invocation-preview.md
+          retention-days: 7
+          
+      - name: Display quick result
+        if: always()
+        run: |
+          echo "🎯 Invocation Summary:"
+          echo "Agent: ${{ inputs.agent_id }}"
+          echo "Operation: ${{ inputs.operation }}"
+          echo "Model: ${{ inputs.model || 'default' }}"
+          echo "Temperature: ${{ inputs.temperature }}"
+          echo ""
+          
+          if [ -f "agent-invocation-result.json" ]; then
+            echo "📄 Result file created successfully"
+            
+            # Show success/failure status
+            if jq -e '.success' agent-invocation-result.json > /dev/null; then
+              echo "✅ Status: SUCCESS"
+              
+              # Show response preview
+              echo ""
+              echo "📝 Response Preview:"
+              jq -r '.response' agent-invocation-result.json | head -c 200
+              echo ""
+              
+              # Show usage if available
+              if jq -e '.usage' agent-invocation-result.json > /dev/null; then
+                echo ""
+                echo "📊 Token Usage:"
+                jq '.usage' agent-invocation-result.json
+              fi
+            else
+              echo "❌ Status: FAILED"
+              echo ""
+              echo "Error:"
+              jq -r '.error' agent-invocation-result.json
+            fi
+          else
+            echo "❌ Result file not found"
+          fi

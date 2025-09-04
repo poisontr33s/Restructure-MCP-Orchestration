@@ -1,0 +1,89 @@
+---
+name: 🗣️ Natural Language - Share Your Story
+description: Tell us about your experience, challenge, or idea in your own words
+labels: ["natural-language", "story"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🌟 Welcome to Natural Language Collaboration!
+        
+        **No forms, no checkboxes, no rigid templates** - just tell us your story! We embrace the 
+        **Anti-Template Policy** and believe that rich, conversational descriptions lead to better 
+        understanding and collaboration.
+        
+        This template is perfect for:
+        - Complex scenarios that don't fit standard categories
+        - Creative ideas and innovative approaches  
+        - Detailed user experiences and narratives
+        - Strategic discussions and planning
+        - When you just want to have a natural conversation about your needs
+        
+        ---
+        
+  - type: textarea
+    id: story
+    attributes:
+      label: "📖 Tell Us Your Story"
+      description: "Share your experience, challenge, idea, or question in your own words. Include as much context as you'd like!"
+      placeholder: |
+        Describe your situation naturally - there's no wrong way to share your thoughts!
+        
+        Some conversation starters (completely optional):
+        - What were you trying to accomplish?
+        - What happened along the way?
+        - What would success look like?
+        - What ideas do you have?
+        - What questions are you exploring?
+        
+        Feel free to include:
+        - Screenshots or images
+        - Code snippets or examples
+        - Links to relevant resources
+        - Creative formatting with emojis
+        - Anything else that helps tell your story!
+      value: |
+        ## 🎯 My Story
+        
+        <!-- Tell us what's on your mind! -->
+        
+    validations:
+      required: true
+      
+  - type: textarea
+    id: context
+    attributes:
+      label: "🌍 Additional Context (Optional)"
+      description: "Anything else that might be helpful for us to know?"
+      placeholder: |
+        Feel free to add:
+        - Technical details or specifications
+        - Related issues or discussions
+        - Team or project context
+        - Timeline considerations
+        - Creative insights or inspirations
+        - Concerns or questions
+        
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🤝 What Happens Next?
+        
+        Once you submit your story, our AI collaboration team will respond:
+        
+        - **@claude** will provide strategic analysis and comprehensive guidance
+        - **@copilot** may assist with tactical implementation details
+        - **Human team members** will join for additional perspective when needed
+        
+        We'll work together using natural language, creative problem-solving, and 
+        renaissance-level attention to detail to help you achieve your goals.
+        
+        **Remember**: This is a conversation, not a form! Feel free to be creative, 
+        detailed, and authentic in sharing your thoughts.
+        
+        ---
+        
+        *🏴‍☠️ Powered by Captain Guthilda's Anti-Template Policy - Where natural language reigns supreme!*

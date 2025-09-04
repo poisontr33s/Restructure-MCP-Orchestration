@@ -7,18 +7,21 @@ Captain Guthilda is the central intelligence and meta-automation orchestrator fo
 ## Features
 
 ### 🤖 AI Service Integration
+
 - **Microsoft Copilot** - VS Code integration and premium features
 - **Google Workspace** - Document and content management
 - **X Premium+** - Social intelligence and content discovery
 - **OpenAI Plus** - Advanced language model integration
 
 ### 🎼 Meta-Orchestration
+
 - **Unified Command Interface** - Single point of control for all systems
 - **Intelligent Workflow Management** - Automated task orchestration
 - **Cross-Platform Integration** - Seamless service coordination
 - **Real-time Monitoring** - Comprehensive system health tracking
 
 ### ⚓ Automation Workflows
+
 - **Branch Intelligence** - Smart repository management
 - **Agent Deployment** - Automated agent orchestration
 - **Content Discovery** - AI-powered content scanning
@@ -69,13 +72,13 @@ const guthilda = new CaptainGuthilda({
   aiServices: {
     microsoftCopilot: { enabled: true },
     googleWorkspace: { enabled: true },
-    openaiPlus: { enabled: true }
+    openaiPlus: { enabled: true },
   },
   orchestration: {
     autoCleanup: true,
     branchIntelligence: true,
-    agentDeployment: true
-  }
+    agentDeployment: true,
+  },
 });
 
 await guthilda.initialize();
@@ -164,24 +167,28 @@ Create `guthilda.config.json` in your project root:
 ## Workflows
 
 ### Authentication Workflow
+
 1. Service discovery and capability detection
 2. Credential validation and token refresh
 3. Permission verification and scope confirmation
 4. Connection establishment and health checks
 
 ### Orchestration Workflow
+
 1. System status assessment
 2. Workflow prioritization and scheduling
 3. Task execution and monitoring
 4. Result aggregation and reporting
 
 ### Content Discovery Workflow
+
 1. Service scanning and inventory
 2. Content classification and indexing
 3. Metadata extraction and enrichment
 4. Cross-service relationship mapping
 
 ### Cleanup Workflow
+
 1. Artifact identification and categorization
 2. Age-based retention policy application
 3. Dependency analysis and safe removal
@@ -201,18 +208,21 @@ Captain Guthilda integrates seamlessly with the broader MCP Orchestration System
 Captain Guthilda provides comprehensive monitoring capabilities:
 
 ### System Health Metrics
+
 - Service availability and response times
 - Resource utilization and performance
 - Error rates and failure patterns
 - Task completion and success rates
 
 ### Real-time Dashboards
+
 - Live status indicators for all systems
 - Performance graphs and trend analysis
 - Alert notifications and escalation
 - Historical data and reporting
 
 ### Automated Alerts
+
 - Service degradation detection
 - Resource threshold breaches
 - Authentication failures
@@ -223,12 +233,14 @@ Captain Guthilda provides comprehensive monitoring capabilities:
 Captain Guthilda implements enterprise-grade security:
 
 ### Credential Management
+
 - Secure storage of API keys and tokens
 - Automatic credential rotation
 - Permission scope validation
 - Access logging and auditing
 
 ### Service Authentication
+
 - OAuth 2.0 flow support
 - Service account management
 - Token refresh and renewal
@@ -239,6 +251,7 @@ Captain Guthilda implements enterprise-grade security:
 ### Common Issues
 
 #### Service Authentication Failures
+
 ```bash
 # Check service configuration
 pnpm guthilda status
@@ -251,6 +264,7 @@ cat guthilda.config.json
 ```
 
 #### Orchestration Task Failures
+
 ```bash
 # Check task status
 pnpm guthilda status
@@ -263,6 +277,7 @@ pnpm guthilda orchestrate
 ```
 
 #### Performance Issues
+
 ```bash
 # Generate performance report
 pnpm guthilda report

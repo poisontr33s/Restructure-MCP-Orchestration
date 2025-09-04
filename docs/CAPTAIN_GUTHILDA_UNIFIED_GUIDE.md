@@ -115,11 +115,11 @@ repo-root/
 
 ### Dependency Management
 
-| Command                              | Purpose                            |
-| ------------------------------------ | ---------------------------------- |
-| `pnpm dependencies:analyze`          | Analyze dependency update PRs      |
-| `pnpm dependencies:batch`            | Create batch dependency updates    |
-| `pnpm dependencies:consolidate`      | Execute dependency consolidation   |
+| Command                         | Purpose                          |
+| ------------------------------- | -------------------------------- |
+| `pnpm dependencies:analyze`     | Analyze dependency update PRs    |
+| `pnpm dependencies:batch`       | Create batch dependency updates  |
+| `pnpm dependencies:consolidate` | Execute dependency consolidation |
 
 ---
 
@@ -325,7 +325,7 @@ Captain Guthilda has implemented an Emergency Branch Consolidation Protocol to m
 # Show consolidation plan and current status
 pnpm consolidation:plan
 
-# Create hierarchical branch structure 
+# Create hierarchical branch structure
 pnpm consolidation:create --dry-run
 pnpm consolidation:create
 
@@ -343,7 +343,7 @@ pnpm dependencies:batch
 main/
 ├── feature/
 │   ├── ai-integrations/          # AI/ML integration PRs
-│   ├── workflow-optimization/    # Workflow and automation PRs  
+│   ├── workflow-optimization/    # Workflow and automation PRs
 │   └── monorepo-restructure/     # Monorepo structure PRs
 ├── dependencies/
 │   └── batch-updates/            # Consolidated dependency updates
@@ -611,8 +611,9 @@ pnpm branch-creator:types
 ```
 
 **Branch Types Available:**
+
 - `feature/*` - New feature development
-- `bugfix/*` - Bug fixes and patches  
+- `bugfix/*` - Bug fixes and patches
 - `hotfix/*` - Critical urgent fixes
 - `enhancement/*` - Improvements to existing features
 - `refactor/*` - Code refactoring and restructuring

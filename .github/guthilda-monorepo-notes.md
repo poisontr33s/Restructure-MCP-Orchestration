@@ -144,7 +144,8 @@
 > **Savant:** “Hmm... Maybe we should retreat to my vscode editor. Where we can discuss in privacy and work more seamlessly… Can you repurpose this ...session as a temporal fix for the continuation in there…?”
 >
 > **Captain:** [Gave instructions for saving, referencing, and resuming the session log as a markdown file for context continuity in VS Code or **GitHub Copilot Chat Ass-istant/Captain/** -
-> > *...refer to copilot.instructions.md/.*]
+>
+> > _...refer to copilot.instructions.md/._]
 
 ---
 

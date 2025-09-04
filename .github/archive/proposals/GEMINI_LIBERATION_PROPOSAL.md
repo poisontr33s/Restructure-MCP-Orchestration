@@ -1,18 +1,22 @@
 # Gemini AI Scout Liberation Proposal 🌟
 
 ## Executive Summary
+
 Proposal to liberate @Gemini as the strategic "scout" AI assistant within the Claude-Copilot collaboration framework. This addresses @poisontr33s' request to unlock Gemini's full potential through comprehensive npm integration and strategic positioning.
 
 ## Current State Analysis
 
 ### Existing Gemini Infrastructure
+
 - **Current Status**: Stub implementation in `agent-gemini.yml`
 - **Trigger**: Label-based activation (`agent:gemini`)
 - **Limitation**: Requires manual GOOGLE_API_KEY configuration
 - **Scope**: Limited to acknowledgment messages
 
 ### Strategic Position
+
 Gemini will serve as the **Scout** in the AI hierarchy:
+
 - **Claude**: Strategic Lead (Full repository access, renaissance-level planning)
 - **Copilot**: Tactical Assistant (Implementation, delegation handling)
 - **Gemini**: Strategic Scout (Reconnaissance, discovery, advanced research)
@@ -22,12 +26,14 @@ Gemini will serve as the **Scout** in the AI hierarchy:
 ### Phase 1: npm Infrastructure Setup
 
 #### Core Dependencies
+
 ```bash
 pnpm add @google/generative-ai @ai-sdk/google
 pnpm add -D @types/google-generative-ai
 ```
 
 #### Scout Capabilities Package
+
 ```bash
 pnpm add @google/genai commands-helper
 ```
@@ -35,6 +41,7 @@ pnpm add @google/genai commands-helper
 ### Phase 2: Enhanced Workflow Configuration
 
 #### Proposed `agent-gemini.yml` Evolution
+
 ```yaml
 name: Agent - Gemini Scout
 on:
@@ -86,6 +93,7 @@ jobs:
 ### Phase 3: Scout Operations Script
 
 #### Gemini Scout Capabilities
+
 - **Repository Reconnaissance**: Deep codebase analysis and pattern discovery
 - **Dependency Intelligence**: Advanced npm/pnpm dependency analysis and optimization
 - **Performance Scouting**: Code performance analysis and optimization recommendations
@@ -95,6 +103,7 @@ jobs:
 ### Phase 4: npm Heavy Duty Integration
 
 #### Advanced npm Operations
+
 ```javascript
 // Enhanced package management with Gemini intelligence
 const geminiOperations = {
@@ -109,19 +118,21 @@ const geminiOperations = {
   },
   innovationDiscovery: async () => {
     // Emerging technology integration opportunities
-  }
+  },
 };
 ```
 
 ## Integration Benefits
 
 ### Strategic Value
+
 1. **Three-AI Synergy**: Claude (Strategy) + Copilot (Tactics) + Gemini (Intelligence)
 2. **Advanced Reconnaissance**: Deep codebase intelligence and pattern analysis
 3. **npm Ecosystem Mastery**: Comprehensive package management optimization
 4. **Innovation Pipeline**: Continuous discovery of emerging technologies
 
 ### Operational Excellence
+
 - **Automated Discovery**: Proactive identification of optimization opportunities
 - **Intelligence Gathering**: Advanced analysis of codebase patterns and dependencies
 - **Strategic Recommendations**: AI-driven suggestions for architectural improvements
@@ -130,12 +141,14 @@ const geminiOperations = {
 ## Implementation Roadmap
 
 ### Immediate Actions
+
 1. **Secret Configuration**: Add `GOOGLE_API_KEY` to repository secrets
 2. **Dependency Installation**: Execute npm infrastructure setup
 3. **Script Development**: Create `scripts/gemini-scout.js` with core functionality
 4. **Workflow Enhancement**: Update `agent-gemini.yml` with full capabilities
 
 ### Progressive Enhancement
+
 1. **Phase 1**: Basic scout operations and npm integration
 2. **Phase 2**: Advanced intelligence gathering and analysis
 3. **Phase 3**: Full three-AI collaborative orchestration

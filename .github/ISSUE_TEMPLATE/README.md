@@ -130,8 +130,32 @@ The repository still contains YAML templates for users who prefer structured for
 ### Progressive Enhancement
 
 - **New users**: Encouraged to use natural language descriptions
-- **Template users**: Can continue using YAML forms if preferred
+- **Template users**: Can continue using YAML forms if preferred  
 - **AI systems**: Designed to work with both approaches seamlessly
+
+### New Template Format Options
+
+We now support **multiple template formats** for maximum flexibility:
+
+#### 📝 **Markdown Templates (.md)**
+- Simple, readable natural language format
+- GitHub-native formatting support
+- Perfect for quick issue creation
+- File: `natural-language.md`
+
+#### 🧠 **Natural Language Processing (.nlp)**
+- Advanced AI collaboration format
+- Rich metadata for enhanced processing
+- Structured yet conversational approach
+- File: `natural-language.nlp`
+
+#### 📋 **YAML Templates (.yml)**
+- Traditional GitHub issue template format
+- Form-based structured input
+- Built-in field validation
+- File: `natural-language.yml`
+
+**Choose the format that feels most natural for your collaboration style!**
 
 ## Implementation Notes
 

@@ -199,7 +199,7 @@ jobs:
 
       - name: 🔒 Run Security Audit
         run: |
-          npm audit --audit-level moderate || echo "⚠️ Security audit completed with warnings"
+          pnpm audit || echo "⚠️ Security audit completed with warnings"
 
       - name: 🛡️ Dependency Review
         run: |

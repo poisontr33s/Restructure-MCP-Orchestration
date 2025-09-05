@@ -1,0 +1,43 @@
+{
+  "name": "Restructure MCP Orchestration - Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+  "forwardPorts": [3000, 8080, 5173],
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "npm install -g pnpm@8.15.0 && pnpm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-eslint",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-markdown",
+        "ms-vscode-remote.remote-containers"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.eslint.fixAll": "explicit"
+        },
+        "typescript.preferences.includePackageJsonAutoImports": "auto",
+        "npm.packageManager": "pnpm",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "workbench.colorTheme": "Default Dark+",
+        "files.exclude": {
+          "**/node_modules": true,
+          "**/dist": true,
+          "**/.turbo": true
+        }
+      }
+    }
+  },
+  "remoteUser": "node"
+}

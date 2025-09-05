@@ -17,6 +17,7 @@ jobs:
   build-release:
     name: Build Release (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     
     strategy:
       fail-fast: false
@@ -24,16 +25,16 @@ jobs:
         include:
           - target: linux-x64
             os: ubuntu-latest
-            npm-script: build:linux
+            pnpm-script: build:linux
           - target: windows-x64
             os: windows-latest
-            npm-script: build:windows
+            pnpm-script: build:windows
           - target: macos-x64
             os: macos-latest
-            npm-script: build:macos
+            pnpm-script: build:macos
           - target: macos-arm64
             os: macos-latest
-            npm-script: build:macos-arm64
+            pnpm-script: build:macos-arm64
     
     steps:
       - name: Checkout repository
@@ -43,16 +44,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          
+      - name: Install pnpm
+        run: npm install -g pnpm@8.15.0
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         
       - name: Build for release
-        run: npm run build
+        run: pnpm run build
         
       - name: Build platform-specific binaries
-        run: npm run ${{ matrix.npm-script }} || npm run build
+        run: pnpm run ${{ matrix.pnpm-script }} || pnpm run build
         continue-on-error: true
         
       # ARTIFACT V4 COMPATIBILITY NOTE:

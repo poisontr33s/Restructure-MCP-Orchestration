@@ -56,13 +56,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@8.15.0
 
       - name: Install dependencies
         run: |
-          npm install
-          # Ensure Gemini packages are available
-          npm install @google/generative-ai @ai-sdk/google @google/genai
+          pnpm install --frozen-lockfile
+          # Ensure Gemini packages are available (already in root package.json)
+          echo "Gemini AI packages installed via workspace dependencies"
 
       - name: Determine operation mode
         id: mode

@@ -79,21 +79,25 @@
 
 /* Server status indicator colors */
 .status-indicator {
-  @apply w-3 h-3 rounded-full inline-block mr-2;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
 }
 
 .status-running {
-  @apply bg-green-500;
+  background-color: #22c55e; /* green-500 */
 }
 
 .status-starting {
-  @apply bg-yellow-500;
+  background-color: #eab308; /* yellow-500 */
 }
 
 .status-error, .status-not-responding, .status-timeout {
-  @apply bg-red-500;
+  background-color: #ef4444; /* red-500 */
 }
 
 .status-stopped {
-  @apply bg-gray-500;
+  background-color: #6b7280; /* gray-500 */
 }

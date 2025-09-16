@@ -2,8 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import CSS4 mobile fixes */
+@import './css4-mobile-fix.css';
+
 @layer base {
   :root {
+    /* Use standard HSL values instead of CSS4 color functions */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 

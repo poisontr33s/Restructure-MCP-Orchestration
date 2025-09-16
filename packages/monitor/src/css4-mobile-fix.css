@@ -1,0 +1,201 @@
+/* 🏴‍☠️ Cpt. Guthilda's CSS4 Hardcode Fix */
+/* Mobile-optimized CSS that prevents CSS4 hardcoded issues */
+
+/* Reset CSS4 problematic defaults */
+*, *::before, *::after {
+  box-sizing: border-box;
+  /* Prevent CSS4 logical properties that cause hardcoded issues */
+  margin-block: initial;
+  margin-inline: initial;
+  padding-block: initial;
+  padding-inline: initial;
+}
+
+/* Fix CSS4 cascade layers issues */
+@supports not (color: color(display-p3 1 0 0)) {
+  :root {
+    /* Fallback for CSS4 color functions */
+    --color-primary: #1f2937;
+    --color-secondary: #f3f4f6;
+    --color-accent: #3b82f6;
+  }
+}
+
+/* Mobile-first responsive design without CSS4 container queries */
+.responsive-container {
+  width: 100%;
+  max-width: 100vw;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 2rem;
+    max-width: 768px;
+    margin: 0 auto;
+  }
+}
+
+/* Fix hardcoded flexbox issues */
+.flex-fix {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.flex-column {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+/* Fix hardcoded grid issues */
+.grid-fix {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr;
+  grid-template-columns: 1fr;
+}
+
+@supports (display: grid) {
+  .grid-fix {
+    display: grid;
+  }
+}
+
+/* Mobile touch targets (minimum 44px) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix CSS4 aspect-ratio fallback */
+.aspect-ratio-16-9 {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+}
+
+@supports (aspect-ratio: 16 / 9) {
+  .aspect-ratio-16-9 {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    padding-bottom: 0;
+  }
+}
+
+/* Prevent CSS4 scroll-snap hardcoded issues */
+.scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+@supports (scroll-snap-type: x mandatory) {
+  .scroll-container {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .scroll-item {
+    scroll-snap-align: start;
+  }
+}
+
+/* Mobile-safe animations (prevent CSS4 motion issues) */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fix CSS4 custom property fallbacks */
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-running {
+  background-color: #10b981; /* Fallback */
+  background-color: var(--color-success, #10b981);
+}
+
+.status-error {
+  background-color: #ef4444; /* Fallback */
+  background-color: var(--color-error, #ef4444);
+}
+
+.status-warning {
+  background-color: #f59e0b; /* Fallback */
+  background-color: var(--color-warning, #f59e0b);
+}
+
+/* Mobile typography fixes */
+.mobile-text {
+  font-size: 16px; /* Prevent zoom on iOS */
+  line-height: 1.5;
+}
+
+.mobile-heading {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.2;
+}
+
+/* Fix CSS4 clamp() fallback */
+@supports not (font-size: clamp(1rem, 2vw, 1.5rem)) {
+  .mobile-heading {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 640px) {
+    .mobile-heading {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+/* Prevent CSS4 layout issues on mobile */
+.mobile-safe {
+  position: relative;
+  z-index: 0;
+  transform: translateZ(0); /* Force hardware acceleration */
+  -webkit-transform: translateZ(0);
+}
+
+/* Fix CSS4 focus-visible issues */
+.focus-fix:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+@supports selector(:focus-visible) {
+  .focus-fix:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  .focus-fix:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}

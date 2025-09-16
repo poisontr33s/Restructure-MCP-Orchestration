@@ -4,6 +4,14 @@ import animate from 'tailwindcss-animate';
 export default {
   darkMode: 'class',
   content: ['./src/**/*.{ts,tsx}'],
+  future: {
+    // Disable CSS4 features that cause hardcoded issues
+    hoverOnlyWhenSupported: true,
+  },
+  experimental: {
+    // Disable experimental CSS4 features that break
+    optimizeUniversalDefaults: false,
+  },
   theme: {
     container: {
       center: true,
@@ -13,6 +21,7 @@ export default {
       },
     },
     extend: {
+      // Use HSL instead of hardcoded CSS4 color functions
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

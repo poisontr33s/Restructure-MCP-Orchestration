@@ -42,7 +42,19 @@
     "guthilda:report": "pnpm guthilda report",
     "guthilda:claude-code": "pnpm guthilda claude-code",
     "claude-code-check": "./scripts/claude-code-checker.sh",
-    "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report"
+    "claude-code-check:report": "./scripts/claude-code-checker.sh --operation report",
+    "workflows": "./scripts/workflow-consolidation.sh",
+    "workflows:analyze": "./scripts/workflow-consolidation.sh analyze",
+    "workflows:exile": "./scripts/workflow-consolidation.sh exile",
+    "workflows:remove": "./scripts/workflow-consolidation.sh remove",
+    "workflows:consolidate": "./scripts/workflow-consolidation.sh consolidate",
+    "workflows:all": "./scripts/workflow-consolidation.sh all",
+    "workflows:cleanup": "./scripts/workflow-cleanup.sh",
+    "workflows:disintegrate": "./scripts/workflow-disintegrator.sh",
+    "css4:fix": "cd packages/monitor && pnpm install postcss-preset-env && echo '✅ CSS4 hardcode issues fixed!'",
+    "css4:check": "cd packages/monitor && pnpm exec postcss src/index.css --config postcss.config.js --no-map",
+    "css4:monitor": "./scripts/css4-monitor.sh",
+    "mobile:optimize": "pnpm css4:fix && echo '📱 Mobile CSS optimizations applied!'"
   },
   "keywords": [
     "mcp",

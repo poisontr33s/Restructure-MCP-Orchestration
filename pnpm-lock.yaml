@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@ai-sdk/google':
         specifier: ^2.0.8
-        version: 2.0.11(zod@4.1.8)
+        version: 2.0.11(zod@4.1.12)
       '@google/genai':
         specifier: ^1.15.0
         version: 1.15.0
@@ -88,8 +88,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       express-rate-limit:
-        specifier: ^8.0.1
-        version: 8.0.1(express@5.1.0)
+        specifier: ^8.2.1
+        version: 8.2.1(express@5.1.0)
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -203,18 +203,18 @@ importers:
 
 packages:
 
-  /@ai-sdk/google@2.0.11(zod@4.1.8):
+  /@ai-sdk/google@2.0.11(zod@4.1.12):
     resolution: {integrity: sha512-dnVIgSz1DZD/0gVau6ifYN3HZFN15HZwC9VjevTFfvrfSfbEvpXj5x/k/zk/0XuQrlQ5g8JiwJtxc9bx24x2xw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.7(zod@4.1.8)
-      zod: 4.1.8
+      '@ai-sdk/provider-utils': 3.0.7(zod@4.1.12)
+      zod: 4.1.12
     dev: true
 
-  /@ai-sdk/provider-utils@3.0.7(zod@4.1.8):
+  /@ai-sdk/provider-utils@3.0.7(zod@4.1.12):
     resolution: {integrity: sha512-o3BS5/t8KnBL3ubP8k3w77AByOypLm+pkIL/DCw0qKkhDbvhCy+L3hRTGPikpdb8WHcylAeKsjgwOxhj4cqTUA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -223,7 +223,7 @@ packages:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
       eventsource-parser: 3.0.5
-      zod: 4.1.8
+      zod: 4.1.12
     dev: true
 
   /@ai-sdk/provider@2.0.0:
@@ -2787,8 +2787,8 @@ packages:
     engines: {node: '>=12.0.0'}
     dev: true
 
-  /express-rate-limit@8.0.1(express@5.1.0):
-    resolution: {integrity: sha512-aZVCnybn7TVmxO4BtlmnvX+nuz8qHW124KKJ8dumsBsmv5ZLxE0pYu7S2nwyRBGHHCAzdmnGyrc5U/rksSPO7Q==}
+  /express-rate-limit@8.2.1(express@5.1.0):
+    resolution: {integrity: sha512-PCZEIEIxqwhzw4KF0n7QF4QqruVTcF73O5kFKUnGOyjbCCgizBBiFaYpd/fnBLUMPw/BWw9OsiN7GgrNYr7j6g==}
     engines: {node: '>= 16'}
     peerDependencies:
       express: '>= 4.11'
@@ -5084,8 +5084,13 @@ packages:
     resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
     dev: false
 
+  /zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+    dev: true
+
   /zod@4.1.8:
     resolution: {integrity: sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ==}
+    dev: false
 
   /zustand@5.0.6(@types/react@19.1.12)(react@19.1.1):
     resolution: {integrity: sha512-ihAqNeUVhe0MAD+X8M5UzqyZ9k3FFZLBTtqo6JLPwV53cbRB/mJwBI0PxcIgqhBBHlEs8G45OTDTMq3gNcLq3A==}

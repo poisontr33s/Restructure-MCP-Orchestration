@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@ai-sdk/google':
         specifier: ^2.0.8
-        version: 2.0.11(zod@4.1.8)
+        version: 2.0.11(zod@4.3.5)
       '@google/genai':
         specifier: ^1.15.0
         version: 1.15.0
@@ -97,8 +97,8 @@ importers:
         specifier: ^3.11.0
         version: 3.17.0
       zod:
-        specifier: ^4.0.17
-        version: 4.0.17
+        specifier: ^4.3.5
+        version: 4.3.5
     devDependencies:
       '@types/express':
         specifier: ^5.0.3
@@ -198,23 +198,23 @@ importers:
   packages/shared:
     dependencies:
       zod:
-        specifier: ^4.1.5
-        version: 4.1.8
+        specifier: ^4.3.5
+        version: 4.3.5
 
 packages:
 
-  /@ai-sdk/google@2.0.11(zod@4.1.8):
+  /@ai-sdk/google@2.0.11(zod@4.3.5):
     resolution: {integrity: sha512-dnVIgSz1DZD/0gVau6ifYN3HZFN15HZwC9VjevTFfvrfSfbEvpXj5x/k/zk/0XuQrlQ5g8JiwJtxc9bx24x2xw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.7(zod@4.1.8)
-      zod: 4.1.8
+      '@ai-sdk/provider-utils': 3.0.7(zod@4.3.5)
+      zod: 4.3.5
     dev: true
 
-  /@ai-sdk/provider-utils@3.0.7(zod@4.1.8):
+  /@ai-sdk/provider-utils@3.0.7(zod@4.3.5):
     resolution: {integrity: sha512-o3BS5/t8KnBL3ubP8k3w77AByOypLm+pkIL/DCw0qKkhDbvhCy+L3hRTGPikpdb8WHcylAeKsjgwOxhj4cqTUA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -223,7 +223,7 @@ packages:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
       eventsource-parser: 3.0.5
-      zod: 4.1.8
+      zod: 4.3.5
     dev: true
 
   /@ai-sdk/provider@2.0.0:
@@ -5080,12 +5080,8 @@ packages:
     engines: {node: '>=18'}
     dev: false
 
-  /zod@4.0.17:
-    resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
-    dev: false
-
-  /zod@4.1.8:
-    resolution: {integrity: sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ==}
+  /zod@4.3.5:
+    resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
 
   /zustand@5.0.6(@types/react@19.1.12)(react@19.1.1):
     resolution: {integrity: sha512-ihAqNeUVhe0MAD+X8M5UzqyZ9k3FFZLBTtqo6JLPwV53cbRB/mJwBI0PxcIgqhBBHlEs8G45OTDTMq3gNcLq3A==}

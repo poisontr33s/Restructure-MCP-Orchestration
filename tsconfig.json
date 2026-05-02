@@ -15,7 +15,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@mcp/server-base": ["packages/servers/base/src/index.ts"],
+      "@mcp/shared": ["packages/shared/src/index.ts"],
+      "@mcp/core": ["packages/core/src/index.ts"],
+      "@mcp/cli": ["packages/cli/src/index.ts"],
+      "@mcp/guthilda": ["packages/guthilda/src/index.ts"],
+      "@mcp/server-sequential-thinking": ["packages/servers/sequential-thinking/src/index.ts"],
+      "@mcp/server-duckduckgo": ["packages/servers/duckduckgo/src/index.ts"]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "packages/monitor"]
 }

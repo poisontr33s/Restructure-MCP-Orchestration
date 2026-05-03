@@ -21,7 +21,7 @@ DEFAULT_BASE_BRANCH="main"
 
 # Target branch structure for consolidation
 declare -A CONSOLIDATION_BRANCHES=(
-    ["feature/ai-integrations"]="Consolidate AI integration PRs #110, #109, #108"
+    ["feature/ai-integrations"]="Consolidate integration PRs #110, #109, #108"
     ["feature/workflow-optimization"]="Consolidate workflow PRs #69, #85, #87, #89, #90, #92"
     ["feature/monorepo-restructure"]="Consolidate monorepo PRs #65, #66, #72"
     ["dependencies/batch-updates"]="Consolidate dependency update PRs"

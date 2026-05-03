@@ -1,14 +1,14 @@
 # 🤖 AI Agents Registry System
 
-A remote-friendly system for discovering and invoking external AI agents through GitHub Actions. Designed to work seamlessly from any device, including mobile, without requiring VS Code or local development tools.
+A remote-friendly system for discovering and invoking external agents through GitHub Actions. Designed to work seamlessly from any device, including mobile, without requiring VS Code or local development tools.
 
 ## 📋 Overview
 
 The Agents Registry system provides:
 
-- **JSON-based Agent Registry**: Single source of truth for all AI agent definitions
+- **JSON-based Agent Registry**: Single source of truth for all agent definitions
 - **Automated Discovery**: Weekly agent health checks and API probing
-- **Mobile-Friendly Invocation**: Trigger AI agents directly from GitHub Actions UI
+- **Mobile-Friendly Invocation**: Trigger agents directly from GitHub Actions UI
 - **Safe by Default**: No API calls without proper secrets configuration
 - **Multi-Vendor Support**: OpenAI, Anthropic, Google Gemini, and placeholder support
 

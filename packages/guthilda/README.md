@@ -24,7 +24,7 @@ Captain Guthilda is the central intelligence and meta-automation orchestrator fo
 
 - **Branch Intelligence** - Smart repository management
 - **Agent Deployment** - Automated agent orchestration
-- **Content Discovery** - AI-powered content scanning
+- **Content Discovery** - Guthilda-powered content scanning
 - **System Cleanup** - Automated maintenance and optimization
 
 ## Installation

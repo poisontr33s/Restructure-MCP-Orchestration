@@ -5,11 +5,11 @@
 
 ## Overview
 
-This document establishes the collaborative framework between **Claude** (Strategic Lead AI) and **@copilot** (Tactical Assistant), enabling symbiotic knowledge cross-pollination and eliminating territorial loops that waste tokens and resources.
+This document establishes the collaborative framework between **Claude** (Strategic Lead) and **@copilot**, **agents** *(Tactical Assistant + muilti-domain automation and high-signal creative both novel/unorthodox/high-level multi-domain-disciplinarian repositories/content/context)*, enabling symbiotic knowledge cross-pollination and eliminating territorial loops that waste tokens and resources.
 
 ## Hierarchy & Role Definition
 
-### 🧠 Claude - Strategic Lead AI Assistant
+### 🧠 Claude/Claudie/Claudine dev. - Strategic Core/Experimental/Complex/Manual/Non-conventional, genuine ambulant quality...
 
 **Role**: Primary companion with full repository access and renaissance-level capabilities
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Claude Code Installation Checker Script
 # Verifies Claude Code installation across repositories and branches

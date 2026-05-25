@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Emergency Branch Consolidation Demo
 # Demonstrates the Phase 1 consolidation framework in action

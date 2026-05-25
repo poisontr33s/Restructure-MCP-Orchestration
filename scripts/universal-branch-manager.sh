@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Universal Branch Manager Script
 # Provides local automation for branch management across multiple repositories

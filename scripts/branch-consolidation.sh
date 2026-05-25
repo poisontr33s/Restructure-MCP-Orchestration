@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Emergency Branch Consolidation Script
 # Implements Phase 1 of the Emergency Branch Consolidation Protocol

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Branch Creator Script
 # Simple branch creation utility following Captain Guthilda's conventions

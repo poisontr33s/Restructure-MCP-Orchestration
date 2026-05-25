@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Dependency Batch Consolidation Script
 # Consolidates multiple dependency update PRs into batched cycles
